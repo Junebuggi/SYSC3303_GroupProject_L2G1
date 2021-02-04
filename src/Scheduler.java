@@ -39,7 +39,7 @@ public class Scheduler implements Runnable{
 			}
 
 			this.floorRequest = floorRequest;
-			isWork = true;
+			this.isWork = true;
 
 			notifyAll();
 			return;
@@ -48,18 +48,29 @@ public class Scheduler implements Runnable{
 
 	/**
 	 * 
-	 * @return
+	 * @return floorRequest
 	 */
 	public synchronized Object getRequest() {
-		return 0;
+		while (isWork) {
+			try {
+				wait();
+			} catch (InterruptedException e) {
+				System.err.println(e);
+			}
+
+		Object floorRequest = this.floorRequest;
+		this.floorRequest = null;
+		this.isWork = false;
+		notifyAll();
+		return floorRequest;
 	}
 
 	/**
 	 * 
-	 * @return
+	 * @return isWork
 	 */
 	public synchronized boolean isWork() {
-		return false;
+		return this.isWork;
 	}
 	
 	@Override
