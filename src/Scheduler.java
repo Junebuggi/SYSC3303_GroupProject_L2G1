@@ -10,7 +10,7 @@
  *         SYSC 3303 L2
  * @version 1.0
  */
-public class Scheduler {
+public class Scheduler implements Runnable{
 
 	private Object floorRequest;
 	private boolean isWork;
@@ -72,5 +72,14 @@ public class Scheduler {
 	public synchronized boolean isWork() {
 		return this.isWork;
 	}
+	
+	@Override
+	public void run() {
+		while(true) {
+			
+		}
+	}
+
+}
 
 }
