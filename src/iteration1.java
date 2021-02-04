@@ -5,6 +5,15 @@ public class iteration1 {
 	private static Random rand = new Random();
 	
 	public static void main(String[] args) {
+		Thread elevator, floor, scheduler;
+		
+		elevator = new Thread(new Elevator(), "Elevator");
+		floor = new Thread(new Floor(), "floor");
+		scheduler = new Thead(new Scheduler(), "scheduler");
+		
+		elevator.start();
+		floor.start();
+		scheduler.start();
 		
 		for(int i = 0; i < 100; i++) {
 			System.out.println(makeElevatorRequest());
