@@ -8,6 +8,15 @@ public class BoxTest {
 	private static Random rand = new Random();
 	
 	public static void main(String[] args) {
+		Thread elevator, floor, scheduler;
+		
+		elevator = new Thread(new Elevator(), "Elevator");
+		floor = new Thread(new Floor(), "floor");
+		scheduler = new Thead(new Scheduler(), "scheduler");
+		
+		elevator.start();
+		floor.start();
+		scheduler.start();
 		
 		PrintWriter writer = null;
 		try {
