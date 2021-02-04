@@ -1,15 +1,30 @@
 import java.util.Random;
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 
-public class iteration1 {
+public class BoxTest {
 	
 	private static Random rand = new Random();
 	
 	public static void main(String[] args) {
 		
-		for(int i = 0; i < 100; i++) {
-			System.out.println(makeElevatorRequest());
+		PrintWriter writer = null;
+		try {
+			writer = new PrintWriter("floorRequest.txt", "UTF-8");
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
 		}
 		
+		String request;
+		for(int i = 0; i < 100; i++) {
+			request = makeElevatorRequest();
+			System.out.println(request);
+			writer.println(request);
+		}
+		writer.close();
 		return;
 		
 	}
