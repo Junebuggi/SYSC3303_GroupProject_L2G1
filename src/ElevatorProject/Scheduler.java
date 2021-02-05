@@ -52,8 +52,8 @@ public class Scheduler implements Runnable {
 	 * 
 	 * @return floorRequest
 	 */
-	public synchronized Object getRequest() {
-		while (isWork) {
+	public synchronized Object getRequest(boolean stationary) {
+		while (isWork && stationary) {
 			try {
 				wait();
 			} catch (InterruptedException e) {
@@ -66,6 +66,13 @@ public class Scheduler implements Runnable {
 		this.isWork = false;
 		notifyAll();
 		return floorRequest;
+	}
+	
+	/**
+	 * This method receives a message from the elevator to signal the floor. 
+	 */
+	public synchronized void sendMessage() {
+		return;
 	}
 
 	/**

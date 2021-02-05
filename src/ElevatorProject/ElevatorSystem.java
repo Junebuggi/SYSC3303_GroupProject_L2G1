@@ -8,18 +8,27 @@ import java.io.UnsupportedEncodingException;
 public class ElevatorSystem {
 
 	private static Random rand = new Random();
-
+	
+	/**
+	 * Creates a new floor thread, scheduler thread, and elevator thread.
+	 * 
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		Thread elevator, floor, scheduler;
+		Scheduler schedule = new Scheduler();
+		System.out.println("Setting up the Scheduler.");
 
-		elevator = new Thread(new Elevator(), "Elevator");
-		floor = new Thread(new Floor(), "floor");
-		scheduler = new Thread(new Scheduler(), "scheduler");
-
+		elevator = new Thread(new Elevator(schedule, 1), "Elevator");
+		floor = new Thread(new Floor(), "Floor");
+		scheduler = new Thread(new Scheduler(), "Scheduler");
+		System.out.println("Threads are created.");
+		
 		elevator.start();
 		floor.start();
 		scheduler.start();
-
+		System.out.println("Threads have started.\n");
+		
 		PrintWriter writer = null;
 		try {
 			writer = new PrintWriter("floorRequest.txt", "UTF-8");
