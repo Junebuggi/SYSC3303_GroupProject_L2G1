@@ -16,6 +16,7 @@ public class ElevatorSystem {
 	 */
 	public static void main(String[] args) {
 		Thread elevator, floor, scheduler;
+<<<<<<< HEAD
 		Scheduler schedule = new Scheduler();
 		System.out.println("Setting up the Scheduler.");
 
