@@ -1,49 +1,27 @@
 package ElevatorProject;
 
 import java.util.Random;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 
 public class ElevatorSystem {
 
-	private static Random rand = new Random();
+
 
 	public static void main(String[] args) {
 		Thread elevator, floor, scheduler;
 		Scheduler schedulerObj = new Scheduler();
-		
-
-		elevator = new Thread(new Elevator(), "Elevator");
+		scheduler = new Thread(schedulerObj, "Scheduler");
+		elevator = new Thread(new Elevator(schedulerObj), "Elevator");
 		floor = new Thread(new Floor(schedulerObj), "floor");
-		scheduler = new Thread(schedulerObj, "scheduler");
-
+		
 		elevator.start();
 		floor.start();
 		scheduler.start();
 
-		PrintWriter writer = null;
-		try {
-			writer = new PrintWriter("floorRequest.txt", "UTF-8");
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
-
-		String request;
-		for (int i = 0; i < 100; i++) {
-			request = makeElevatorRequest();
-			System.out.println(request);
-			writer.println(request);
-		}
-		writer.close();
-		return;
 
 	}
 
 	private static String makeElevatorRequest() {
-
+		Random rand = new Random();
 		String hh = String.format("%02d", rand.nextInt(24));
 		String mm = String.format("%02d", rand.nextInt(60));
 		String ss = String.format("%02d", rand.nextInt(60));

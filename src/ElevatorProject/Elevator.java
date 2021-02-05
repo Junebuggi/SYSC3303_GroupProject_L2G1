@@ -1,74 +1,42 @@
 package ElevatorProject;
 
 public class Elevator implements Runnable {
+	private Scheduler scheduler;
+	private byte[] currentRequest;
+	
+	public Elevator(Scheduler scheduler) {
+		this.scheduler = scheduler;
+		this.currentRequest = null;
 
-	private Object floorRequest;
-	private boolean isWork;
-
-	/**
-	 * The default constructor.
-	 */
-	public Elevator() {
-		this.floorRequest = null;
-		this.isWork = false;
 	}
 
-	/**
-	 * This method puts a floor request into the scheduler. This method will return
-	 * when there is space for the floor request in the scheduler.
-	 * 
-	 * @param floorRequest An object representing the floor request from the floor
-	 *                     subsystem
-	 */
-	public synchronized void putRequest(Object floorRequest) {
-		while (!isWork) {
-			try {
-				wait();
-			} catch (InterruptedException e) {
-				System.err.println(e);
-			}
-
-			this.floorRequest = floorRequest;
-			this.isWork = true;
-
-			notifyAll();
-			return;
-		}
+	public String toString() {
+		String strRequest = new String(this.currentRequest);
+		String[] parsedStr = strRequest.split(" ");
+		return "Time: " + parsedStr[0] + "\nFloor: " + parsedStr[1] + "\nFloor Button: " + parsedStr[2] + "\nCar Button: " + parsedStr[3];
 	}
 
-	/**
-	 * 
-	 * @return floorRequest
-	 */
-	public synchronized Object getRequest() {
-		while (isWork) {
-			try {
-				wait();
-			} catch (InterruptedException e) {
-				System.err.println(e);
-			}
-		}
-
-		Object floorRequest = this.floorRequest;
-		this.floorRequest = null;
-		this.isWork = false;
-		notifyAll();
-		return floorRequest;
-	}
-
-	/**
-	 * 
-	 * @return isWork
-	 */
-	public synchronized boolean isWork() {
-		return this.isWork;
-	}
-
-	@Override
 	public void run() {
-		while (true) {
 
+		int i = 0;
+		while (true) {
+			synchronized (scheduler) {
+				if (scheduler.isWork()) {
+					this.currentRequest = (byte[])scheduler.getRequest();
+					System.out.println(this.toString() + "\n");
+					scheduler.acknowledgeRequest();
+					i++;
+					if(i == 99) {
+						System.exit(0);
+					}
+					try {
+						Thread.sleep(2000);
+					} catch (InterruptedException e) {
+					}
+				}
+			}
 		}
+
 	}
 
 }
