@@ -38,11 +38,12 @@ public class Scheduler implements Runnable {
 			} catch (InterruptedException e) {
 				System.err.println(e);
 			}
+		}
 
 			this.workRequests.add(elevatorRequests);
 			notifyAll();
 			return;
-		}
+		
 	}
 
 	/**
