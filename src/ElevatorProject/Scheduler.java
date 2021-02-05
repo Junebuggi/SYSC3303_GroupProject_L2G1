@@ -10,7 +10,9 @@
  *         SYSC 3303 L2
  * @version 1.0
  */
-public class Scheduler implements Runnable{
+package ElevatorProject;
+
+public class Scheduler implements Runnable {
 
 	private Object floorRequest;
 	private boolean isWork;
@@ -28,7 +30,7 @@ public class Scheduler implements Runnable{
 	 * when there is space for the floor request in the scheduler.
 	 * 
 	 * @param floorRequest An object representing the floor request from the floor
-	 *                     subsytem
+	 *                     subsystem
 	 */
 	public synchronized void putRequest(Object floorRequest) {
 		while (!isWork) {
@@ -57,6 +59,7 @@ public class Scheduler implements Runnable{
 			} catch (InterruptedException e) {
 				System.err.println(e);
 			}
+		}
 
 		Object floorRequest = this.floorRequest;
 		this.floorRequest = null;
@@ -72,14 +75,12 @@ public class Scheduler implements Runnable{
 	public synchronized boolean isWork() {
 		return this.isWork;
 	}
-	
+
 	@Override
 	public void run() {
-		while(true) {
-			
+		while (true) {
+
 		}
 	}
-
-}
 
 }
