@@ -33,7 +33,12 @@ public class Floor implements Runnable{
 				synchronized (this.scheduler) {
 					scheduler.putRequest(floorRequest);
 					System.out.println("sent request to scheduler");
+
 				}
+				while(!scheduler.getAcknowledgemnt()) {
+					
+				}
+				System.out.println("Elevator is on it's way!");
 			}
 			//send requests to the elevator via scheduler	
 			

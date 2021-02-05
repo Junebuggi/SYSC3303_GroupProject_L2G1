@@ -24,6 +24,7 @@ public class Elevator implements Runnable {
 				if (scheduler.isWork()) {
 					this.currentRequest = (byte[])scheduler.getRequest();
 					System.out.println(this.toString() + "\n");
+					scheduler.acknowledgeRequest();
 					i++;
 					if(i == 99) {
 						System.exit(0);

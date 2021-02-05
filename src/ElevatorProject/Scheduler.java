@@ -15,7 +15,7 @@ package ElevatorProject;
 import java.util.ArrayList;
 
 public class Scheduler implements Runnable {
-	
+	private boolean acknowledgment = false;
 	private ArrayList<Object> workRequests = new ArrayList<>();
 
 	/**
@@ -62,6 +62,17 @@ public class Scheduler implements Runnable {
 		Object floorRequest = workRequests.remove(0);
 		notifyAll();
 		return floorRequest;
+	}
+	
+	public synchronized void acknowledgeRequest() {
+		this.acknowledgment = true;
+		notifyAll();
+	}
+	
+	public synchronized boolean getAcknowledgemnt() {
+		boolean ack = this.acknowledgment;
+		this.acknowledgment = false;
+		return ack;
 	}
 
 	/**
