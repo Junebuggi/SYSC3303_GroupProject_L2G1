@@ -12,7 +12,11 @@
  */
 package ElevatorProject;
 
+import java.util.ArrayList;
+
 public class Scheduler implements Runnable {
+	
+	private ArrayList<ElevatorRequestData> workRequests = new ArrayList<>();
 
 	private Object floorRequest;
 	private boolean isWork;
@@ -32,7 +36,7 @@ public class Scheduler implements Runnable {
 	 * @param floorRequest An object representing the floor request from the floor
 	 *                     subsystem
 	 */
-	public synchronized void putRequest(Object floorRequest) {
+	public synchronized void putRequest(ArrayList<ElevatorRequestData> elevatorRequests) {
 		while (!isWork) {
 			try {
 				wait();
@@ -40,7 +44,7 @@ public class Scheduler implements Runnable {
 				System.err.println(e);
 			}
 
-			this.floorRequest = floorRequest;
+			this.workRequests.addAll(elevatorRequests);
 			this.isWork = true;
 
 			notifyAll();
@@ -73,7 +77,7 @@ public class Scheduler implements Runnable {
 	 * @return isWork
 	 */
 	public synchronized boolean isWork() {
-		return this.isWork;
+		return workRequests.size() > 0;
 	}
 
 	@Override
