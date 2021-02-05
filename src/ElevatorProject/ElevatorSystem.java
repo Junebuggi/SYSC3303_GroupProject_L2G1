@@ -11,10 +11,12 @@ public class ElevatorSystem {
 
 	public static void main(String[] args) {
 		Thread elevator, floor, scheduler;
+		Scheduler schedulerObj = new Scheduler();
+		
 
 		elevator = new Thread(new Elevator(), "Elevator");
-		floor = new Thread(new Floor(), "floor");
-		scheduler = new Thread(new Scheduler(), "scheduler");
+		floor = new Thread(new Floor(schedulerObj), "floor");
+		scheduler = new Thread(schedulerObj, "scheduler");
 
 		elevator.start();
 		floor.start();
