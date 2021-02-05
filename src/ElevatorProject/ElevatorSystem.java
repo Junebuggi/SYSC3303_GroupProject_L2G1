@@ -16,15 +16,15 @@ public class ElevatorSystem {
 	 */
 	public static void main(String[] args) {
 		Thread elevator, floor, scheduler;
-<<<<<<< HEAD
-		Scheduler schedule = new Scheduler();
-		System.out.println("Setting up the Scheduler.");
 
-		elevator = new Thread(new Elevator(schedule, 1), "Elevator");
-		floor = new Thread(new Floor(), "Floor");
-		scheduler = new Thread(new Scheduler(), "Scheduler");
-		System.out.println("Threads are created.");
+		Scheduler schedulerObj = new Scheduler();
+		System.out.println("Setting up the Scheduler.");
 		
+		elevator = new Thread(new Elevator(schedulerObj, 1), "Elevator");
+		floor = new Thread(new Floor(schedulerObj), "floor");
+		scheduler = new Thread(schedulerObj, "scheduler");
+		System.out.println("Threads are created.");
+
 		elevator.start();
 		floor.start();
 		scheduler.start();

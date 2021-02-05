@@ -59,6 +59,7 @@ public class Elevator implements Runnable {
 	 * Method to move the elevator.
 	 */
 	public void move(int floor) {
+		this.stationary = false;
 		int numFloorsToTravel = Math.abs(currentFloor-floor);
 		try {
 			Thread.sleep(Information.TRAVEL_TIME_PER_FLOOR*numFloorsToTravel);
@@ -67,6 +68,7 @@ public class Elevator implements Runnable {
 		}
 		currentFloor=floor;
 		System.out.println("Elevator is moving to floor " + currentFloor);
+		this.stationary = true;
 	}
 	
 	/**
