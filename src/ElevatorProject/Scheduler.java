@@ -16,17 +16,12 @@ import java.util.ArrayList;
 
 public class Scheduler implements Runnable {
 	
-	private ArrayList<ElevatorRequestData> workRequests = new ArrayList<>();
-
-	private Object floorRequest;
-	private boolean isWork;
+	private ArrayList<Object> workRequests = new ArrayList<>();
 
 	/**
 	 * The default constructor.
 	 */
 	public Scheduler() {
-		this.floorRequest = null;
-		this.isWork = false;
 	}
 
 	/**
@@ -36,17 +31,15 @@ public class Scheduler implements Runnable {
 	 * @param floorRequest An object representing the floor request from the floor
 	 *                     subsystem
 	 */
-	public synchronized void putRequest(ArrayList<ElevatorRequestData> elevatorRequests) {
-		while (!isWork) {
+	public synchronized void putRequest(Object elevatorRequests) {
+		while (workRequests.size() != 0) {
 			try {
 				wait();
 			} catch (InterruptedException e) {
 				System.err.println(e);
 			}
 
-			this.workRequests.addAll(elevatorRequests);
-			this.isWork = true;
-
+			this.workRequests.add(elevatorRequests);
 			notifyAll();
 			return;
 		}
@@ -57,17 +50,15 @@ public class Scheduler implements Runnable {
 	 * @return floorRequest
 	 */
 	public synchronized Object getRequest() {
-		while (isWork) {
+		while (!isWork()) {
 			try {
 				wait();
 			} catch (InterruptedException e) {
 				System.err.println(e);
 			}
 		}
-
-		Object floorRequest = this.floorRequest;
-		this.floorRequest = null;
-		this.isWork = false;
+		
+		Object floorRequest = workRequests.remove(0);
 		notifyAll();
 		return floorRequest;
 	}
@@ -77,7 +68,7 @@ public class Scheduler implements Runnable {
 	 * @return isWork
 	 */
 	public synchronized boolean isWork() {
-		return workRequests.size() > 0;
+		return !workRequests.isEmpty();
 	}
 
 	@Override
