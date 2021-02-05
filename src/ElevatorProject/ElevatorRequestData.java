@@ -18,7 +18,7 @@ public class ElevatorRequestData {
 	private Integer carButton; //destination floor
 	private String floorButton; //direction: "Up" or "Down"
 	
-	public ElevatorRequestData (Time time, Integer floor, Integer carButton, String floorButton) {
+	public ElevatorRequestData (Time time, Integer floor, String floorButton, Integer carButton) {
 		this.time = time;
 		this.floor = floor;
 		this.carButton = carButton;
