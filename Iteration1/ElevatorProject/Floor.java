@@ -18,7 +18,7 @@ public class Floor implements Runnable{
 	private int floorLevel;
 	private int floorButton;
 	private Information.directionLamp dirLamp = Information.directionLamp.NOT_PRESSED;
-	private File inputFile = new File(System.getProperty("user.dir") + "/src/ElevatorProject/floorRequest.txt");
+	private File inputFile = new File(System.getProperty("user.dir") + "/Iteration1/ElevatorProject/floorRequest.txt");
 	private ArrayList<String >requestList;
 	
 	public Floor (Scheduler scheduler) {

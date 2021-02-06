@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 public class Scheduler implements Runnable {
 	private byte[] ack = null;
-	private ArrayList<Object> workRequests = new ArrayList<>();
+	private ArrayList<byte[]> workRequests = new ArrayList<>();
 
 	/**
 	 * The default constructor.
@@ -31,7 +31,7 @@ public class Scheduler implements Runnable {
 	 * @param floorRequest An object representing the floor request from the floor
 	 *                     subsystem
 	 */
-	public synchronized void putRequest(Object elevatorRequests) {
+	public synchronized void putRequest(byte[] elevatorRequests) {
 		
 			this.workRequests.add(elevatorRequests);
 			notifyAll();
@@ -43,7 +43,7 @@ public class Scheduler implements Runnable {
 	 * @return floorRequest
 	 */
 
-	public synchronized Object getRequest() {
+	public synchronized byte[] getRequest() {
 		while (!isWork()) {
 			try {
 				wait();
@@ -52,7 +52,7 @@ public class Scheduler implements Runnable {
 			}
 		}
 		
-		Object floorRequest = workRequests.remove(0);
+		byte[] floorRequest = workRequests.remove(0);
 		notifyAll();
 		return floorRequest;
 	}
@@ -92,6 +92,10 @@ public class Scheduler implements Runnable {
 		while (true) {
 
 		}
+	}
+	
+	public ArrayList<byte[]> getAllRequest(){
+		return workRequests;
 	}
 
 }

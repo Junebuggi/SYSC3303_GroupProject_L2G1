@@ -1,8 +1,0 @@
-package ElevatorProject;
-
-
-class SchedulerTest {
-	
-	
-
-}
