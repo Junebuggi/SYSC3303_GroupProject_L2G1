@@ -1,31 +1,46 @@
+/**
+ * Floor.java
+ * 
+ * The Floor thread will read in events from an input file and will try to put a request 
+ * in the scheduler while the previous request has been acknowledged.
+ *
+ * @author rutvikshah
+ * 
+ * SYSC 3303 L2 Group 1
+ * @version 1.0
+ */
 
 package ElevatorProject;
 
 import java.io.File;
 import java.util.ArrayList;
-
-
-/**
- * @author rutvikshah
- *
- */
-
 import java.util.Scanner;
 
 public class Floor implements Runnable{
+	
 	//private final Integer NUMBER_OF_FLOORS = 7;
 	private Scheduler scheduler;
 	private int floorLevel;
 	private int floorButton;
 	private Information.directionLamp dirLamp = Information.directionLamp.NOT_PRESSED;
 	private File inputFile = new File(System.getProperty("user.dir") + "/Iteration1/ElevatorProject/floorRequest.txt");
-	private ArrayList<String >requestList;
+	private ArrayList<String> requestList;
 	
+	/**
+	 * Constructor class used to initialize the object of the Floor class.
+	 * 
+	 * @param scheduler		the schedule where the actions of the floor are passed to
+	 */
 	public Floor (Scheduler scheduler) {
 		this.scheduler = scheduler;
 		requestList = getRequestFromFile(inputFile);
 	}
 	
+	/**
+	 * 
+	 * 
+	 * @param file
+	 */
 	@SuppressWarnings({ "resource", "unused" })
 	public ArrayList<String> getRequestFromFile(File file){
 		ArrayList<String >requestList = new ArrayList<String>();
@@ -43,6 +58,11 @@ public class Floor implements Runnable{
 		return requestList;
 	}
 	
+	/**
+	 * 
+	 * 
+	 * @param request
+	 */
 	public void requestHandler(String request) {
 		synchronized (this.scheduler) {
 			scheduler.putRequest(request.getBytes());
@@ -58,6 +78,9 @@ public class Floor implements Runnable{
 		}
 	}
 	
+	/**
+	 * Overrides the run method of the Runnable interface.
+	 */	
 	@Override
 	public synchronized void run() {
 

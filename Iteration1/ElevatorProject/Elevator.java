@@ -1,10 +1,23 @@
-package ElevatorProject;
+/**
+ * Elevator.java
+ * 
+ * The Elevator thread will try to get requests from the scheduler while it is stationary. 
+ * It will then handle those requests and pass an acknowledgment to the Scheduler to be passed 
+ * back to the floorSubsystem.
+ *
+ * @author Hasan Baig
+ * @author Alden Wan Yeung Ng
+ * 
+ * SYSC 3303 L2 Group 1
+ * @version 1.0
+ */
 
+package ElevatorProject;
 
 public class Elevator implements Runnable {
 	
-//	private Integer[] elevatorButtonSelected = new Integer[NUM_FLOORS];	//set of elevator button to select a floor
-//	private Integer[] elevatorLamp = new Integer[NUM_FLOORS];			//indicate the floor(s) which will be visited by the elevator
+	//private Integer[] elevatorButtonSelected = new Integer[NUM_FLOORS];	//set of elevator button to select a floor
+	//private Integer[] elevatorLamp = new Integer[NUM_FLOORS];			    //indicate the floor(s) which will be visited by the elevator
 	
 	private Scheduler scheduler;
 	private byte[] currentRequest;
@@ -19,16 +32,17 @@ public class Elevator implements Runnable {
    /**
 	 * Constructor class used to initialize the object of the Elevator class.
 	 * 
-	 * @param schedule			the schedule where the actions of the elevator are passed to
+	 * @param scheduler			the schedule where the actions of the elevator are passed to
 	 * @param elevatorNumber	the elevator number
 	 */
 	public Elevator(Scheduler scheduler, int elevatorNumber) {
 		this.scheduler = scheduler;
 		this.currentRequest = null;
-    this.elevatorNumber = elevatorNumber;
-    floorRequestedFrom = -1;
-    floorToVisit = -1;
+		this.elevatorNumber = elevatorNumber;
+		floorRequestedFrom = -1;
+		floorToVisit = -1;
 	}
+
 	/**
 	 * Method prints current elevator information.
 	 */
@@ -38,7 +52,6 @@ public class Elevator implements Runnable {
  		return "Time: " + parsedStr[0] + "\nFloor: " + parsedStr[1] + "\nFloor Button: " + parsedStr[2] + "\nCar Button: " + parsedStr[3];
 	}
 
-	
 	/**
 	 * Method to open door.
 	 */
@@ -71,7 +84,7 @@ public class Elevator implements Runnable {
 	public void move(int floor) {
 		this.stationary = false;
 		int numFloorsToTravel = Math.abs(currentFloor-floor);
-    System.out.println("Elevator is moving to floor " + currentFloor);
+    	System.out.println("Elevator is moving to floor " + floor);
 		try {
 			Thread.sleep(Information.TRAVEL_TIME_PER_FLOOR*numFloorsToTravel);
 		} catch (InterruptedException e) {
@@ -100,12 +113,9 @@ public class Elevator implements Runnable {
 					scheduler.acknowledgeRequest(("ACK " + elevatorNumber).getBytes());
 				}
 			}
-					try {
-						Thread.sleep(2000);
-					} catch (InterruptedException e) {
-					}
-          
-				
+			try {
+				Thread.sleep(2000);
+			} catch (InterruptedException e) {}				
 		}
 
 	}

@@ -1,35 +1,35 @@
 /**
  * Scheduler.java
  * 
- * The scheduler is used to pass floorRequests from the floor subsystem to the
- * elevator subsystem
+ * The scheduler thread is a shared resource between the floor and elevator subsystems. The floorSubsystem 
+ * will place requests into the Scheduler and the elevatorSubsystem will get and handle those requests.
  *
  * @author Emma Boulay
  * @author Abeer Rafiq
  * 
- * SYSC 3303 L2
+ * SYSC 3303 L2 Group 1
  * @version 1.0
  */
+
 package ElevatorProject;
 
 import java.util.ArrayList;
 
 public class Scheduler implements Runnable {
+
 	private byte[] ack = null;
 	private ArrayList<byte[]> workRequests = new ArrayList<>(); 
 
 	/**
 	 * The default constructor.
 	 */
-	public Scheduler() {
-	}
+	public Scheduler() { }
 
 	/**
 	 * This method puts a floor request into the scheduler. This method will return
 	 * when there is space for the floor request in the scheduler.
 	 * 
-	 * @param floorRequest An object representing the floor request from the floor
-	 *                     subsystem
+	 * @param elevatorRequests An object representing the elevator request from the floor subsystem
 	 */
 	public synchronized void putRequest(byte[] elevatorRequests) {
 			//Add the work requests passed in and notify all
@@ -41,7 +41,7 @@ public class Scheduler implements Runnable {
 	/**
 	 * This synchronized method returns the first floor request (position 0) and removes it from the scheduler. 
 	 * 
-	 * @return floorRequest the floor request that should be completed next (the first floor request)
+	 * @return floorRequest	the floor request that should be completed next (the first floor request)
 	 */
 	public synchronized byte[] getRequest() {
 		//wait if there are no work requests
@@ -62,7 +62,7 @@ public class Scheduler implements Runnable {
   	/**
 	 * This synchronized method sets the acknowledgement private variable to byte[] ack passed in and notifies all.
 	 * 
-	 * @param byte[] ack The acknowledgement to be put into byte ack
+	 * @param ack The acknowledgement to be put into byte ack
 	 */
 	public synchronized void acknowledgeRequest(byte[] ack) {
 		this.ack = ack;
@@ -94,7 +94,8 @@ public class Scheduler implements Runnable {
 	/**
 	 * This synchronized method is used to determine if there are any work requests pending.
 	 * 
-	 * @return False if there are no work requests pending, True if there are pending work requests.
+	 * @return false  if there are no work requests pending
+	 * @return true   if there are pending work requests
 	 */	
 	public synchronized boolean isWork() {
 		return !workRequests.isEmpty();
@@ -109,10 +110,11 @@ public class Scheduler implements Runnable {
 
 		}
 	}
+
 	/**
 	 * This method returns the arrayList containing all the requests.
 	 * 
-	 * @return workRequests An arrayList containing all requests (type byte[])
+	 * @return workRequests  arrayList containing all requests (type byte[])
 	 */	
 	public ArrayList<byte[]> getAllRequest(){
 		return workRequests;
