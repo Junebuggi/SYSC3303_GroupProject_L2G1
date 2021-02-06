@@ -13,16 +13,16 @@ Project Iteration 1 - Java Threads
 The purpose of this project iteration is to model the communication between the floor subsystem and the elevator subsystem with the scheduler. The floor subsystem reads in events from an input file and will send them to the Scheduler and will wait until the scheduler communicates that the elevator has acknowledge their request. The elevator will make calls to the Scheduler while it is stationary to check if any requests are pending. If requests are pending the elevator subsystem will handle the request and send an ackowledgment for the Scheduler to pass back to the floor subsystem. The program will terminate when the floor subsystem has handled all events in the input file and has recieved the last acknowledgment.
 
 -Breakdown of Responsibilities
-  ALL\n
-    -> Class Diagram\n
-    -> Sequence Diagram\n
-    -> elevatorProjectTest.java (main program)\n
-  Abeer + Emma\n
-    -> Scheduler.java\n
-  Alden + Hasan\n
-    -> elevatorSubsystem.java\n
-  Rutvik\n
-    -> floorSubsystem.java\n
+  ALL
+    -> Class Diagram
+    -> Sequence Diagram
+    -> elevatorProjectTest.java (main program)
+  Abeer + Emma
+    -> Scheduler.java
+  Alden + Hasan
+    -> elevatorSubsystem.java
+  Rutvik
+    -> floorSubsystem.java
     
 -File Names
 elevatorProjectTest.java
