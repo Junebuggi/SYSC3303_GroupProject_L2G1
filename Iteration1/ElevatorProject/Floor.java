@@ -29,7 +29,7 @@ public class Floor implements Runnable{
 	/**
 	 * Constructor class used to initialize the object of the Floor class.
 	 * 
-	 * @param scheduler		the schedule where the actions of the floor are passed to
+	 * @param scheduler	the schedule where the actions of the floor are passed to
 	 */
 	public Floor (Scheduler scheduler) {
 		this.scheduler = scheduler;
@@ -37,15 +37,17 @@ public class Floor implements Runnable{
 	}
 	
 	/**
+	 * Method used to parse the request file and store the requests in an array list (requestList)
 	 * 
-	 * 
-	 * @param file
+	 * @param file    the input file that contains the list of elevator requests to be performed.
+	 * @return requestList  the arraylist containing all the requests to be performed
 	 */
 	@SuppressWarnings({ "resource", "unused" })
 	public ArrayList<String> getRequestFromFile(File file){
-		ArrayList<String >requestList = new ArrayList<String>();
+		ArrayList<String> requestList = new ArrayList<String>();
 		try {
 			Scanner scanner = new Scanner(inputFile);
+			// Scan each line from the txt file and store it to the requestList
 			String line = scanner.nextLine();
 			while(scanner.hasNextLine()) {
 				requestList.add(scanner.nextLine());
@@ -59,16 +61,18 @@ public class Floor implements Runnable{
 	}
 	
 	/**
+	 * Method used for sending each request to the scheduler for further execution and recieve acknowledgement
 	 * 
-	 * 
-	 * @param request
+	 * @param request  topmost elevator request from the txt file (FIFO format)
 	 */
 	public void requestHandler(String request) {
 		synchronized (this.scheduler) {
+			//send the request to be performed to the scheduler for execution
 			scheduler.putRequest(request.getBytes());
 			System.out.println("Floor Subsystem: sent request to scheduler");
 			String[] strAck;
 			
+			//check for acknowledment
 			do{
 				strAck = (new String(scheduler.getAcknowledgemnt())).split(" ");
 			}while(!"ACK".equals(strAck[0]));
