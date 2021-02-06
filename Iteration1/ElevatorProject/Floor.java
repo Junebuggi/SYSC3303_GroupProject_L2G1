@@ -72,7 +72,7 @@ public class Floor implements Runnable{
 			System.out.println("Floor Subsystem: sent request to scheduler");
 			String[] strAck;
 			
-			//check for acknowledment
+			//check for acknowledgement
 			do{
 				strAck = (new String(scheduler.getAcknowledgemnt())).split(" ");
 			}while(!"ACK".equals(strAck[0]));
