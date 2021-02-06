@@ -14,5 +14,4 @@ public class Information {
 	public enum doorState{OPEN, CLOSE}
 	public enum directionLamp{UP, DOWN, NOT_PRESSED}
 
-
 }

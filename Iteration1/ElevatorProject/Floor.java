@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Floor implements Runnable{
-	//private final Integer NUMBER_OF_FLOORS = 7;
 	private Scheduler scheduler;
 	private int floorLevel;
 	private int floorButton;
@@ -53,7 +52,7 @@ public class Floor implements Runnable{
 				strAck = (new String(scheduler.getAcknowledgemnt())).split(" ");
 			}while(!"ACK".equals(strAck[0]));
 			
-			System.out.println("Floor System: " + strAck[0] + " recieved, Elevator " + strAck[1] + " is on it's way!\n");
+			System.out.println("Floor SubSystem: " + strAck[0] + " recieved, Elevator " + strAck[1] + " is on it's way!\n");
 			
 		}
 	}
