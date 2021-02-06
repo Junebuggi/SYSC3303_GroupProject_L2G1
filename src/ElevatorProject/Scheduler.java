@@ -15,18 +15,13 @@ package ElevatorProject;
 import java.util.ArrayList;
 
 public class Scheduler implements Runnable {
-	
-	private ArrayList<ElevatorRequestData> workRequests = new ArrayList<>();
-
-	private Object floorRequest;
-	private boolean isWork;
+	private boolean acknowledgment = false;
+	private ArrayList<Object> workRequests = new ArrayList<>();
 
 	/**
 	 * The default constructor.
 	 */
 	public Scheduler() {
-		this.floorRequest = null;
-		this.isWork = false;
 	}
 
 	/**
@@ -36,47 +31,50 @@ public class Scheduler implements Runnable {
 	 * @param floorRequest An object representing the floor request from the floor
 	 *                     subsystem
 	 */
-	public synchronized void putRequest(ArrayList<ElevatorRequestData> elevatorRequests) {
-		while (!isWork) {
+	public synchronized void putRequest(Object elevatorRequests) {
+		while (workRequests.size() != 0) {
 			try {
 				wait();
 			} catch (InterruptedException e) {
 				System.err.println(e);
 			}
+		}
 
-			this.workRequests.addAll(elevatorRequests);
-			this.isWork = true;
-
+			this.workRequests.add(elevatorRequests);
 			notifyAll();
 			return;
-		}
+		
 	}
 
 	/**
 	 * 
 	 * @return floorRequest
 	 */
-	public synchronized Object getRequest(boolean stationary) {
-		while (isWork && stationary) {
+
+	public synchronized Object getRequest() {
+		while (!isWork()) {
 			try {
 				wait();
 			} catch (InterruptedException e) {
 				System.err.println(e);
 			}
 		}
-
-		Object floorRequest = this.floorRequest;
-		this.floorRequest = null;
-		this.isWork = false;
+		
+		Object floorRequest = workRequests.remove(0);
 		notifyAll();
 		return floorRequest;
 	}
 	
-	/**
-	 * This method receives a message from the elevator to signal the floor. 
-	 */
-	public synchronized void sendMessage() {
-		return;
+  
+	public synchronized void acknowledgeRequest() {
+		this.acknowledgment = true;
+		notifyAll();
+	}
+	
+	public synchronized boolean getAcknowledgemnt() {
+		boolean ack = this.acknowledgment;
+		this.acknowledgment = false;
+		return ack;
 	}
 
 	/**
@@ -84,7 +82,7 @@ public class Scheduler implements Runnable {
 	 * @return isWork
 	 */
 	public synchronized boolean isWork() {
-		return workRequests.size() > 0;
+		return !workRequests.isEmpty();
 	}
 
 	@Override

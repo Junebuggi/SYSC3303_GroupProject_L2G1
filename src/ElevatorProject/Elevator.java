@@ -4,30 +4,41 @@ import java.lang.Math.*;
 
 public class Elevator implements Runnable {
 	
-	private Scheduler schedule;
-	private Integer elevatorNumber;
-	private Integer currentFloor = 0;
-	private Information.doorState doorState = Information.doorState.CLOSE;
-	private Information.lampState lampState = Information.lampState.OFF;
-	
-	Object elevatorRequest = null;
-	private Integer floorRequestedFrom;
-	private Integer floorToVisit;
-	private Boolean stationary = true;
-	
 //	private Integer[] elevatorButtonSelected = new Integer[NUM_FLOORS];	//set of elevator button to select a floor
 //	private Integer[] elevatorLamp = new Integer[NUM_FLOORS];			//indicate the floor(s) which will be visited by the elevator
 	
-	/**
+	private Scheduler scheduler;
+	private byte[] currentRequest;
+	private int elevatorNumber;
+	private int currentFloor = 0;
+	private Information.doorState doorState = Information.doorState.CLOSE;
+	private Information.lampState lampState = Information.lampState.OFF;
+	private int floorRequestedFrom;
+	private int floorToVisit;
+	private Boolean stationary = true;
+	
+   /**
 	 * Constructor class used to initialize the object of the Elevator class.
 	 * 
 	 * @param schedule			the schedule where the actions of the elevator are passed to
 	 * @param elevatorNumber	the elevator number
 	 */
-	public Elevator(Scheduler schedule, int elevatorNumber) {
-		this.schedule = schedule;
-		this.elevatorNumber = elevatorNumber;
+	public Elevator(Scheduler scheduler, int elevatorNumber) {
+		this.scheduler = scheduler;
+		this.currentRequest = null;
+    this.elevatorNumber = elevatorNumber;
+    floorRequestedFrom = null;
+    floorToVisit = null;
 	}
+	/**
+	 * Method prints current elevator information.
+	 */
+	public String toString() {
+		String strRequest = new String(this.currentRequest);
+		String[] parsedStr = strRequest.split(" ");
+ 		return "Time: " + parsedStr[0] + "\nFloor: " + parsedStr[1] + "\nFloor Button: " + parsedStr[2] + "\nCar Button: " + parsedStr[3];
+	}
+
 	
 	/**
 	 * Method to open door.
@@ -61,23 +72,14 @@ public class Elevator implements Runnable {
 	public void move(int floor) {
 		this.stationary = false;
 		int numFloorsToTravel = Math.abs(currentFloor-floor);
+    System.out.println("Elevator is moving to floor " + currentFloor);
 		try {
 			Thread.sleep(Information.TRAVEL_TIME_PER_FLOOR*numFloorsToTravel);
 		} catch (InterruptedException e) {
 			System.err.println(e);
 		}
 		currentFloor=floor;
-		System.out.println("Elevator is moving to floor " + currentFloor);
 		this.stationary = true;
-	}
-	
-	/**
-	 * Method prints current elevator information.
-	 */
-	public void displayInformation() {
-		System.out.println("This is Elevator Number: " + this.elevatorNumber);
-		System.out.println("The Current Floor is: " + this.currentFloor);
-		System.out.println();
 	}
 	
 	/**
@@ -87,40 +89,30 @@ public class Elevator implements Runnable {
 	 * 		the elevator is stationary.
 	 */	
 	@Override
-	public void run() { 
-		for(;;) {
-			displayInformation();
-			elevatorRequest = schedule.getRequest(stationary);
-			
-			floorRequestedFrom = 1; //dont which data structure to deconstruct 
-			floorToVisit = 4;		//also dont know how to get value from Object (toString?)
-			
-			System.out.println("The users floor is: " + floorRequestedFrom);
-			System.out.println("The requested floor is: " + floorToVisit);
-			
-			if(doorState == Information.doorState.OPEN) { closeDoor(); }
-			stationary = false;
-			move(floorRequestedFrom);
-			stationary = true;
-			
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
-				System.err.println(e);
-			}
-			
-			schedule.sendMessage();
-			stationary = false;
-			move(floorToVisit);
-			stationary = true;
-			
-			
-			try {
-				Thread.sleep(500);
-			} catch (InterruptedException e) {
-				System.err.println(e);
+	public void run() {
+
+		int i = 0;
+		while (true) {
+			synchronized (scheduler) {
+				if (scheduler.isWork() && stationary) {
+          
+					this.currentRequest = (byte[])scheduler.getRequest();
+					System.out.println(this.toString() + "\n");
+					scheduler.acknowledgeRequest();
+					
+          i++;
+					if(i == 99) {
+						System.exit(0);
+					}
+					try {
+						Thread.sleep(2000);
+					} catch (InterruptedException e) {
+					}
+          
+				}
 			}
 		}
+
 	}
 
 }
