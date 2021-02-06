@@ -32,14 +32,7 @@ public class Scheduler implements Runnable {
 	 *                     subsystem
 	 */
 	public synchronized void putRequest(Object elevatorRequests) {
-		while (workRequests.size() != 0) {
-			try {
-				wait();
-			} catch (InterruptedException e) {
-				System.err.println(e);
-			}
-		}
-
+		
 			this.workRequests.add(elevatorRequests);
 			notifyAll();
 			return;

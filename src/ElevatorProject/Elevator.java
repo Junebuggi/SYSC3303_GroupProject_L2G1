@@ -90,7 +90,6 @@ public class Elevator implements Runnable {
 	@Override
 	public void run() {
 
-		int i = 0;
 		while (true) {
 			synchronized (scheduler) {
 				if (scheduler.isWork() && stationary) {
@@ -101,10 +100,6 @@ public class Elevator implements Runnable {
 					scheduler.acknowledgeRequest(("ACK " + elevatorNumber).getBytes());
 				}
 			}
-					i++;
-					if(i == 99) {
-						System.exit(0);
-					}
 					try {
 						Thread.sleep(2000);
 					} catch (InterruptedException e) {
