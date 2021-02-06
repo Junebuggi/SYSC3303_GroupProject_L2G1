@@ -1,3 +1,15 @@
+/**
+ * Information.java
+ * 
+ * A class that stores the constants of Iteration1 and the enumerators for the lamp state, motor direction, 
+ * door state and direction lamp.
+ *
+ * @author Hasan Baig
+ * 
+ * SYSC 3303 L2 Group 1
+ * @version 1.0
+ */
+
 package ElevatorProject;
 
 public class Information {

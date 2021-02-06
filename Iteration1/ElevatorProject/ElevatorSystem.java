@@ -1,9 +1,20 @@
+/**
+ * ElevatorSystem.java
+ * 
+ * The main class which initializes the floorSubsystem(client), elevatorSubsystem(client) and the
+ * Scheduler(server) threads and then starts them.
+ *
+ * @author ALL
+ * 
+ * SYSC 3303 L2 Group 1
+ * @version 1.0
+ */
+
 package ElevatorProject;
 
 import java.util.Random;
 
 public class ElevatorSystem {
-
 
 	private static Random rand = new Random();
 	
@@ -12,30 +23,30 @@ public class ElevatorSystem {
 	 * 
 	 * @param args
 	 */
-
 	public static void main(String[] args) {
 		Thread elevator, floor, scheduler;
-
+		
 		Scheduler schedulerObj = new Scheduler();
+    		System.out.println("Setting up the Scheduler.");
 		
-    System.out.println("Setting up the Scheduler.");
+    		elevator = new Thread(new Elevator(schedulerObj, 1), "Elevator");
+		floor = new Thread(new Floor(schedulerObj), "Floor");
+		scheduler = new Thread(schedulerObj, "Scheduler");
 		
-    elevator = new Thread(new Elevator(schedulerObj, 1), "Elevator");
-		floor = new Thread(new Floor(schedulerObj), "floor");
-		scheduler = new Thread(schedulerObj, "scheduler");
-		
-    System.out.println("Threads are created.");
+    		System.out.println("Threads are created.");
     
-    elevator.start();
+    		elevator.start();
 		scheduler.start();
-    floor.start();
+    		floor.start();
 		
-    System.out.println("Threads have started.\n");
+    		System.out.println("Threads have started.\n");
 		
-    return;
-
+    		return;
 	}
 
+	/**
+	 * Creates a random elevator request. This method was used to construct the floorRequest.txt file
+	 */
 	private static String makeElevatorRequest() {
 		Random rand = new Random();
 		String hh = String.format("%02d", rand.nextInt(24));
