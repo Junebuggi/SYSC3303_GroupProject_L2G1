@@ -36,9 +36,6 @@ has handled all events in the input file and has received the last acknowledgmen
 Elevator.java
 	-> The Elevator thread will try to get requests from the scheduler while it is stationary. 
 It will then handle those requests and pass an acknowledgment to the Scheduler to be passed back to the floorSubsystem.
-  
-ElevatorRequest.java
- 	-> The ElevatorRequest class models an event request
 
 ElevatorSystem.java
 	-> The main class which initializes the floorSubsystem(client), elevatorSubsystem(client) and the 
