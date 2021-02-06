@@ -30,7 +30,6 @@ public class Floor implements Runnable{
 		ArrayList<String >requestList = new ArrayList<String>();
 		try {
 			Scanner scanner = new Scanner(inputFile);
-			String line = scanner.nextLine();
 			while(scanner.hasNextLine()) {
 				requestList.add(scanner.nextLine());
 			}

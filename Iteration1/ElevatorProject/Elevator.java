@@ -101,7 +101,7 @@ public class Elevator implements Runnable {
 				}
 			}
 					try {
-						Thread.sleep(500);
+						Thread.sleep(0);
 					} catch (InterruptedException e) {
 					}
           
