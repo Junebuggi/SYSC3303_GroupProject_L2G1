@@ -106,7 +106,6 @@ public class Elevator implements Runnable {
 		while (true) {
 			synchronized (scheduler) {
 				if (scheduler.isWork() && stationary) {
-          
 					this.currentRequest = (byte[])scheduler.getRequest();
 					System.out.println("Elevator Subsystem:");
 					System.out.println(this.toString());

@@ -9,3 +9,5 @@
 /Information$doorState.class
 /Information$lampState.class
 /Information$motorDirection.class
+/ElevatorRequestData.class
+/Information$directionLamp.class

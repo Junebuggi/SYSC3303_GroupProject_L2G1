@@ -23,7 +23,7 @@ public class Floor implements Runnable{
 	private int floorLevel;
 	private int floorButton;
 	private Information.directionLamp dirLamp = Information.directionLamp.NOT_PRESSED;
-	private File inputFile = new File(System.getProperty("user.dir") + "/Iteration1/ElevatorProject/floorRequest.txt");
+	private File inputFile = new File(System.getProperty("user.dir") + "/ElevatorProject/floorRequest.txt");
 	private ArrayList<String> requestList;
 	
 	/**
@@ -48,7 +48,6 @@ public class Floor implements Runnable{
 		try {
 			Scanner scanner = new Scanner(inputFile);
 			// Scan each line from the txt file and store it to the requestList
-			String line = scanner.nextLine();
 			while(scanner.hasNextLine()) {
 				requestList.add(scanner.nextLine());
 			}
