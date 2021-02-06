@@ -1,6 +1,5 @@
 package ElevatorProject;
-import java.util.*;
-import java.lang.Math.*;
+
 
 public class Elevator implements Runnable {
 	
@@ -27,8 +26,8 @@ public class Elevator implements Runnable {
 		this.scheduler = scheduler;
 		this.currentRequest = null;
     this.elevatorNumber = elevatorNumber;
-    floorRequestedFrom = null;
-    floorToVisit = null;
+    floorRequestedFrom = -1;
+    floorToVisit = -1;
 	}
 	/**
 	 * Method prints current elevator information.
@@ -97,10 +96,12 @@ public class Elevator implements Runnable {
 				if (scheduler.isWork() && stationary) {
           
 					this.currentRequest = (byte[])scheduler.getRequest();
-					System.out.println(this.toString() + "\n");
-					scheduler.acknowledgeRequest();
-					
-          i++;
+					System.out.println("Elevator Subsystem:");
+					System.out.println(this.toString());
+					scheduler.acknowledgeRequest(("ACK " + elevatorNumber).getBytes());
+				}
+			}
+					i++;
 					if(i == 99) {
 						System.exit(0);
 					}
@@ -109,8 +110,7 @@ public class Elevator implements Runnable {
 					} catch (InterruptedException e) {
 					}
           
-				}
-			}
+				
 		}
 
 	}

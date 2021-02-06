@@ -24,7 +24,7 @@ public class Floor implements Runnable{
 	public synchronized void run() {
 		//find the path for the input file
 		String dir = System.getProperty("user.dir");
-		File inputFile = new File(dir + "/src/floorRequest.txt");
+		File inputFile = new File(dir + "/src/ElevatorProject/floorRequest.txt");
 		try {
 			Scanner scanner = new Scanner(inputFile);
 			String line = scanner.nextLine();
@@ -32,13 +32,15 @@ public class Floor implements Runnable{
 				byte[] floorRequest = scanner.nextLine().getBytes();
 				synchronized (this.scheduler) {
 					scheduler.putRequest(floorRequest);
-					System.out.println("sent request to scheduler");
+					System.out.println("Floor Subsystem: sent request to scheduler");
+					
+					byte[] ack = scheduler.getAcknowledgemnt();
+					
+					String strAck[] = (new String(ack)).split(" ");
+					System.out.println("Floor System: " + strAck[0] + " recieved, Elevator " + strAck[1] + " is on it's way!\n");
 
 				}
-				while(!scheduler.getAcknowledgemnt()) {
-					
-				}
-				System.out.println("Elevator is on it's way!");
+			
 			}
 			//send requests to the elevator via scheduler	
 			
