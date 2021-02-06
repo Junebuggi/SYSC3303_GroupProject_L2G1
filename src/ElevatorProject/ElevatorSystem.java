@@ -5,18 +5,34 @@ import java.util.Random;
 public class ElevatorSystem {
 
 
+	private static Random rand = new Random();
+	
+	/**
+	 * Creates a new floor thread, scheduler thread, and elevator thread.
+	 * 
+	 * @param args
+	 */
 
 	public static void main(String[] args) {
 		Thread elevator, floor, scheduler;
-		Scheduler schedulerObj = new Scheduler();
-		scheduler = new Thread(schedulerObj, "Scheduler");
-		elevator = new Thread(new Elevator(schedulerObj), "Elevator");
-		floor = new Thread(new Floor(schedulerObj), "floor");
-		
-		elevator.start();
-		floor.start();
-		scheduler.start();
 
+		Scheduler schedulerObj = new Scheduler();
+		
+    System.out.println("Setting up the Scheduler.");
+		
+    elevator = new Thread(new Elevator(schedulerObj, 1), "Elevator");
+		floor = new Thread(new Floor(schedulerObj), "floor");
+		scheduler = new Thread(schedulerObj, "scheduler");
+		
+    System.out.println("Threads are created.");
+    
+    elevator.start();
+		scheduler.start();
+    floor.start();
+		
+    System.out.println("Threads have started.\n");
+		
+    return;
 
 	}
 

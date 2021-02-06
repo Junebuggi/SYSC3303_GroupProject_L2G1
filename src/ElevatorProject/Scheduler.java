@@ -50,6 +50,7 @@ public class Scheduler implements Runnable {
 	 * 
 	 * @return floorRequest
 	 */
+
 	public synchronized Object getRequest() {
 		while (!isWork()) {
 			try {
@@ -64,6 +65,7 @@ public class Scheduler implements Runnable {
 		return floorRequest;
 	}
 	
+  
 	public synchronized void acknowledgeRequest() {
 		this.acknowledgment = true;
 		notifyAll();
