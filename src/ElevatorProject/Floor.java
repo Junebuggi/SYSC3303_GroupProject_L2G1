@@ -67,7 +67,7 @@ public class Floor implements Runnable{
 	public void requestHandler(String request) {
 		synchronized (this.scheduler) {
 			//send the request to be performed to the scheduler for execution
-			scheduler.putRequest(request.getBytes(), "floorRequest".getBytes());
+			scheduler.putRequest(("floorRequest "+request).getBytes());
 			System.out.println("Floor Subsystem: sent request to scheduler");
 			String[] strAck;
 			

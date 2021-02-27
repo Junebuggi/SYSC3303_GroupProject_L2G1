@@ -29,7 +29,7 @@ class SchedulerTest {
 		ArrayList<byte[]> actual;
 		
 		synchronized (underTest) {
-			underTest.putRequest(request, "floorRequest".getBytes());
+			underTest.putRequest(request);
 			actual = underTest.getAllRequest();
 		}
 		

@@ -4,6 +4,13 @@ package ElevatorProject;
 public class SchedulerStateMachine implements Runnable{
 	
 	/**
+	 * This variable is used to keep track of the current state of the scheduler.
+	 * Initial state is to wait for a request.
+	 */
+	private static State current_state = State.WAIT_FOR_REQUEST;
+	private Scheduler scheduler = new Scheduler();
+	
+	/**
 	 * These are the states that the scheduler will go through.
 	 * 
 	 */
@@ -12,49 +19,46 @@ public class SchedulerStateMachine implements Runnable{
 	}
 
 	/**
-	 * This variable is used to keep track of the current state of the scheduler.
-	 * Initial state is to wait for a request.
+	 * This is the default constructor
 	 */
-	private static State current_state = State.WAIT_FOR_REQUEST;
-	private Scheduler scheduler = new Scheduler();
-	private boolean verbose;
-	
-	public SchedulerStateMachine(String v) {
-		if (v.equals("verbose")) {
-			this.verbose = true;
-		}
+	public SchedulerStateMachine() {
+		
 	}
 	
-	/* 
+	/**
 	 * Used to receive current state of scheduler.
-   */
+	 */
 	public State getState() {
 		return current_state;
 	}
 
 	/**
 	 * This method will override the Runnable interface's run method.
-   * It contains a switch statement to implement the state machine.
+     s* It contains a switch statement to implement the state machine.
 	 */
 
 	@Override
-	public void run() {
+	public synchronized void run() {
 		while (true) {
 			switch (current_state) {
 				case WAIT_FOR_REQUEST: {
-					while(!scheduler.isWork()) {		
+					while(!scheduler.isWork()) {
 					}
 					current_state = State.SEND_ELEVATOR_TO_FLOOR;
-					if(verbose)
-						System.out.println("Current State: WAIT_FOR_REQUEST\nWork Request Recieved\nNew State: SEND_ELEVATOR_TO_FLOOR");
+
 					break;
 				}
 				case SEND_ELEVATOR_TO_FLOOR: {
+						
+						if(scheduler.getAllRequest().size() == 0) {
+							current_state = State.WAIT_FOR_REQUEST;
+							break;
+						}
 						String[] request = scheduler.parseData(scheduler.getAllRequest().get(0));
 						int floor = Integer.parseInt(request[2]);
 						String direction = request[3];
 						int elevator = scheduler.checkForAvailableElevator(floor, direction);
-						System.out.println("Elevator " + elevator + " is availble and on its way!");
+						//System.out.println("Elevator " + elevator + " is availble and on its way!");
 
 						current_state = State.WAIT_FOR_ELEVATOR;
 					break;

@@ -30,7 +30,7 @@ public class ElevatorSystem {
     		System.out.println("Setting up the Scheduler.");
 		
     		elevator = new Thread(new Elevator(schedulerObj, 1), "Elevator");
-		floor = new Thread(new Floor(schedulerObj), "Floor");
+    		floor = new Thread(new Floor(schedulerObj), "Floor");
 
 		
     		System.out.println("Threads are created.");

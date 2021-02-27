@@ -34,16 +34,16 @@ public class Scheduler {
 	 * 
 	 * @param elevatorRequests An object representing the elevator request from the floor subsystem
 	 */
-	public synchronized void putRequest(byte[] request, byte[] type) {
+	public synchronized void putRequest(byte[] request) {
 			//Add the work requests passed in and notify all
 			//This is an elevatorRequest message
 			String[] data = parseData(request);
-			if(new String(type).equals("floorRequest")) {
+			if(data[0].equals("floorRequest")) {
 				this.workRequests.add(request);
 			}
 			
 			//This is a elevator destination floor message
-			if(new String(type).equals("arrivalSensor")) {
+			if(data[0].equals("arrivalSensor")) {
 				if (arrivals.get((Integer.parseInt(data[3]))) == null) {
 				    arrivals.put(Integer.parseInt(data[3]), new ArrayList<Integer>());
 				}
@@ -135,8 +135,13 @@ public class Scheduler {
 		return 1;
 	}
 	
-	public void removeRequest(int i) {
+	public synchronized void removeRequest(int i) {
 		workRequests.remove(i);
+		notifyAll();
+	}
+	
+	public ArrayList<Integer> getArrivals(int elevator){
+		return arrivals.get(elevator);
 	}
 }
 
