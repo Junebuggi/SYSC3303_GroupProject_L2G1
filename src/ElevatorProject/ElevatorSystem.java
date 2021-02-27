@@ -24,19 +24,18 @@ public class ElevatorSystem {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		Thread elevator, floor, scheduler;
+		Thread elevator, floor;
 		
 		Scheduler schedulerObj = new Scheduler();
     		System.out.println("Setting up the Scheduler.");
 		
     		elevator = new Thread(new Elevator(schedulerObj, 1), "Elevator");
 		floor = new Thread(new Floor(schedulerObj), "Floor");
-		scheduler = new Thread(schedulerObj, "Scheduler");
+
 		
     		System.out.println("Threads are created.");
     
     		elevator.start();
-		scheduler.start();
     		floor.start();
 		
     		System.out.println("Threads have started.\n");

@@ -1,24 +1,27 @@
 /**
  * Scheduler.java
  * 
- * The scheduler thread is a shared resource between the floor and elevator subsystems. The floorSubsystem 
- * will place requests into the Scheduler and the elevatorSubsystem will get and handle those requests.
+ * The Scheduler is responsible for handling incoming requests from the floor Subsystem and passing requests
+ * to the elevator subsystem. This is done using a shared resource between the three threads and with the 
+ * implementation of a state machine. 
  *
- * @author Emma Boulay
- * @author Abeer Rafiq
- * 
- * SYSC 3303 L2 Group 1
  * @version 1.0
+ * @author Emma Boulay, Abeer Rafiq
+ *
+ * (Group 1 - SYSC 3303 L2)
+ *
  */
-
 package ElevatorProject;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
-public class Scheduler implements Runnable {
+public class Scheduler {
 
 	private byte[] ack = null;
 	private ArrayList<byte[]> workRequests = new ArrayList<>(); 
+	private HashMap<Integer, ArrayList<Integer>> arrivals = new HashMap<Integer, ArrayList<Integer>>();
+
 
 	/**
 	 * The default constructor.
@@ -31,13 +34,29 @@ public class Scheduler implements Runnable {
 	 * 
 	 * @param elevatorRequests An object representing the elevator request from the floor subsystem
 	 */
-	public synchronized void putRequest(byte[] elevatorRequests) {
+	public synchronized void putRequest(byte[] request, byte[] type) {
 			//Add the work requests passed in and notify all
-			this.workRequests.add(elevatorRequests);
+			//This is an elevatorRequest message
+			String[] data = parseData(request);
+			if(new String(type).equals("floorRequest")) {
+				this.workRequests.add(request);
+			}
+			
+			//This is a elevator destination floor message
+			if(new String(type).equals("arrivalSensor")) {
+				if (arrivals.get((Integer.parseInt(data[3]))) == null) {
+				    arrivals.put(Integer.parseInt(data[3]), new ArrayList<Integer>());
+				}
+				arrivals.get(Integer.parseInt(data[3])).add(Integer.parseInt(data[2]));
+			}
+			
 			notifyAll();
 			return;
 	}
-
+	
+	public String[] parseData(byte[] data) {
+		return new String(data).split(" ");
+	}
 	/**
 	 * This synchronized method returns the first floor request (position 0) and removes it from the scheduler. 
 	 * 
@@ -59,7 +78,7 @@ public class Scheduler implements Runnable {
 		return floorRequest;
 	}
 	
-  	/**
+  /**
 	 * This synchronized method sets the acknowledgement private variable to byte[] ack passed in and notifies all.
 	 * 
 	 * @param ack The acknowledgement to be put into byte ack
@@ -70,7 +89,7 @@ public class Scheduler implements Runnable {
 	}
 	
 		
-  	/**
+  /**
 	 * This synchronized method is used to send an acknowledgement and reset private ack variable to null.
 	 * 
 	 * @return ackReturn The acknowledgement to be sent 
@@ -102,16 +121,6 @@ public class Scheduler implements Runnable {
 	}
 
 	/**
-	 * Run method to keep scheduler always running.
-	 */	
-	@Override
-	public void run() {
-		while (true) {
-
-		}
-	}
-
-	/**
 	 * This method returns the arrayList containing all the requests.
 	 * 
 	 * @return workRequests  arrayList containing all requests (type byte[])
@@ -119,5 +128,16 @@ public class Scheduler implements Runnable {
 	public ArrayList<byte[]> getAllRequest(){
 		return workRequests;
 	}
-
+	
+	public int checkForAvailableElevator(int Floor, String direction) {
+		//Logic to determine which elevator will service request will be implemeted
+		//later
+		return 1;
+	}
+	
+	public void removeRequest(int i) {
+		workRequests.remove(i);
+	}
 }
+
+

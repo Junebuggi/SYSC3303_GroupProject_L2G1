@@ -112,18 +112,10 @@ public class Elevator implements Runnable {
 					scheduler.acknowledgeRequest(("ACK " + elevatorNumber).getBytes());
 				}
 			}
-<<<<<<< HEAD
-					try {
-						Thread.sleep(0);
-					} catch (InterruptedException e) {
-					}
-          
-				
-=======
+		
 			try {
 				Thread.sleep(2000);
 			} catch (InterruptedException e) {}				
->>>>>>> branch 'main' of https://github.com/Hasan-Baig/SYSC3303_Group_Project.git
 		}
 
 	}

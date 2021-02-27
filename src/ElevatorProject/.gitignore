@@ -11,3 +11,7 @@
 /Information$motorDirection.class
 /ElevatorRequestData.class
 /Information$directionLamp.class
+/Scheduler$State.class
+/SchedulerStateMachine.class
+/SchedulerStateMachine$State.class
+/SchedulerStateMachineTest.class
