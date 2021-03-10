@@ -25,5 +25,7 @@ public class Information {
 	public enum motorDirection{UP, DOWN, IDLE}
 	public enum doorState{OPEN, CLOSE}
 	public enum directionLamp{UP, DOWN, NOT_PRESSED}
+	
+	public static int[] portArray = {23, 24, 25, 56};
 
 }

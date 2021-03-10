@@ -1,33 +1,52 @@
+package ElevatorProject;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+
 /**
  * Elevator.java
  * 
  * The Elevator thread will try to get requests from the scheduler while it is stationary. 
  * It will then handle those requests and pass an acknowledgment to the Scheduler to be passed 
- * back to the floorSubsystem.
+ * back to the floorSubsystem. It also changes the states of the state machine.
  *
  * @author Hasan Baig
  * @author Alden Wan Yeung Ng
+ * @author Emma Boulay [iteration 3]
  * 
  * SYSC 3303 L2 Group 1
  * @version 1.0
  */
 
-package ElevatorProject;
+public class Elevator extends Network implements Runnable{
 
-public class Elevator implements Runnable {
+	// Current Elevator State
+	private ElevatorState elevatorState;
 	
-	//private Integer[] elevatorButtonSelected = new Integer[NUM_FLOORS];	//set of elevator button to select a floor
-	//private Integer[] elevatorLamp = new Integer[NUM_FLOORS];			    //indicate the floor(s) which will be visited by the elevator
+	// All Concrete Elevator States
+	private ElevatorState idle;
+	private ElevatorState moving;
+	private ElevatorState arrived;
 	
-	private Scheduler scheduler;
+	// Iteration 1 Variables
+	public int schedulerPort;
 	private byte[] currentRequest;
 	private int elevatorNumber;
-	private int currentFloor = 0;
-	private Information.doorState doorState = Information.doorState.CLOSE;
-	private Information.lampState lampState = Information.lampState.OFF;
-	private int floorRequestedFrom;
-	private int floorToVisit;
-	private Boolean stationary = true;
+	private int currentFloor = 1;
+	private Motor motor = Motor.IDLE;
+	private Door door = Door.CLOSE;
+	public enum Motor{
+		UP, DOWN, IDLE;
+	}
+	public enum Door{
+		OPEN, CLOSE;
+	}
+	private HashMap<Integer, ArrayList<Integer>> floorDestinations = new HashMap<Integer, ArrayList<Integer>>();
+	private ArrayList<Integer> floorsToVisit = new ArrayList<>();
+	private int nFloors;
+	private ElevatorButton[] btns;
+	public Boolean stationary = true;
+	private DirectionLamp[] dirLamps;
 	
    /**
 	 * Constructor class used to initialize the object of the Elevator class.
@@ -35,47 +54,61 @@ public class Elevator implements Runnable {
 	 * @param scheduler			the schedule where the actions of the elevator are passed to
 	 * @param elevatorNumber	the elevator number
 	 */
-	public Elevator(Scheduler scheduler, int elevatorNumber) {
-		this.scheduler = scheduler;
-		this.currentRequest = null;
+	public Elevator(int elevatorNumber, int schedulerPort, int nFloors) {
+		
 		this.elevatorNumber = elevatorNumber;
-		floorRequestedFrom = -1;
-		floorToVisit = -1;
+		this.schedulerPort = schedulerPort;
+		this.nFloors = nFloors;
+		this.currentRequest = null;
+		
+		btns = createButtons();
+		
+		// Creating all concrete state objects
+		this.idle = new IdleES(this);
+		this.moving = new MovingES(this);
+		this.arrived = new ArrivedES(this);
+		
+		// Default State to Idle
+		elevatorState = idle;
+		dirLamps = new DirectionLamp[] { new DirectionLamp("UP"), new DirectionLamp("DOWN") };
 	}
-
-	/**
-	 * Method prints current elevator information.
-	 */
-	public String toString() {
-		String strRequest = new String(this.currentRequest);
-		String[] parsedStr = strRequest.split(" ");
- 		return "Time: " + parsedStr[0] + "\nFloor: " + parsedStr[1] + "\nFloor Button: " + parsedStr[2] + "\nCar Button: " + parsedStr[3];
-	}
-
-	/**
-	 * Method to open door.
-	 */
-	public void openDoor() {
-		try {
-			Thread.sleep(Information.TIME_OPEN_DOOR);
-		} catch (InterruptedException e) {
-			System.err.println(e);
+	
+	public ElevatorButton[] createButtons() {
+		ElevatorButton[] btns = new ElevatorButton[nFloors];
+		
+		for(int i = 1; i <= nFloors; i++) {
+			btns[i-1] = new ElevatorButton(i);
 		}
-		doorState = Information.doorState.OPEN;
-		System.out.println("Elevator door opened.");
+		
+		return btns;
 	}
 	
 	/**
-	 * Method to close door.
+	 * Returns State of this elevator
 	 */
-	public void closeDoor() {
-		try {
-			Thread.sleep(Information.TIME_CLOSE_DOOR);
-		} catch (InterruptedException e) {
-			System.err.println(e);
-		}
-		doorState = Information.doorState.CLOSE;
-		System.out.println("Elevator door closed.");
+	public ElevatorState getState() {
+		return this.elevatorState;
+	}
+	
+	/**
+	 * Set the State of the Elevator
+	 */
+	public void setState(ElevatorState newElevatorState) {
+		elevatorState = newElevatorState;
+	}
+	
+	public ElevatorState getIdleState() {return this.idle; }
+	public ElevatorState getMovingState() {return this.moving; }
+	public ElevatorState getArrivedState() {return this.arrived; }
+	
+	/**
+	 * Method prints current elevator information.
+	 */
+	@Override
+	public String toString() {
+		String strRequest = new String(this.currentRequest);
+		String[] parsedStr = strRequest.split(" ");
+		return "Time: " + parsedStr[1] + "\nFloor: " + parsedStr[2] + "\nFloor Button: " + parsedStr[3] + "\nCar Button: " + parsedStr[4];
 	}
 	
 	/**
@@ -95,29 +128,122 @@ public class Elevator implements Runnable {
 	}
 	
 	/**
+	 * Send Scheduler Request for Data
+	 */
+	public String[] arrivalSensor(int floor, int elevator, String direction) {
+		byte[] message = pac.toBytes("arrivalSensor " + "hh:mm:ss.mmm " + floor + " " + elevator + " " + direction);
+		byte[] data = rpc_send(schedulerPort, message, 500);
+		return pac.parseData(data);
+	}
+	
+	public DirectionLamp getDirectionLamp(String direction) {
+		if(direction.equals("UP"))
+			return dirLamps[0];
+		else
+			return dirLamps[1];
+	}
+	
+	public ElevatorButton getElevatorButton(int btnNumber) {
+		return btns[btnNumber-1];
+	}
+	
+	public void setDoorState(String doorState) {
+		this.door = Door.valueOf(doorState);
+	}
+	
+	//To be revised
+	public int getNextFloor() {
+		int next = -1;
+		
+		if(motor.equals(Motor.IDLE) || floorsToVisit.size() <= 1) {
+			if(floorsToVisit.isEmpty())
+				return next;
+			else
+				return floorsToVisit.get(0);
+		}
+		
+		int closest = floorsToVisit.get(0);
+		int distance = Math.abs(closest - currentFloor); 
+		
+		for(int i = 1; i < floorsToVisit.size(); i++) {
+			if(Math.abs(currentFloor - floorsToVisit.get(i)) < distance) {
+				next = floorsToVisit.get(i);
+			}
+		}
+		
+		return next;
+	}
+	
+	public void setMotorState(String motorState) {
+		this.motor = Motor.valueOf(motorState);
+	}
+	
+	public void addFloorToVisit(int floor) {
+		floorsToVisit.add(floor);
+	}
+	
+	public void addDestination(int floor, int destination) {
+		
+		if(!floorDestinations.containsKey(floor)) {
+			ArrayList<Integer> dest = new ArrayList<>();
+			dest.add(destination);
+			floorDestinations.put(floor, dest);
+		}
+		else {
+			ArrayList<Integer> dest = floorDestinations.get(floor);
+			dest.add(destination);
+			floorDestinations.put(floor, dest);
+		}
+	}
+	
+	public void moveDestToFloorsToVisit(int floor) {
+		ArrayList<Integer> dest = floorDestinations.get(floor);
+		
+		for(int i = 0; i < floorDestinations.size(); i++) {
+			floorsToVisit.add(dest.get(i));
+		}
+	}
+	
+	public int getCurrentFloor() {
+		return this.currentFloor;
+	}
+	
+	public void setCurrentFloor(int floor) {
+		this.currentFloor = floor;
+	}
+	
+	public String getDirection(int floorLevel) {
+		if(floorLevel < currentFloor) {
+			return "DOWN";
+		}
+		else
+			return "UP";
+	}
+	
+	public Motor getMotorDirection() {
+		return motor;
+	}
+	
+	public int getElevatorNumber() {
+		return this.elevatorNumber;
+	}
+	
+	
+	/**
 	 * Overrides the run method of the Runnable interface.
 	 * The floor requests from Scheduler are received if:
 	 * 		the queue is not empty and
 	 * 		the elevator is stationary.
-	 */	
+	 * Changes the state of the elevator according to the logic presented.
+	 */
 	@Override
 	public void run() {
-
-		while (true) {
-			synchronized (scheduler) {
-				if (scheduler.isWork() && stationary) {
-					this.currentRequest = (byte[])scheduler.getRequest();
-					System.out.println("Elevator Subsystem:");
-					System.out.println(this.toString());
-					scheduler.acknowledgeRequest(("ACK " + elevatorNumber).getBytes());
-				}
-			}
 		
-			try {
-				Thread.sleep(2000);
-			} catch (InterruptedException e) {}				
+		while (true) {
+
+				this.elevatorState.Moving();
+				
 		}
-
+			
 	}
-
 }
