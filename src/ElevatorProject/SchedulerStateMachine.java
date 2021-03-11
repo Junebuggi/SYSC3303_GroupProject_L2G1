@@ -107,7 +107,6 @@ public class SchedulerStateMachine implements Runnable{
 							break;
 						}else {
 							current_state = State.SEND_ELEVATOR_TO_FLOOR;
-							System.out.println("State Change: SEND_ELEVATOR_TO_FLOOR");
 						}
 						
 					}
@@ -122,22 +121,16 @@ public class SchedulerStateMachine implements Runnable{
 						//If there are requests, get first request and extract it's information
 						String[] request = scheduler.getAllRequest().get(0);
 						
-						System.out.println("Request: " + Arrays.toString(request));
-						
 						int floor = Integer.parseInt(request[2]);
-						elevator = 1;//scheduler.getClosestIdleElevator(floor);
+						elevator = scheduler.getClosestIdleElevator(floor);
 						
 						//send ElevatorRequest to elevatorPort from new socket
 						if(elevator == -1) {
 							current_state = State.WAIT_FOR_REQUEST;
-							System.out.println("All elevators are currently busy");
 							break;
 						}
 						System.out.println("Sending message to elevator");
 						byte[] msg = scheduler.createElevatorRequest(request, elevator);
-						System.out.println(new String(msg));
-						System.out.println("Elevator Port: " + scheduler.getElevatorPort());
-						
 						scheduler.send(scheduler.getElevatorPort(), msg, sendReceiveSocket);
 						
 						//

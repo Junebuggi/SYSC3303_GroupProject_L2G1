@@ -83,20 +83,26 @@ public class Scheduler extends Network {
 			//This is a elevator destination floor message
 			if(data[0].equals("arrivalSensor")) {
 				elevators.put(Integer.parseInt(data[3]), new Elevator(data[4], Integer.parseInt(data[3])));
-				String[] servicableRequest = checkIfRequestPendingAtFloor(Integer.valueOf(data[2]), data[4]);
-				if(servicableRequest != null) {			
-					return pac.toBytes(servicableRequest.toString());
+				String servicableRequest = checkIfRequestPendingAtFloor(Integer.valueOf(data[2]), data[4]);
+				if(servicableRequest != null) {		
+					System.out.println("Servicable Request: " + servicableRequest);
+					notifyAll();
+					return pac.toBytes(servicableRequest);
 				}
 			}
-			
 			notifyAll();
 			return Network.createACK();
 	}
 	
-	private String[] checkIfRequestPendingAtFloor(int floor, String direction) {
+	private String checkIfRequestPendingAtFloor(int floor, String direction) {
+		
 		for(int i = 0; i < workRequests.size(); i++) {
-			if(workRequests.get(i)[3].equals(direction) && Integer.valueOf(workRequests.get(i)[2]) == floor)
-				return workRequests.remove(i);
+			System.out.println("Floor: " + floor + " Direction: " + direction);
+			if(workRequests.get(i)[3].equals(direction) && Integer.valueOf(workRequests.get(i)[2]) == floor) {
+				System.out.println("Pending request found");
+				return Network.pac.joinStringArray(workRequests.remove(i));
+
+			}
 		}
 		
 		return null;

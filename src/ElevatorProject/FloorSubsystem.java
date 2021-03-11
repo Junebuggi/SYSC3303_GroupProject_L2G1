@@ -181,7 +181,7 @@ public class FloorSubsystem extends Network implements Runnable {
 	public static void main(String[] args) {
 
 		int nFloors = 7;
-		int nShafts = 4;
+		int nShafts = 1;
 		int schedulerPort = 23;
 		int timeout = 500; // in milliseconds
 

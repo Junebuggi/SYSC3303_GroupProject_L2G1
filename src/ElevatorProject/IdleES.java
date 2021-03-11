@@ -40,7 +40,7 @@ public class IdleES implements ElevatorState{
 		CloseDoors(); //Close Doors
 		
 		System.out.println("Switching to MOVING state\n");
-		
+		elevator.setMotorState(elevator.getDirection(floorLevel));
 		// Change Elevator to MOVING state
 		elevator.setState(elevator.getMovingState());
 	}
@@ -49,7 +49,16 @@ public class IdleES implements ElevatorState{
 	public void Moving() {
 		int nextFloor = elevator.getNextFloor();
 		if(nextFloor != -1) {
-			ButtonPress(nextFloor);
+			System.out.println("\nELEVATOR STATE: IDLE");
+			System.out.println("Elevator requested at floor : " + nextFloor);
+			
+			String motorDirection = elevator.getDirection(nextFloor);
+			System.out.println("Turning on the " + motorDirection + " direction lamp");
+			TurnOnDirectionLamp(motorDirection);
+			elevator.setMotorState(motorDirection);
+			elevator.arrivalSensor(elevator.getCurrentFloor(), elevator.getElevatorNumber(), elevator.getMotorDirection().toString());
+			
+			System.out.println("Switching to MOVING state\n");
 			elevator.setState(elevator.getMovingState());
 		}
 	}

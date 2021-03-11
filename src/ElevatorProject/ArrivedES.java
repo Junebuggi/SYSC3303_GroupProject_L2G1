@@ -30,7 +30,16 @@ public class ArrivedES implements ElevatorState{
 	
 
 	@Override
-	public void Moving() {}
+	public void Moving() {
+		elevator.arrivingAtFloor(elevator.getCurrentFloor());
+		System.out.println("\nELEVATOR STATE: ARRIVED");
+		int floor = elevator.getCurrentFloor();
+		TurnOffButtonLamp(floor);
+		elevator.setMotorState("IDLE");
+		System.out.println("Switching to IDLE state\n");
+		elevator.setState(elevator.getIdleState());
+		elevator.arrivalSensor(floor, elevator.getElevatorNumber(), elevator.getMotorDirection().toString());
+	}
 	
 	@Override
 	public void StopMoving() {}

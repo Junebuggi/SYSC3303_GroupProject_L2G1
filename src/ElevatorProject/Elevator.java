@@ -1,7 +1,9 @@
 package ElevatorProject;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 /**
  * Elevator.java
@@ -133,7 +135,14 @@ public class Elevator extends Network implements Runnable{
 	public String[] arrivalSensor(int floor, int elevator, String direction) {
 		byte[] message = pac.toBytes("arrivalSensor " + "hh:mm:ss.mmm " + floor + " " + elevator + " " + direction);
 		byte[] data = rpc_send(schedulerPort, message, 500);
-		return pac.parseData(data);
+
+		String[] strData = null;
+		try {
+			strData = (new String(data, pac.getEncoding())).split(" ");
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		return strData;
 	}
 	
 	public DirectionLamp getDirectionLamp(String direction) {
@@ -152,26 +161,30 @@ public class Elevator extends Network implements Runnable{
 	}
 	
 	//To be revised
-	public int getNextFloor() {
+	public synchronized int getNextFloor() {
 		int next = -1;
 		
-		if(motor.equals(Motor.IDLE) || floorsToVisit.size() <= 1) {
-			if(floorsToVisit.isEmpty())
-				return next;
-			else
-				return floorsToVisit.get(0);
+		if(motor.equals(Motor.IDLE)) {
+			while(floorsToVisit.isEmpty()) {
+				try {
+					wait();
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			return floorsToVisit.get(0);
 		}
-		
 		int closest = floorsToVisit.get(0);
 		int distance = Math.abs(closest - currentFloor); 
 		
 		for(int i = 1; i < floorsToVisit.size(); i++) {
 			if(Math.abs(currentFloor - floorsToVisit.get(i)) < distance) {
-				next = floorsToVisit.get(i);
+				closest = floorsToVisit.get(i);
 			}
 		}
 		
-		return next;
+		return closest;
 	}
 	
 	public void setMotorState(String motorState) {
@@ -180,6 +193,10 @@ public class Elevator extends Network implements Runnable{
 	
 	public void addFloorToVisit(int floor) {
 		floorsToVisit.add(floor);
+	}
+	
+	public ArrayList<Integer> getFloorToVisit() {
+		return floorsToVisit;
 	}
 	
 	public void addDestination(int floor, int destination) {
@@ -197,10 +214,12 @@ public class Elevator extends Network implements Runnable{
 	}
 	
 	public void moveDestToFloorsToVisit(int floor) {
-		ArrayList<Integer> dest = floorDestinations.get(floor);
-		
-		for(int i = 0; i < floorDestinations.size(); i++) {
-			floorsToVisit.add(dest.get(i));
+		if(floorDestinations.containsKey(floor)) {
+			ArrayList<Integer> dest = floorDestinations.get(floor);
+			
+			for(int i = 0; i < floorDestinations.size(); i++) {
+				floorsToVisit.add(dest.get(i));
+			}
 		}
 	}
 	
@@ -224,6 +243,16 @@ public class Elevator extends Network implements Runnable{
 		return motor;
 	}
 	
+	public void arrivingAtFloor(int floor) {
+	    for (Iterator<Integer> i = floorsToVisit.iterator(); i.hasNext();) {
+	        Integer number = i.next();
+	        if (number == floor) {
+	            i.remove();
+	        }
+	    }
+	    moveDestToFloorsToVisit(floor);
+	}
+	
 	public int getElevatorNumber() {
 		return this.elevatorNumber;
 	}
@@ -238,7 +267,7 @@ public class Elevator extends Network implements Runnable{
 	 */
 	@Override
 	public void run() {
-		
+		System.out.println("Elevator " + elevatorNumber + " is set up and ready to go");
 		while (true) {
 
 				this.elevatorState.Moving();

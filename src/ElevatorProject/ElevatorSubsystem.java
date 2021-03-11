@@ -1,6 +1,5 @@
 package ElevatorProject;
 
-import java.io.UnsupportedEncodingException;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.util.Arrays;
@@ -50,20 +49,25 @@ public class ElevatorSubsystem extends Network implements Runnable{
 		
 		setUp();
 		System.out.println("Finished Setup. Now entering listening loop");
+		
 		while(running) {
 			ReturnData returnData = receive(getSocket(0));
 			send(returnData.getPort(), Network.createACK(), getSocket(0));
 			String[] data = Network.pac.parseData(returnData.getData());
-			System.out.println(Arrays.toString(data));
 			//Validate packet received and add the floor to the specified elevators queue
 			if(data[0].equals("floorRequest")) {
-				int floor = Integer.valueOf(data[4]);
-				int floorButton = Integer.valueOf(data[2]);
-				int elevatorNum = Integer.valueOf(data[1]);
+				int floor = Integer.valueOf(data[2]);
+				int floorButton = Integer.valueOf(data[4]);
+				int elevatorNum = Integer.valueOf(data[1]) - 1;
 				
 				//Add request to floorsToVisit and connect the pickup floor with the destination floor
-				elevators[elevatorNum].addFloorToVisit(floor);
-				elevators[elevatorNum].addDestination(floor, floorButton);
+				synchronized(elevators[elevatorNum]) {
+					elevators[elevatorNum].addFloorToVisit(floor);
+					elevators[elevatorNum].addDestination(floor, floorButton);
+					elevators[elevatorNum].notifyAll();
+				}
+				
+
 			}
 		}
 		
@@ -71,7 +75,7 @@ public class ElevatorSubsystem extends Network implements Runnable{
 	
 	public static void main(String[] args) {
 		
-		ElevatorSubsystem elevSys = new ElevatorSubsystem(4, 23, 7);
+		ElevatorSubsystem elevSys = new ElevatorSubsystem(1, 23, 7);
 		Thread elevSubThread = new Thread(elevSys, "Elevator Subsystem");
 		elevSubThread.start();
 	}

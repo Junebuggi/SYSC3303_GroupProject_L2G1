@@ -1,6 +1,7 @@
 package ElevatorProject;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 
 /**
  * The Packet class contains helper functions to manipulate byte arrays. The
@@ -30,6 +31,15 @@ public class Packet {
 		return (s + "]");
 	}
 
+	public String joinStringArray(String[] arr) {
+		
+		String str = arr[0];
+		for(int i = 1; i < arr.length; i++) {
+			str += (" " + arr[i]);
+		}
+		
+		return str;
+	}
 	/**
 	 * This method appends b2 to b1. This method is useful for combining the packet
 	 * to be sent to the intermediate host from the client.

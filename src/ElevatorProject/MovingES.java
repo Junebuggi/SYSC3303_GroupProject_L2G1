@@ -51,27 +51,31 @@ public class MovingES implements ElevatorState {
 		System.out.println("ELEVATOR STATE: MOVING");
 		System.out.println("Elevator is moving.");
 		int nextFloor = elevator.getNextFloor();
-		while(nextFloor != elevator.getCurrentFloor());
+		while(nextFloor != elevator.getCurrentFloor()) {
 		// Takes 5 seconds (arbitrary) to arrive to floor
-		try {
-			Thread.sleep(5000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			try {
+				Thread.sleep(5000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		
 
-		int newFloor = moveFloor();	
-		System.out.println("Approaching floor " + newFloor);
-		System.out.println("Arrival sensor is informing scheduler");
-		String[] returnMessage = elevator.arrivalSensor(newFloor, elevator.getElevatorNumber(), elevator.getMotorDirection().toString());
-		
-		TurnOffButtonLamp(newFloor);
-		if(!returnMessage[0].equals("ACK")){
-			int floorButton = Integer.valueOf(returnMessage[4]);
-			elevator.addFloorToVisit(floorButton);
-			StopMoving();	
+			int newFloor = moveFloor();	
+			System.out.println("Approaching floor " + newFloor);
+			System.out.println("Arrival sensor is informing scheduler\n");
+			String[] returnMessage = elevator.arrivalSensor(newFloor, elevator.getElevatorNumber(), elevator.getMotorDirection().toString());
+			TurnOffButtonLamp(newFloor);
+			if(!returnMessage[0].equals("ACK") && returnMessage.length == 5){
+				System.out.println("Elevator request at this floor");
+				int floorButton = Integer.valueOf(returnMessage[4]);
+				ButtonPress(floorButton);
+				elevator.addFloorToVisit(floorButton);
+				StopMoving();	
+			}
+			
 		}
-		
+		System.out.println("Switching to ARRIVED state\n");
 		StopMoving();
 	}
 
@@ -142,12 +146,12 @@ public class MovingES implements ElevatorState {
 	}
 	
 	private int moveFloor() {
-		int newFloor;
-		
+		int newFloor = elevator.getCurrentFloor();
+
 		if(elevator.getMotorDirection().equals(Motor.UP))
-			newFloor = elevator.getCurrentFloor() + 1;
-		else
-			newFloor = elevator.getCurrentFloor() - 1;
+			newFloor++;
+		else if(elevator.getMotorDirection().equals(Motor.DOWN))
+			newFloor--;
 		
 		elevator.setCurrentFloor(newFloor);
 		
