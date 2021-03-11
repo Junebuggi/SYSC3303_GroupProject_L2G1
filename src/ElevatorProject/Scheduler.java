@@ -22,13 +22,12 @@ import java.util.HashMap;
 
 public class Scheduler extends Network {
 
-	private byte[] ack = null;
 	private ArrayList<String[]> workRequests = new ArrayList<>(); 
-	private int floorSubsystemPort = -1;
 	private HashMap<Integer, Integer> floorPorts = new HashMap<Integer, Integer>();
 	private int elevatorPort = -1;
 	private HashMap<Integer, Elevator> elevators = new HashMap<Integer, Elevator>();
 	private int timeout;
+	
 	protected class Elevator {
 		private String state;
 		private int floor;
@@ -72,7 +71,7 @@ public class Scheduler extends Network {
 			//This is an elevatorRequest message
 			String[] data = pac.parseData(request);
 			System.out.println("Request: " + Arrays.toString(data));
-			if(data[0].equals("floorRequest")) {
+			if(data[0].equals("floorRequest") && data.length == 5) {
 				if(!arrayContainsRequest(data, workRequests)) {
 					this.workRequests.add(data);
 					System.out.println("Added to workRequests array");
@@ -81,10 +80,12 @@ public class Scheduler extends Network {
 			}
 			
 			//This is a elevator destination floor message
-			if(data[0].equals("arrivalSensor")) {
+			if(data[0].equals("arrivalSensor") && data.length == 5) {
+				arrivalNotificationToFloor(data, Integer.valueOf(data[2]));
 				elevators.put(Integer.parseInt(data[3]), new Elevator(data[4], Integer.parseInt(data[3])));
 				String servicableRequest = checkIfRequestPendingAtFloor(Integer.valueOf(data[2]), data[4]);
 				if(servicableRequest != null) {		
+					
 					System.out.println("Servicable Request: " + servicableRequest);
 					notifyAll();
 					return pac.toBytes(servicableRequest);
@@ -138,38 +139,6 @@ public class Scheduler extends Network {
 		notifyAll();
 		return floorRequest;
 	}
-	
-  /**
-	 * This synchronized method sets the acknowledgement private variable to byte[] ack passed in and notifies all.
-	 * 
-	 * @param ack The acknowledgement to be put into byte ack
-	 */
-	public synchronized void acknowledgeRequest(byte[] ack) {
-		this.ack = ack;
-		notifyAll();
-	}
-	
-		
-  /**
-	 * This synchronized method is used to send an acknowledgement and reset private ack variable to null.
-	 * 
-	 * @return ackReturn The acknowledgement to be sent 
-	 */	
-	public synchronized byte[] getAcknowledgemnt() {	
-		//wait if acknowledgement is null
-		while (this.ack == null) {
-			try {
-				wait();
-			} catch (InterruptedException e) {
-				System.err.println(e);
-			}
-		}
-		//return acknowledgement and set private acknowledgement variable to null
-		byte[] ackReturn = this.ack;
-		this.ack = null;
-		notifyAll();
-		return ackReturn;
-	}
 
 	/**
 	 * This synchronized method is used to determine if there are any work requests pending.
@@ -197,11 +166,6 @@ public class Scheduler extends Network {
 		notifyAll();
 	}
 	
-	
-	public int getFloorPort() {
-		return this.floorSubsystemPort;
-	}
-	
 	public int getElevatorPort() {
 		return this.elevatorPort;
 	}
@@ -210,7 +174,7 @@ public class Scheduler extends Network {
 		
 			boolean floor = true;
 			
-			while(floor && elevatorPort == -1) {
+			while(floor || elevatorPort == -1) {
 				System.out.println("Listening on port: " + socket.getLocalPort());
 				ReturnData portData = receive(socket);
 				
@@ -224,6 +188,7 @@ public class Scheduler extends Network {
 				String[] fromSystem = Network.pac.parseData(portData.getData());
 				
 				if(fromSystem[0].equals("floorInit")) {
+					System.out.println("Initializing floor " + Integer.parseInt(fromSystem[1]) + " to port: " + Integer.parseInt(fromSystem[2]));
 					floorPorts.put(Integer.parseInt(fromSystem[1]), Integer.parseInt(fromSystem[2]));
 				}
 				
@@ -233,6 +198,7 @@ public class Scheduler extends Network {
 				}	
 				
 				else if (fromSystem[0].equals("floorInitEnd")) {
+					System.out.println("Received floorInitEnd message");
 					floor = false;
 				}
 
@@ -292,6 +258,15 @@ public class Scheduler extends Network {
 			req += (" " + request[i]);
 		System.out.println("Request to elevator " + elevator + ": " + req.toString());
 		return pac.toBytes(req);
+	}
+	
+	public void arrivalNotificationToFloor(String[] request, int floor) {
+		String str = "floorArrival";
+		for(int i = 1; i < request.length; i++) {
+			str += " " + request[i];
+		}	
+		System.out.println("Message to floor: " + floor + " at port: " + floorPorts.get(floor) + "\nis: " + str);
+		rpc_send(floorPorts.get(floor), Network.pac.toBytes(str));
 	}
 	
 	public int getTimeout() {

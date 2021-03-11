@@ -23,7 +23,7 @@ public class Floor extends Network implements Runnable {
 	private FloorButton[] floorButtons; // The UP or DOWN button
 	private DirectionLamp[][] dirLamps; // Each shaft has a direction lamp signaling the arrival of an elevator
 	private int schedulerPort;
-
+	private int maxFloor;
 	/**
 	 * The constructor method creates a Floor at floorLevel that communicates with
 	 * the scheduler
@@ -37,6 +37,7 @@ public class Floor extends Network implements Runnable {
 		this.floorLevel = floorLevel;
 		DirectionLamp[] dirLamp;
 		this.schedulerPort = schedulerPort;
+		this.maxFloor = maxFloor;
 		// Create new socket to listen from scheduler. Don't worry about a port. It will
 		// let coordinate with scheduler in setUp()
 		try {
@@ -122,7 +123,7 @@ public class Floor extends Network implements Runnable {
 	 * @param onOff true if turning on the lamp and false if turning off the lamp
 	 */
 	public void setDirectionLamp(int nCar, int index, String dir) {
-		dirLamps[nCar][index].setLamp(dir);
+		dirLamps[nCar-1][index].setLamp(dir);
 	}
 
 	/**
@@ -133,7 +134,8 @@ public class Floor extends Network implements Runnable {
 	 */
 	@Override
 	public String toString() {
-		String str = "FloorButton: \n";
+		String str = "Floor Level: " + floorLevel + "\n";
+		str += "FloorButton: \n";
 		for (FloorButton btn : floorButtons) {
 			str += btn.getDirection() + " : " + btn.isPressed() + "\n";
 		}
@@ -164,6 +166,14 @@ public class Floor extends Network implements Runnable {
 		rpc_send(schedulerPort, initMsg, 500);
 
 	}
+	
+	private int getIndex(int floor, String direction) {
+		if(floor == 1 || floor == this.maxFloor) {
+			return 0;
+		}
+		else
+			return ((direction.equals("UP") ? 0 : 1));
+	}
 
 	/**
 	 * Overrides the run method of the Runnable interface.
@@ -179,9 +189,13 @@ public class Floor extends Network implements Runnable {
 			send(returnData.getPort(), createACK(), getSocket(0));
 
 			String request[] = pac.parseData(returnData.getData());
-			// Turn of designated directionLamp
-			if (request[0].equals("floorArrival")) {
-				setDirectionLamp(Integer.valueOf(request[3]), 0, "ON");
+			// Turn off designated directionLamp
+			if (request[0].equals("floorArrival") && !request[4].equals("IDLE")) {
+				if(getFloorButton(getIndex(Integer.valueOf(request[2]), request[4])).isPressed()) {
+					System.out.println("Elevator " + request[3] + " arriving at floor " + request[2] + ", " + request[4] + " button lamp turning off");
+				}
+				turnOnOffLamp(request[4], false);
+				//setDirectionLamp(Integer.valueOf(request[3]), getIndex(Integer.valueOf(request[2]), request[4]), "OFF");
 			}
 		}
 	}

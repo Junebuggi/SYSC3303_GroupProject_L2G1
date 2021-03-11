@@ -20,12 +20,5 @@ public class Information {
 	public static final Integer TRAVEL_TIME_PER_FLOOR = 19800;
 	public static final Integer TIME_OPEN_DOOR = 4600;
 	public static final Integer TIME_CLOSE_DOOR = 4600;
-	
-	public enum lampState{ON, OFF}
-	public enum motorDirection{UP, DOWN, IDLE}
-	public enum doorState{OPEN, CLOSE}
-	public enum directionLamp{UP, DOWN, NOT_PRESSED}
-	
-	public static int[] portArray = {23, 24, 25, 56};
 
 }

@@ -5,7 +5,7 @@
  * in the scheduler and then peek ahead to the next request and sleep until time elapsed to send 
  * the next floor request to the scheduler
  *
- * @author Emma Boulay
+ * @author Emma Boulay [Iteration 3]
  * 
  * SYSC 3303 L2 Group 1
  * @version 1.0
@@ -101,15 +101,18 @@ public class FloorSubsystem extends Network implements Runnable {
 	 * @param request The request read from the input file
 	 */
 	public void turnOnLamp(String request) {
+
 		String[] reqArr = request.split(" ");
 		int floor = Integer.parseInt(reqArr[1]);
 		String dir = reqArr[2];
-		floors[floor].turnOnOffLamp(dir, true);
+		System.out.println("Elevator Requested at floor " + floor + ", " + dir + " button pressed and is now on");
+		floors[floor - 1].turnOnOffLamp(dir, true);
 	}
 
 	/**
 	 * This method converts the given time in the format "HH:mm:ss.SSS" to
-	 * milliseconds
+	 * milliseconds. It is used to determine the time required to wait between
+	 * requests sent to scheduler.
 	 * 
 	 * @param time A string representation of time in the format "HH:mm:ss.SSS"
 	 * @return milliseconds The given time in milliseconds
@@ -146,30 +149,32 @@ public class FloorSubsystem extends Network implements Runnable {
 		rpc_send(schedulerPort, initMsg, 500);
 
 		// Send the next request in the array
+		int i = 1;
 		while (!requests.isEmpty()) {
 			String curRequest = requests.remove(0);
 			turnOnLamp(curRequest); // Button has been pressed, turn on lamp
 
+			// RPC send the floor request to the scheduler from a new socket (which is
+			// closed on completion) with a timeout
 			try {
 				rpc_send(schedulerPort, ("floorRequest " + curRequest).getBytes(pac.getEncoding()), timeout);
 			} catch (UnsupportedEncodingException e) {
 				e.printStackTrace();
 			}
-
+			System.out.println("Elevator Subsystem: Sending request " + i);
+			i++;
 			// If the last request sent was not the last request sleep until next request is
 			// read to be sent
 			if (requests.size() > 0) {
 				try {
 					int now = getMilli(curRequest.split(" ")[0]);
 					int nextTime = getMilli(requests.get(0).split(" ")[0]);
-					Thread.sleep(nextTime - now);
+					Thread.sleep((int) ((nextTime - now)));
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
 			}
-
 		}
-
 	}
 
 	/**
@@ -181,7 +186,7 @@ public class FloorSubsystem extends Network implements Runnable {
 	public static void main(String[] args) {
 
 		int nFloors = 7;
-		int nShafts = 1;
+		int nShafts = 4;
 		int schedulerPort = 23;
 		int timeout = 500; // in milliseconds
 

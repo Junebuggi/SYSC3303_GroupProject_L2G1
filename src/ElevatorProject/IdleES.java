@@ -25,91 +25,37 @@ public class IdleES implements ElevatorState{
 	 */
 	public IdleES(Elevator newElevator) {
 		elevator = newElevator;
-		elevator.stationary = true;
 	}
 	
-	/**
-	 * Pressing the button will turn on the lamp and close the door.
-	 */
-	@Override
-	public void ButtonPress(int floorLevel) {
-		System.out.println("\nELEVATOR STATE: IDLE");
-		System.out.println("Elevator Button: " + floorLevel + ", has been pressed");
-		TurnOnButtonLamp(floorLevel); //Illuminate the designated floor button
-		TurnOnDirectionLamp(elevator.getDirection(floorLevel)); //Illuminate the designated direction lamp
-		CloseDoors(); //Close Doors
-		
-		System.out.println("Switching to MOVING state\n");
-		elevator.setMotorState(elevator.getDirection(floorLevel));
-		// Change Elevator to MOVING state
-		elevator.setState(elevator.getMovingState());
-	}
 	
 	@Override
 	public void Moving() {
+		System.out.println("\n" + "Elevator" + elevator.getElevatorNumber() + " STATE: IDLE");
+		elevator.setMotorState("IDLE");
+		elevator.setDoorState("OPEN");
+		
+		elevator.arrivalSensor(elevator.getCurrentFloor(), elevator.getElevatorNumber(), elevator.getMotorDirection().toString());
+
 		int nextFloor = elevator.getNextFloor();
-		if(nextFloor != -1) {
-			System.out.println("\nELEVATOR STATE: IDLE");
-			System.out.println("Elevator requested at floor : " + nextFloor);
-			
-			String motorDirection = elevator.getDirection(nextFloor);
-			System.out.println("Turning on the " + motorDirection + " direction lamp");
-			TurnOnDirectionLamp(motorDirection);
-			elevator.setMotorState(motorDirection);
-			elevator.arrivalSensor(elevator.getCurrentFloor(), elevator.getElevatorNumber(), elevator.getMotorDirection().toString());
-			
-			System.out.println("Switching to MOVING state\n");
-			elevator.setState(elevator.getMovingState());
-		}
-	}
-
-	@Override
-	public void StopMoving() {}
-	
-	/*
-	 * Method to close the doors.
-	 */
-	@Override
-	public void CloseDoors() {
-		try {
-			Thread.sleep(Information.TIME_CLOSE_DOOR);
-		} catch (InterruptedException e) {
-			System.err.println(e);
-		}
-		elevator.setDoorState("CLOSE");
-		System.out.println("Elevator door closed.");
-	}
-
-	@Override
-	public void OpenDoors() {}
-	
-	/*
-	 * Method to turn on the lamp.
-	 */
-	@Override
-	public void TurnOnDirectionLamp(String direction) {
-		elevator.getDirectionLamp(direction).setLamp("ON");
-		System.out.println("Elevator button lamp on.");
-	};
-	
-	@Override
-	public void TurnOffDirectionLamp(String direction) {};
-	
-	/**
-	 *  Invoke a request to scheduler for data.
-	 */
-
-	@Override
-	public void TurnOffButtonLamp(int btnNumber) {
-		elevator.getElevatorButton(btnNumber).setLampState("OFF");
 		
+		System.out.println("Elevator" + elevator.getElevatorNumber() + ": requested at floor : " + nextFloor);
+		elevator.CloseDoors();
+		String motorDirection = elevator.getDirection(nextFloor);
+		System.out.println("Elevator" + elevator.getElevatorNumber() + " Turning on the " + motorDirection + " direction lamp");
+		elevator.TurnOnDirectionLamp(motorDirection);
+		elevator.setMotorState(motorDirection);
+				
+		System.out.println("Elevator" + elevator.getElevatorNumber() + ": Switching to MOVING state\n");
+		elevator.setState(elevator.getMovingState());
 	}
 
-	@Override
-	public void TurnOnButtonLamp(int btnNumber) {
-		elevator.getElevatorButton(btnNumber).setLampState("ON");
-		
-	}
+
+
+
+
+
+
+
 	
 
 }

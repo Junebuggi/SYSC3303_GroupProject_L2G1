@@ -25,82 +25,23 @@ public class ArrivedES implements ElevatorState{
 	 */
 	public ArrivedES(Elevator newElevator) {
 		elevator = newElevator;
-		elevator.stationary = true;
 	}
 	
 
 	@Override
 	public void Moving() {
+		
 		elevator.arrivingAtFloor(elevator.getCurrentFloor());
-		System.out.println("\nELEVATOR STATE: ARRIVED");
+		System.out.println("\n" + "Elevator" + elevator.getElevatorNumber() + " STATE: ARRIVED");
+		
 		int floor = elevator.getCurrentFloor();
-		TurnOffButtonLamp(floor);
+		elevator.TurnOffButtonLamp(floor);
+		
 		elevator.setMotorState("IDLE");
-		System.out.println("Switching to IDLE state\n");
-		elevator.setState(elevator.getIdleState());
-		elevator.arrivalSensor(floor, elevator.getElevatorNumber(), elevator.getMotorDirection().toString());
-	}
-	
-	@Override
-	public void StopMoving() {}
-	
-	@Override
-	public void CloseDoors() {}
-
-	@Override
-	public void OpenDoors() {}
-	
-	
-	/*
-	 * Method to turn off the lamp.
-	 */
-	@Override
-	public void TurnOffButtonLamp(int btnNumber) {
-		elevator.getElevatorButton(btnNumber).setLampState("OFF");
-		System.out.println("Elevator button " + btnNumber + " lamp off.");
-	}
-	
-	/**
-	 * Sends an acknowledgement to the floor that the elevator has arrived.
-	 */
-	public void SendAck() {
-		System.out.println("ELEVATOR STATE: ARRIVED");
-		System.out.println("Elevator has arrived.");
-		TurnOffButtonLamp(1);
-		System.out.println();
 		
-		//send ACK
-		//elevator.sendF(port, Network.createACK())	
+		System.out.println("Elevator" + elevator.getElevatorNumber() + " Switching to IDLE state\n");
 		
-		// Change Elevator to IDLE state
-		elevator.setState(elevator.getIdleState());
-	}
-
-	@Override
-	public void TurnOnButtonLamp(int btnNumber) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	@Override
-	public void ButtonPress(int floorLevel) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	@Override
-	public void TurnOnDirectionLamp(String direction) {
-		// TODO Auto-generated method stub
-		
-	}
-
-
-	@Override
-	public void TurnOffDirectionLamp(String direction) {
-		// TODO Auto-generated method stub
-		
+		elevator.setState(elevator.getIdleState());		
 	}
 
 }

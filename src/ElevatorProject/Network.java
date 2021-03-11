@@ -65,14 +65,11 @@ public class Network {
 		byte[] data = new byte[100];
 		DatagramPacket receivePacket = new DatagramPacket(data, data.length);
 
-		System.out.println(Thread.currentThread().getName() + " Waiting for message");
-
 		// Block until a datagram is received via sendReceiveSocket.
 		try {
 			socket.receive(receivePacket);
 		} catch (IOException e) {
 			if(e instanceof SocketTimeoutException) {
-				System.out.println("Reached here");
 				return new ReturnData(-1, null);
 				
 			}
@@ -184,11 +181,8 @@ public class Network {
 			se.printStackTrace();
 		}
 		
-		send(receiverPort, pac.appendArray(new byte[] {(byte) sequenceNumber}, data), socket);
+		send(receiverPort, data, socket);
 		returnData = receive(socket);
-			
-		if(returnData.getPort() != -1)
-			sequenceNumber++;
 
 		socket.close();
 		return returnData.getData();
@@ -212,7 +206,6 @@ public class Network {
 			returnData = receive(socket);
 			
 			if(returnData.getPort() != -1) {
-				sequenceNumber++;
 				timeOut = false;
 			}
 
@@ -228,11 +221,10 @@ public class Network {
 		
 		boolean timeOut = true;
 		do {
-			send(receiverPort, pac.appendArray(new byte[] {(byte) sequenceNumber}, data), socket);
+			send(receiverPort, data, socket);
 			returnData = receive(socket);
 			
 			if(returnData.getPort() != -1) {
-				sequenceNumber = (sequenceNumber+1)%255;
 				timeOut = false;
 			}
 

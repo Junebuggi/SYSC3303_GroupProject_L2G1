@@ -95,8 +95,10 @@ public class SchedulerStateMachine implements Runnable{
 				while(Thread.currentThread().getName().equals("listeningThread")){
 					System.out.println(Thread.currentThread().getName());
 					ReturnData returnData = scheduler.receive(scheduler.getSocket(0));
-					byte[] returnMessage = scheduler.putRequest(returnData.getData());
-					scheduler.send(returnData.getPort(), returnMessage , scheduler.getSocket(0));	
+					if(returnData != null) {
+						byte[] returnMessage = scheduler.putRequest(returnData.getData());
+						scheduler.send(returnData.getPort(), returnMessage , scheduler.getSocket(0));
+					}
 				}
 				
 				switch (current_state) {

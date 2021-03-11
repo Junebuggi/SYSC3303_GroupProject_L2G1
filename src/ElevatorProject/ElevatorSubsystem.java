@@ -75,7 +75,7 @@ public class ElevatorSubsystem extends Network implements Runnable{
 	
 	public static void main(String[] args) {
 		
-		ElevatorSubsystem elevSys = new ElevatorSubsystem(1, 23, 7);
+		ElevatorSubsystem elevSys = new ElevatorSubsystem(4, 23, 7);
 		Thread elevSubThread = new Thread(elevSys, "Elevator Subsystem");
 		elevSubThread.start();
 	}

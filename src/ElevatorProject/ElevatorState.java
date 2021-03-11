@@ -14,13 +14,5 @@ package ElevatorProject;
  */
 
 public interface ElevatorState {
-	public void ButtonPress(int floorLevel);
 	public void Moving();
-	public void StopMoving();
-	public void CloseDoors();
-	public void OpenDoors();
-	public void TurnOnDirectionLamp(String direction);
-	public void TurnOffDirectionLamp(String direction);
-	public void TurnOffButtonLamp(int btnNumber);
-	public void TurnOnButtonLamp(int btnNumber);
 }

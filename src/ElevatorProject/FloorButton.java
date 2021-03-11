@@ -25,5 +25,9 @@ public class FloorButton {
 	public boolean isPressed() {
 		return this.isPressed;
 	}
+	
+	public String getState() {
+		return (isPressed) ? "ON" : "OFF";
+	}
 
 }
