@@ -2,11 +2,11 @@
  * Scheduler.java
  * 
  * The Scheduler is responsible for handling incoming requests from the floor Subsystem and passing requests
- * to the elevator subsystem. This is done using a shared resource between the three threads and with the 
- * implementation of a state machine. 
+ * to the elevator subsystem. This is done with the implementation of a state machine. 
  *
  * @version 1.0
- * @author Emma Boulay, Abeer Rafiq
+ * @author Abeer Rafiq
+ * @author Emma Boulay [Iteration 1, 2, 3]
  *
  * (Group 1 - SYSC 3303 L2)
  *
@@ -23,26 +23,44 @@ import java.util.HashMap;
 import ElevatorProject.Network;
 
 public class Scheduler extends Network {
-
+	//An array list of all the floor requests that are waiting to be serviced
 	private ArrayList<String[]> workRequests = new ArrayList<>(); 
+	//Each floor and their corresponding port
 	private HashMap<Integer, Integer> floorPorts = new HashMap<Integer, Integer>();
+	//-1 if the elevatorPort hasn't been initialized yet
 	private int elevatorPort = -1;
+	//A mapping between all the elevators by number and their current state(floor and motor direction)
 	private HashMap<Integer, Elevator> elevators = new HashMap<Integer, Elevator>();
-	private int timeout;
+	private int timeout; //The timeout to be used when wait for an ACK
 	
+	/**
+	 * A simple class that models an elevator's current floor and motor state
+	 * @author Emma Boulay [Iteration 3]
+	 *
+	 */
 	protected class Elevator {
 		private String state;
 		private int floor;
-
+		/**
+		 * The constructor method
+		 * @param state //The motor state, "UP", "DOWN" or "IDLE"
+		 * @param floor the current floor of the elevator
+		 */
 		Elevator(String state, int floor){
 			this.state = state;
 			this.floor = floor;
 		}
-
+		/**
+		 * Getter method to return current floor
+		 * @return current floor
+		 */
 		public int getFloor() {
 			return this.floor;
 		}
-
+		/**
+		 * Getter method to return elevator motor state
+		 * @return motor state, "UP", "DOWN" or "IDLE"
+		 */
 		public String getState() {
 			return this.state;
 		}
@@ -85,9 +103,10 @@ public class Scheduler extends Network {
 			if(data[0].equals("arrivalSensor") && data.length == 5) {
 				arrivalNotificationToFloor(data, Integer.valueOf(data[2]));
 				elevators.put(Integer.parseInt(data[3]), new Elevator(data[4], Integer.parseInt(data[3])));
+				//Check if a passenger is waiting at this floor on this direction
 				String servicableRequest = checkIfRequestPendingAtFloor(Integer.valueOf(data[2]), data[4]);
 				if(servicableRequest != null) {		
-					
+					//Passenger is waiting!
 					System.out.println("Servicable Request: " + servicableRequest);
 					notifyAll();
 					return pac.toBytes(servicableRequest);
@@ -97,6 +116,12 @@ public class Scheduler extends Network {
 			return Network.createACK();
 	}
 	
+	/**
+	 * This method will check if there is a pending request at the floor with the given direction
+	 * @param floor the floor the passenger is waiting at
+	 * @param direction the direction the passenger wants to go
+	 * @return the request if found, null if none found
+	 */
 	private synchronized String checkIfRequestPendingAtFloor(int floor, String direction) {
 		
 		for(int i = 0; i < workRequests.size(); i++) {
@@ -106,12 +131,18 @@ public class Scheduler extends Network {
 				return Network.pac.joinStringArray(workRequests.remove(i));
 
 			}
-		}
-		
-		return null;
-		
+		}	
+		return null;	
 	}
 	
+	/**
+	 * This method will check if the request has already been added to the array. This is useful
+	 * in case the request was sent multiple times by the floor subsystem
+	 * 
+	 * @param request the request to check against the array
+	 * @param allRequests the array to compare with
+	 * @return true if array contains request
+	 */
 	private boolean arrayContainsRequest(String[] request, ArrayList<String[]> allRequests) {
 		for( String[] req : allRequests) {
 			if(Arrays.equals(request, req))
@@ -162,43 +193,58 @@ public class Scheduler extends Network {
 		return workRequests;
 	}
 	
-	
+	/**
+	 * This method will remove request from workRequests at index i
+	 * 
+	 * @param i The index of the request to be removed
+	 */
 	public synchronized void removeRequest(int i) {
 		workRequests.remove(i);
 		notifyAll();
 	}
 	
+	/**
+	 * This method returns the port the elevator subsystem is listening on
+	 * @return elevator subsystem port
+	 */
 	public int getElevatorPort() {
 		return this.elevatorPort;
 	}
 	
+	/**
+	 * This method will wait for floor or elevator initialization messages and store the ports
+	 * supplied. It will wait until received all InitEnd messages
+	 *  
+	 * @param socket the socket to listen on for messages
+	 */
 	public void setUp(DatagramSocket socket) {
 		
 			boolean floor = true;
-			
+			//Loop on receive until all initialization messages are received
 			while(floor || elevatorPort == -1) {
 				System.out.println("Listening on port: " + socket.getLocalPort());
 				ReturnData portData = receive(socket);
-				
+				//Print message received as a string
 				try {
 					System.out.println(new String(portData.getData(), pac.getEncoding()));
 				} catch (UnsupportedEncodingException e) {
 					e.printStackTrace();
 				}
+				//Send an ACK after message received
 				send(portData.getPort(), createACK(), socket);
 
 				String[] fromSystem = Network.pac.parseData(portData.getData());
-				
+				//This is a floorInit message, it provides the floor's number and its listening port
 				if(fromSystem[0].equals("floorInit")) {
 					System.out.println("Initializing floor " + Integer.parseInt(fromSystem[1]) + " to port: " + Integer.parseInt(fromSystem[2]));
 					floorPorts.put(Integer.parseInt(fromSystem[1]), Integer.parseInt(fromSystem[2]));
 				}
-				
+				//This is a elevatorInit message, it provides the number of elevators and it's listening port
 				else if (fromSystem[0].equals("elevatorInit")) {
 					elevatorPort = Integer.parseInt(fromSystem[2]);
 					createElevatorsReference(Integer.parseInt(fromSystem[1]));
 				}	
-				
+				//This is a floorInitEnd message from the floor subsystem, it is only sent after all floors have initialized
 				else if (fromSystem[0].equals("floorInitEnd")) {
 					System.out.println("Received floorInitEnd message");
 					floor = false;
@@ -208,6 +254,12 @@ public class Scheduler extends Network {
 			}
 		}
 	
+	/**
+	 * This method will try to find the closest IDLE elevator to the floor requested
+	 * 
+	 * @param floor The floor waiting for an elevator
+	 * @return the closest elevator's number, if none found -1
+	 */
 	public int getClosestIdleElevator(int floor) {
 		//Initialize both to -1 because if elevatorNum doesn't change then there are no idle elevators
 		int closestDistance = -1;
@@ -220,7 +272,6 @@ public class Scheduler extends Network {
 		for(Integer i : elevators.keySet()) {
 			if(elevators.get(i).getState().equals("IDLE")) {
 				int distance = Math.abs(floor - elevators.get(i).getFloor());
-				System.out.println(floor + " - " + elevators.get(i).getFloor() + "= " + distance);
 				//If this is the first idle elevator found, set closestDistance
 				if(closestDistance == -1) {
 					closestDistance = distance;
@@ -238,6 +289,11 @@ public class Scheduler extends Network {
 			return elevatorNum; //No elevators are currently idle
 	}
 	
+	/**
+	 * This method checks if any elevators are idle
+	 * 
+	 * @return true if there is at least one IDLE elevators
+	 */
 	public boolean elevatorIsIdle() {
 		for(Integer i : elevators.keySet()) {
 			if(elevators.get(i).getState().equals("IDLE")) {
@@ -247,12 +303,27 @@ public class Scheduler extends Network {
 		return false;
 	}
 	
+	/**
+	 * This method creates all the initial elevator references. All elevators
+	 * are assumed to have an initial motor state of "IDLE"
+	 * 
+	 * @param nElevators The number number of elevators in the system
+	 */
 	public void createElevatorsReference(int nElevators) {
 		for(int i = 1; i <= nElevators; i++ ) {
 			elevators.put(i, new Elevator("IDLE", 1));
 		}
 	}
 	
+	/**
+	 * This method creates the request to be sent to the elevator subsystem. It inserts the elevator
+	 * number into the original work request so the elevator subystem can determine which elevator to
+	 * pass it along to
+	 * 
+	 * @param request The request to be modified
+	 * @param elevator The elevator's number who the request is for
+	 * @return the new request as a byte array
+	 */
 	public byte[] createElevatorRequest(String[] request, int elevator) {
 		String req = request[0];
 		req += (" " + elevator);
@@ -262,6 +333,11 @@ public class Scheduler extends Network {
 		return pac.toBytes(req);
 	}
 	
+	/**
+	 * This method sends a message to the given floor that a elevator has arrived at the floor
+	 * @param request the request to be sent
+	 * @param floor the floor to send the request to
+	 */
 	public void arrivalNotificationToFloor(String[] request, int floor) {
 		String str = "floorArrival";
 		for(int i = 1; i < request.length; i++) {
@@ -270,10 +346,7 @@ public class Scheduler extends Network {
 		System.out.println("Message to floor: " + floor + " at port: " + floorPorts.get(floor) + "\nis: " + str);
 		rpc_send(floorPorts.get(floor), Network.pac.toBytes(str));
 	}
-	
-	public int getTimeout() {
-		return this.timeout;
-	}
+
 }
 
 

@@ -27,6 +27,8 @@ public class SchedulerStateMachine implements Runnable {
 	private static State current_state = State.WAIT_FOR_REQUEST;
 	private Scheduler scheduler;
 	private DatagramSocket sendReceiveSocket;
+	private boolean activeRunning = true;
+	private boolean listeningRunning = true;
 
 	/**
 	 * These are the states that the scheduler will go through.
@@ -80,7 +82,6 @@ public class SchedulerStateMachine implements Runnable {
 	public void run() {
 		System.out.println(Thread.currentThread().getName());
 
-		boolean run = true;
 		int elevator = 0;
 		// Wait to receive port initialization messages from the floor and elevator
 		// subsystems
@@ -89,18 +90,20 @@ public class SchedulerStateMachine implements Runnable {
 		if (socket != null) {
 			scheduler.setUp(socket);
 		}
+		
+		while (Thread.currentThread().getName().equals("listeningThread") && listeningRunning) {
+			System.out.println(Thread.currentThread().getName());
+			ReturnData returnData = scheduler.receive(scheduler.getSocket(0));
+			if (returnData != null) {
+				byte[] returnMessage = scheduler.putRequest(returnData.getData());
+				scheduler.send(returnData.getPort(), returnMessage, scheduler.getSocket(0));
+			}
+		}
 
-		while (run) {
+		while (Thread.currentThread().getName().equals("activeThread") && activeRunning) {
 			// If this is the listening thread then wait to receive and place messages into
 			// appropriate list
-			while (Thread.currentThread().getName().equals("listeningThread")) {
-				System.out.println(Thread.currentThread().getName());
-				ReturnData returnData = scheduler.receive(scheduler.getSocket(0));
-				if (returnData != null) {
-					byte[] returnMessage = scheduler.putRequest(returnData.getData());
-					scheduler.send(returnData.getPort(), returnMessage, scheduler.getSocket(0));
-				}
-			}
+
 
 			switch (current_state) {
 			case WAIT_FOR_REQUEST: {
@@ -163,6 +166,16 @@ public class SchedulerStateMachine implements Runnable {
 				break;
 			}
 			}
+		}
+	}
+	
+	public void interrupt() {
+		if(Thread.currentThread().getName().equals("activeThread")) {
+			activeRunning = false;
+		}
+		
+		if(Thread.currentThread().getName().equals("listeningThread")) {
+			listeningRunning = false;
 		}
 	}
 

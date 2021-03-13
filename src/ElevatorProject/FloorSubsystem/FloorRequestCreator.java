@@ -1,6 +1,5 @@
 
 /**
- * Floor.java
  * 
  * The FloorRequestCreator class will create and print nRequests with parameters from
  * the Information class. These requests can then be copied and pasted in to the

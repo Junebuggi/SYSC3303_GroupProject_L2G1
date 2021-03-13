@@ -20,8 +20,8 @@ package ElevatorProject;
  */
 public class Information {
 
-	public static final Integer NUM_FLOORS = 35;
-	public static final Integer NUM_ELEVATORS = 10;
+	public static final Integer NUM_FLOORS = 7;
+	public static final Integer NUM_ELEVATORS = 4;
 
 	public static final Integer SCHEDULER_PORT = 23;
 

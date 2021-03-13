@@ -102,7 +102,7 @@ class SchedulerStateMachineTest extends Network{
 	@Test
 	public void testStartUp() throws Throwable{
 		//Test that all threads startup as expected
-		int receiverPort = 25;
+		int receiverPort = 24;
 		setUpThreads(receiverPort);
 	}
 	
