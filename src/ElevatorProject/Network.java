@@ -151,6 +151,10 @@ public class Network {
 		}
 	}
 
+	/**
+	 * This method will set the timeout for all sockets
+	 * @param timeout the timeout in milliseconds
+	 */
 	public void setTimeoutAllSockets(int timeout) {
 		for (DatagramSocket s : sockets) {
 			try {
@@ -187,7 +191,15 @@ public class Network {
 		socket.close();
 		return returnData.getData();
 	}
-
+	
+	/**
+	 * This method will send the data to the receiverPort from a new socket with
+	 * a timeout
+	 * @param receiverPort The port of the receiver socket
+	 * @param data The data to be sent
+	 * @param timeout the time of the timeout in milliseconds
+	 * @return the data received from the receiver
+	 */
 	public byte[] rpc_send(int receiverPort, byte[] data, int timeout) {
 
 		ReturnData returnData;
@@ -215,6 +227,13 @@ public class Network {
 		return returnData.getData();
 	}
 
+	/**
+	 * The method will rpc_send the data to the receiver port from the socket
+	 * @param receiverPort The port of the receiver socket
+	 * @param data The data to be sent
+	 * @param socket the socket of the sender
+	 * @return the data received from the receiver
+	 */
 	public byte[] rpc_send(int receiverPort, byte[] data, DatagramSocket socket) {
 
 		ReturnData returnData;
@@ -233,7 +252,11 @@ public class Network {
 		socket.close();
 		return returnData.getData();
 	}
-
+	
+	/**
+	 * This method will create the "ACK" in bytes with the proper encoding
+	 * @return "ACK" in bytes
+	 */
 	public static byte[] createACK() {
 		try {
 			return "ACK".getBytes(pac.getEncoding());
