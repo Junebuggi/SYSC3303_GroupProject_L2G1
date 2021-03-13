@@ -22,7 +22,7 @@ import ElevatorProject.Network;
  *
  * @author Hasan Baig
  * @author Alden Wan Yeung Ng
- * @author Emma Boulay [iteration 3]
+ * @author Emma Boulay [Iteration 3]
  * 
  *         SYSC 3303 L2 Group 1
  * @version 1.0
@@ -36,7 +36,7 @@ public class Elevator extends Network implements Runnable {
 
 	// Current Elevator State
 	private ElevatorState elevatorState;
-	
+
 	// All Concrete Elevator States
 	private ElevatorState idle;
 	private ElevatorState moving;
@@ -71,8 +71,8 @@ public class Elevator extends Network implements Runnable {
 	 * Constructor class used to initialize the object of the Elevator class.
 	 * 
 	 * @param elevatorNumber The elevator number [1 to nElevators]
-	 * @param schedulerPort The port of the scheduler's listening thread
-	 * @param nFloors The number of floors the building has
+	 * @param schedulerPort  The port of the scheduler's listening thread
+	 * @param nFloors        The number of floors the building has
 	 */
 	public Elevator(int elevatorNumber, int schedulerPort, int nFloors) {
 
@@ -121,7 +121,7 @@ public class Elevator extends Network implements Runnable {
 	public void setState(ElevatorState newElevatorState) {
 		elevatorState = newElevatorState;
 	}
-	
+
 	/**
 	 * Returns the Idle state
 	 * 
@@ -130,7 +130,7 @@ public class Elevator extends Network implements Runnable {
 	public ElevatorState getIdleState() {
 		return this.idle;
 	}
-	
+
 	/**
 	 * Returns the moving state
 	 * 
@@ -153,7 +153,7 @@ public class Elevator extends Network implements Runnable {
 	 * Method prints current elevator information.
 	 */
 	public String toString(String[] request) {
-		
+
 		String strRequest = Network.pac.joinStringArray(request);
 		String[] parsedStr = strRequest.split(" ");
 		return "Time: " + parsedStr[1] + "\nFloor: " + parsedStr[2] + "\nFloor Button: " + parsedStr[3]
@@ -161,21 +161,23 @@ public class Elevator extends Network implements Runnable {
 	}
 
 	/**
-	 * This method implements the arrival sensor. It will send the arrivalSensor to the scheduler using 
-	 * an RPC method. 
+	 * This method implements the arrival sensor. It will send the arrivalSensor to
+	 * the scheduler using an RPC method.
 	 * 
-	 * @param floor The floor where the arrival sensor was triggered
-	 * @param elevator The elevator that triggered the sensor
+	 * @param floor     The floor where the arrival sensor was triggered
+	 * @param elevator  The elevator that triggered the sensor
 	 * @param direction The direction of the elevator that triggered the sensor
-	 * @return If there is no pending request at the current floor then it will return "ACK" otherwise
-	 * it returns information about the request to be serviced.
+	 * @return If there is no pending request at the current floor then it will
+	 *         return "ACK" otherwise it returns information about the request to be
+	 *         serviced.
 	 */
 	public String[] arrivalSensor(int floor, int elevator, String direction) {
 		Date now = new Date();
-	    String strDate = sdf.format(now);
-	    
+		String strDate = sdf.format(now);
+
 		byte[] message = pac.toBytes("arrivalSensor " + strDate + " " + floor + " " + elevator + " " + direction);
-		//An RPC send to the scheduler with a 500ms timeout from a new socket which will be closed when the call completes
+		// An RPC send to the scheduler with a 500ms timeout from a new socket which
+		// will be closed when the call completes
 		byte[] data = rpc_send(schedulerPort, message, 500);
 
 		String[] strData = null;
@@ -184,15 +186,17 @@ public class Elevator extends Network implements Runnable {
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-		
+
 		return strData;
 	}
 
 	/**
-	 * This method returns the direction lamp of the elevator. Each elevator has a pair of two direction lamps
+	 * This method returns the direction lamp of the elevator. Each elevator has a
+	 * pair of two direction lamps
 	 * 
 	 * @param direction "UP" or "DOWN"
-	 * @return If "UP", directionLamp at index 0, otherwise direction lamp at index 1
+	 * @return If "UP", directionLamp at index 0, otherwise direction lamp at index
+	 *         1
 	 */
 	public DirectionLamp getDirectionLamp(String direction) {
 		if (direction.equals("UP"))
@@ -203,14 +207,17 @@ public class Elevator extends Network implements Runnable {
 
 	/**
 	 * This method returns the specified elevator button
+	 * 
 	 * @param btnNumber The number of the elevator button
 	 * @return The elevator button at btnNumber
 	 */
 	public ElevatorButton getElevatorButton(int btnNumber) {
 		return btns[btnNumber - 1];
 	}
+
 	/**
 	 * This methods sets the door state of the elevator
+	 * 
 	 * @param doorState "OPEN" or "CLOSE"
 	 */
 	public void setDoorState(String doorState) {
@@ -218,8 +225,9 @@ public class Elevator extends Network implements Runnable {
 	}
 
 	/**
-	 * This method returns the next floor to be visited by the elevator. If there are no floors
-	 * the elevator will wait until a new floor is added to the array (by the elevatorSubsystem)
+	 * This method returns the next floor to be visited by the elevator. If there
+	 * are no floors the elevator will wait until a new floor is added to the array
+	 * (by the elevatorSubsystem)
 	 * 
 	 * @return An integer representation of the next floor to be visited
 	 */
@@ -247,15 +255,16 @@ public class Elevator extends Network implements Runnable {
 
 		return closest;
 	}
-	
+
 	/**
 	 * This method sets the motor state of the elevator
+	 * 
 	 * @param motorState "UP", "DOWN", "IDLE"
 	 */
 	public void setMotorState(String motorState) {
 		this.motor = Motor.valueOf(motorState);
 	}
-	
+
 	/**
 	 * This method adds a floor to the floorsToVisit array
 	 * 
@@ -264,12 +273,14 @@ public class Elevator extends Network implements Runnable {
 	public void addFloorToVisit(int floor) {
 		floorsToVisit.add(floor);
 	}
-	
+
 	/**
-	 * Add a floor to visit and its corresponding destination to the floorDestinations hashmap
+	 * Add a floor to visit and its corresponding destination to the
+	 * floorDestinations hashmap
 	 * 
-	 * @param floor The floor to visit
-	 * @param destination The destination the passenger wants to go to from this floor
+	 * @param floor       The floor to visit
+	 * @param destination The destination the passenger wants to go to from this
+	 *                    floor
 	 */
 	public void addDestination(int floor, int destination) {
 
@@ -283,9 +294,11 @@ public class Elevator extends Network implements Runnable {
 			floorDestinations.put(floor, dest);
 		}
 	}
+
 	/**
-	 * This method will move all of the destination floors (values) from the floorDestinations hashmap that correspond 
-	 * with the given floor (the key) and move them to floors to be visited. And turn on the button for each new floor
+	 * This method will move all of the destination floors (values) from the
+	 * floorDestinations hashmap that correspond with the given floor (the key) and
+	 * move them to floors to be visited. And turn on the button for each new floor
 	 * 
 	 * @param floor The floor thats been visited
 	 */
@@ -296,28 +309,30 @@ public class Elevator extends Network implements Runnable {
 			for (int i = 0; i < dest.size(); i++) {
 				floorsToVisit.add(dest.get(i));
 				this.ButtonPress(dest.get(i));
-				
+
 			}
 		}
 		floorDestinations.remove(floor);
 	}
-	
+
 	/**
 	 * This method returns the current floor of the elevator
+	 * 
 	 * @return the current floor
 	 */
 	public int getCurrentFloor() {
 		return this.currentFloor;
 	}
-	
+
 	/**
 	 * This method changes the current floor of the elevator
+	 * 
 	 * @param floor The new floor of the elevator
 	 */
 	public void setCurrentFloor(int floor) {
 		this.currentFloor = floor;
 	}
-	
+
 	/**
 	 * The direction the elevator needs to go to get to the next floor
 	 * 
@@ -325,16 +340,17 @@ public class Elevator extends Network implements Runnable {
 	 * @return The direction elevator needs to go
 	 */
 	public String getDirection(int floorLevel) {
-		if (floorLevel < currentFloor) 
+		if (floorLevel < currentFloor)
 			return "DOWN";
-		else if(floorLevel > currentFloor)
+		else if (floorLevel > currentFloor)
 			return "UP";
 		else
 			return "IDLE";
 	}
-	
+
 	/**
 	 * This method returns the current motor state of the elevator
+	 * 
 	 * @return the motor state, "UP", "DOWN" or "IDLE"
 	 */
 	public Motor getMotorDirection() {
@@ -356,48 +372,75 @@ public class Elevator extends Network implements Runnable {
 				i.remove();
 			}
 		}
-		
+
 	}
-	
+
 	/**
 	 * This method returns the elevator number
+	 * 
 	 * @return elevator number
 	 */
 	public int getElevatorNumber() {
 		return this.elevatorNumber;
 	}
-	
+
 	/**
-	 * This method turns off a given button lamp. Is called when a elevator arrives at a floor.
+	 * This method turns off a given button lamp. Is called when a elevator arrives
+	 * at a floor.
+	 * 
 	 * @param btnNumber The button to be turned off
 	 */
 	public void TurnOffButtonLamp(int btnNumber) {
 		getElevatorButton(btnNumber).setLampState("OFF");
 		System.out.println("Elevator" + getElevatorNumber() + " button " + btnNumber + " lamp off.");
 	}
-	
+
+	/**
+	 * This method presses a button lamp. Is called when a passenger presses a floor
+	 * button
+	 * 
+	 * @param floorLevel The button to be turned off
+	 */
 	public void ButtonPress(int floorLevel) {
 		System.out.println("Elevator" + getElevatorNumber() + " Button: " + floorLevel + ", has been pressed");
-		TurnOnButtonLamp(floorLevel); //Illuminate the designated floor button
+		TurnOnButtonLamp(floorLevel); // Illuminate the designated floor button
 	}
-	
+
+	/**
+	 * This method turns on a button lamp. Is called when a passenger presses a
+	 * floor button
+	 * 
+	 * @param btnNumber The button to be turned off
+	 */
 	public void TurnOnButtonLamp(int btnNumber) {
 		getElevatorButton(btnNumber).setLampState("ON");
 		System.out.println("Elevator" + getElevatorNumber() + " button " + btnNumber + " lamp on.");
-	
+
 	}
-	
+
+	/**
+	 * This method turns on a given direction lamp
+	 * 
+	 * @param direction Direction, UP or DOWN
+	 */
 	public void TurnOnDirectionLamp(String direction) {
 		getDirectionLamp(direction).setLamp("ON");
-		System.out.println("Elevator" + getElevatorNumber() +  " " + direction + " direction lamp on.");
+		System.out.println("Elevator" + getElevatorNumber() + " " + direction + " direction lamp on.");
 	}
-	
+
+	/**
+	 * This method turns off a given direction lamp
+	 * 
+	 * @param direction Direction, UP or DOWN
+	 */
 	public void TurnOffDirectionLamp(String direction) {
 		getDirectionLamp(direction).setLamp("OFF");
-		System.out.println("Elevator" + getElevatorNumber() +  " " + direction + " direction lamp off.");
+		System.out.println("Elevator" + getElevatorNumber() + " " + direction + " direction lamp off.");
 	}
-	
-	
+
+	/**
+	 * This method simulates closing the elevator doors
+	 */
 	public void CloseDoors() {
 		System.out.println("Elevator" + getElevatorNumber() + " door closing.");
 		try {
@@ -408,7 +451,10 @@ public class Elevator extends Network implements Runnable {
 		setDoorState("CLOSE");
 		System.out.println("Elevator" + getElevatorNumber() + " door closed.");
 	}
-	
+
+	/**
+	 * This method simulates opening the elevator doors
+	 */
 	public void OpenDoors() {
 		System.out.println("Elevator" + getElevatorNumber() + " door opening.");
 		try {
@@ -418,13 +464,18 @@ public class Elevator extends Network implements Runnable {
 		}
 		setDoorState("OPEN");
 		System.out.println("Elevator" + getElevatorNumber() + " door opened.");
-		
+
 	}
-	
+
+	/**
+	 * This method returns the max floor level of the elevator
+	 * 
+	 * @return max floor level
+	 */
 	public int getMaxFloor() {
 		return this.nFloors;
 	}
-	
+
 	/**
 	 * Overrides the run method of the Runnable interface. The floor requests from
 	 * Scheduler are received if: the queue is not empty and the elevator is
@@ -434,8 +485,8 @@ public class Elevator extends Network implements Runnable {
 	@Override
 	public void run() {
 		System.out.println("Elevator " + elevatorNumber + " is set up and ready to go");
-		
-		while (true) 
+
+		while (true)
 			this.elevatorState.Moving();
 	}
 }

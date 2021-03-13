@@ -1,14 +1,13 @@
 package ElevatorProject;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Arrays;
 
 /**
  * The Packet class contains helper functions to manipulate byte arrays. The
  * methods allow for printing byte[], combining byte arrays and a toString
  * method.
  * 
- * @author Emma Boulay
+ * @author Emma Boulay [Iteration 3]
  * @version 1.00
  *
  */
@@ -32,14 +31,15 @@ public class Packet {
 	}
 
 	public String joinStringArray(String[] arr) {
-		
+
 		String str = arr[0];
-		for(int i = 1; i < arr.length; i++) {
+		for (int i = 1; i < arr.length; i++) {
 			str += (" " + arr[i]);
 		}
-		
+
 		return str;
 	}
+
 	/**
 	 * This method appends b2 to b1. This method is useful for combining the packet
 	 * to be sent to the intermediate host from the client.
@@ -105,15 +105,15 @@ public class Packet {
 		}
 		return null;
 	}
-	
+
 	public byte[] toBytes(String str) {
-		
+
 		try {
 			return str.getBytes(this.encoding);
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-		
+
 		return null;
 	}
 }

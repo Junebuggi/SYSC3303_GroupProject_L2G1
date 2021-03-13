@@ -12,10 +12,9 @@ import java.util.Arrays;
 
 /**
  * The Network superclass contains generic methods to make it easier for sending
- * and receiving packets. It is subclassed by the Client, IntermediateHost and
- * Server classes.
+ * and receiving packets.
  * 
- * @author Emma Boulay
+ * @author Emma Boulay [Iteration 3]
  * @version 1.00
  *
  */
@@ -24,7 +23,7 @@ public class Network {
 	 * The ReturnData class is a simple class that is returned by the receive method
 	 * so the method can return the port of the sender and the data received.
 	 * 
-	 * @author Emma Boulay
+	 * @author Emma Boulay [Iteration 3]
 	 */
 	public class ReturnData {
 		private int port; // Port of the sender
@@ -69,9 +68,9 @@ public class Network {
 		try {
 			socket.receive(receivePacket);
 		} catch (IOException e) {
-			if(e instanceof SocketTimeoutException) {
+			if (e instanceof SocketTimeoutException) {
 				return new ReturnData(-1, null);
-				
+
 			}
 			e.printStackTrace();
 		}
@@ -81,7 +80,6 @@ public class Network {
 
 		return new ReturnData(receivePacket.getPort(), data.clone());
 	}
-	
 
 	/**
 	 * This method prints the data to be sent and then sends the data from the
@@ -152,8 +150,9 @@ public class Network {
 			s.close();
 		}
 	}
+
 	public void setTimeoutAllSockets(int timeout) {
-		for (DatagramSocket s: sockets) {
+		for (DatagramSocket s : sockets) {
 			try {
 				s.setSoTimeout(timeout);
 			} catch (SocketException e) {
@@ -161,79 +160,80 @@ public class Network {
 			}
 		}
 	}
-	
+
 	/**
-	 * This method is used to make Remote Procedure calls. The data is sent to
-	 * the received and a response is received immediately.
+	 * This method is used to make Remote Procedure calls. The data is sent to the
+	 * received and a response is received immediately.
+	 * 
 	 * @param receiverPort The port of the receiver socket
-	 * @param data The data to be sent
+	 * @param data         The data to be sent
 	 * @param senderSocket The socket for the data to be sent from
 	 * @return the data received from the receiver
 	 */
 	public byte[] rpc_send(int receiverPort, byte[] data) {
-		
+
 		ReturnData returnData;
 		DatagramSocket socket = null;
-		
+
 		try {
 			socket = new DatagramSocket(); // IntermediateHost send to Socket
 		} catch (SocketException se) { // Can't create the socket.
 			se.printStackTrace();
 		}
-		
+
 		send(receiverPort, data, socket);
 		returnData = receive(socket);
 
 		socket.close();
 		return returnData.getData();
 	}
-	
+
 	public byte[] rpc_send(int receiverPort, byte[] data, int timeout) {
-		
+
 		ReturnData returnData;
 		DatagramSocket socket = null;
-		
+
 		try {
 			socket = new DatagramSocket(); // IntermediateHost send to Socket
 			socket.setSoTimeout(timeout);
 		} catch (SocketException se) { // Can't create the socket.
 			se.printStackTrace();
 		}
-		
+
 		boolean timeOut = true;
 		do {
 			send(receiverPort, data, socket);
 			returnData = receive(socket);
-			
-			if(returnData.getPort() != -1) {
+
+			if (returnData.getPort() != -1) {
 				timeOut = false;
 			}
 
-		} while(timeOut);
+		} while (timeOut);
 
 		socket.close();
 		return returnData.getData();
 	}
-	
+
 	public byte[] rpc_send(int receiverPort, byte[] data, DatagramSocket socket) {
-		
+
 		ReturnData returnData;
-		
+
 		boolean timeOut = true;
 		do {
 			send(receiverPort, data, socket);
 			returnData = receive(socket);
-			
-			if(returnData.getPort() != -1) {
+
+			if (returnData.getPort() != -1) {
 				timeOut = false;
 			}
 
-		} while(timeOut);
+		} while (timeOut);
 
 		socket.close();
 		return returnData.getData();
 	}
-	
+
 	public static byte[] createACK() {
 		try {
 			return "ACK".getBytes(pac.getEncoding());
@@ -243,4 +243,3 @@ public class Network {
 		return null;
 	}
 }
-

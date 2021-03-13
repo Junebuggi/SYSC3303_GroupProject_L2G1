@@ -5,7 +5,7 @@ package ElevatorProject;
  * indicates the direction of the elevator. It has a direction and status of on
  * or off.
  * 
- * @author Emma Boulay [iteration 3]
+ * @author Emma Boulay [Iteration 3]
  *
  */
 public class DirectionLamp {

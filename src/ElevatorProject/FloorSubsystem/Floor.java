@@ -14,7 +14,7 @@ import ElevatorProject.FloorSubsystem.FloorButton.Direction;
  * elevator arrival.
  * 
  * @author rutvikshah
- * @author Emma Boulay
+ * @author Emma Boulay [Iteration 3]
  * 
  *         SYSC 3303 L2 Group 1
  * @version 1.0

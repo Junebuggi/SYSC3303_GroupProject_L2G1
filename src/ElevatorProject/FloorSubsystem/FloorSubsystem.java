@@ -24,16 +24,18 @@ import ElevatorProject.Information;
 import ElevatorProject.Network;
 
 /**
- * This is the Floor Subsystem class. This will create all the floors for the subystem to
- * control and will read in all the floorRequests from a file and then send these requests
- * to the scheduler with the appropriate delay between them.
+ * This is the Floor Subsystem class. This will create all the floors for the
+ * subystem to control and will read in all the floorRequests from a file and
+ * then send these requests to the scheduler with the appropriate delay between
+ * them.
  * 
  * @author Emma Boulay [Iteration 3]
  *
  */
 public class FloorSubsystem extends Network implements Runnable {
 	// The input file that contains all the floor requests
-	private File inputFile = new File(System.getProperty("user.dir") + "/src/ElevatorProject/FloorSubsystem/floorRequest.txt");
+	private File inputFile = new File(
+			System.getProperty("user.dir") + "/src/ElevatorProject/FloorSubsystem/floorRequest.txt");
 	SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss.SSS");
 
 	private int schedulerPort;
@@ -180,7 +182,7 @@ public class FloorSubsystem extends Network implements Runnable {
 				try {
 					int now = getMilli(curRequest.split(" ")[0]);
 					int nextTime = getMilli(requests.get(0).split(" ")[0]);
-					Thread.sleep((int) ((nextTime - now)*(Information.TIME_MULTIPLIER)));
+					Thread.sleep((int) ((nextTime - now) * (Information.TIME_MULTIPLIER)));
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
