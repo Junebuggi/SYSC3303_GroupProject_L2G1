@@ -26,7 +26,7 @@ public class Network {
 	 * 
 	 * @author Emma Boulay
 	 */
-	protected class ReturnData {
+	public class ReturnData {
 		private int port; // Port of the sender
 		private byte[] data; // Data received
 

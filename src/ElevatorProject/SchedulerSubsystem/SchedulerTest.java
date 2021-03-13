@@ -9,7 +9,7 @@
  * @version 1.0
  */
 
-package ElevatorProject;
+package ElevatorProject.SchedulerSubsystem;
 
 import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;

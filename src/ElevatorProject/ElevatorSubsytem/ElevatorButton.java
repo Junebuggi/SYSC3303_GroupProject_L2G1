@@ -1,4 +1,4 @@
-package ElevatorProject;
+package ElevatorProject.ElevatorSubsytem;
 
 public class ElevatorButton {
 	private final int btnNumber;

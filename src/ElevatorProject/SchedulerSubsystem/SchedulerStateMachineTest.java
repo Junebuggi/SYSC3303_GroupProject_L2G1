@@ -1,4 +1,4 @@
-package ElevatorProject;
+package ElevatorProject.SchedulerSubsystem;
 
 import static org.junit.Assert.assertEquals;
 

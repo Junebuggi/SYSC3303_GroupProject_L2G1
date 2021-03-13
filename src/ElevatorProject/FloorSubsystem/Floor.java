@@ -1,9 +1,12 @@
-package ElevatorProject;
+package ElevatorProject.FloorSubsystem;
 
 import java.io.UnsupportedEncodingException;
 import java.net.DatagramSocket;
 import java.net.SocketException;
-import ElevatorProject.FloorButton.Direction;
+
+import ElevatorProject.DirectionLamp;
+import ElevatorProject.Network;
+import ElevatorProject.FloorSubsystem.FloorButton.Direction;
 
 /**
  * The floor class models a floor that has nShaft elevator shafts with an up or
@@ -162,8 +165,8 @@ public class Floor extends Network implements Runnable {
 		} catch (UnsupportedEncodingException e1) {
 			e1.printStackTrace();
 		}
-		// Keep trying to connect with the scheduler with a 500ms timeout
-		rpc_send(schedulerPort, initMsg, 500);
+		// Keep trying to connect with the scheduler with a 2000ms timeout
+		rpc_send(schedulerPort, initMsg, 2000);
 
 	}
 	

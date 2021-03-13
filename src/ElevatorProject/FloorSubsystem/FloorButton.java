@@ -1,4 +1,4 @@
-package ElevatorProject;
+package ElevatorProject.FloorSubsystem;
 
 public class FloorButton {
 	

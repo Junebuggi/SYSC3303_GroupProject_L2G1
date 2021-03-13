@@ -12,13 +12,15 @@
  * @version 1.0
  */
 
-package ElevatorProject;
+package ElevatorProject.FloorSubsystem;
 
 
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
+
+import ElevatorProject.Network;
 
 public class Floor1 extends Network implements Runnable{
 	private static SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss.SSS");

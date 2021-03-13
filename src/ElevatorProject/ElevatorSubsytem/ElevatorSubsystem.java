@@ -1,8 +1,10 @@
-package ElevatorProject;
+package ElevatorProject.ElevatorSubsytem;
 
 import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.util.Arrays;
+
+import ElevatorProject.Network;
 
 public class ElevatorSubsystem extends Network implements Runnable{
 	
@@ -38,7 +40,7 @@ public class ElevatorSubsystem extends Network implements Runnable{
 		String initMsg = ("elevatorInit " + elevators.length +  " " + sockets[0].getLocalPort());
 
 		System.out.println(initMsg);
-		rpc_send(schedulerPort, pac.toBytes(initMsg), 500);
+		rpc_send(schedulerPort, pac.toBytes(initMsg), 2000);
 		
 	}
 	

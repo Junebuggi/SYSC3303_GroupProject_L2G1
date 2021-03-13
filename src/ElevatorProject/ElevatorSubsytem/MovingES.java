@@ -1,6 +1,6 @@
-package ElevatorProject;
+package ElevatorProject.ElevatorSubsytem;
 
-import ElevatorProject.Elevator.Motor;
+import ElevatorProject.ElevatorSubsytem.Elevator.Motor;
 
 /**
  * MovingES.java
@@ -37,38 +37,37 @@ public class MovingES implements ElevatorState {
 	public void Moving() {
 		System.out.println("ELEVATOR" + elevator.getElevatorNumber() + " STATE: MOVING");
 		System.out.println("Elevator" + elevator.getElevatorNumber() + " is moving.");
+		
 		int nextFloor = elevator.getNextFloor();
 		elevator.setMotorState(elevator.getDirection(nextFloor));
-		System.out.println("For Elevator" + elevator.getElevatorNumber() + " Next floor: " + nextFloor);
+		
 		while(nextFloor != elevator.getCurrentFloor()) {
+			
+			if(moveFloor() == -1) {
+				StopMoving();
+				return;
+			};
 		// Takes 5 seconds (arbitrary) to arrive to floor
 			try {
-				Thread.sleep(5000);
+				Thread.sleep(50);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		
+			//This will decrease or increase the current floor by 1 depending on motor direction.
 
-			moveFloor();
 			
 			System.out.println("Elevator" + elevator.getElevatorNumber() + " approaching floor " + elevator.getCurrentFloor());
 			System.out.println("Elevator" + elevator.getElevatorNumber() + " arrival sensor is informing scheduler\n");
 			String[] returnMessage = elevator.arrivalSensor(elevator.getCurrentFloor(), elevator.getElevatorNumber(), elevator.getMotorDirection().toString());
-			elevator.TurnOffButtonLamp(elevator.getCurrentFloor());
+						
 			if(!returnMessage[0].equals("ACK") && returnMessage.length == 5){
 				System.out.println("Elevator" + elevator.getElevatorNumber() + ": request at this floor");
 				int floorButton = Integer.valueOf(returnMessage[4]);
 				elevator.ButtonPress(floorButton);
 				elevator.addFloorToVisit(floorButton);
-				StopMoving();	
-			}
-			
-			nextFloor = elevator.getNextFloor();
-			elevator.setMotorState(elevator.getDirection(nextFloor));
-			if(elevator.getMovingState().toString().equals("IDLE")) {
 				StopMoving();
-				break;
+				return;
 			}
 			
 		}
@@ -81,16 +80,19 @@ public class MovingES implements ElevatorState {
 		elevator.TurnOffDirectionLamp(elevator.getMotorDirection().toString());
 		elevator.setMotorState("IDLE");
 		elevator.OpenDoors();
-		System.out.println();
 		
 		// Change Elevator to ARRIVED state
 		elevator.setState(elevator.getArrivedState());
 	}
 	
-	private void moveFloor() {
+	private int moveFloor() {
 		int newFloor = elevator.getCurrentFloor();
-		if(newFloor == elevator.getMaxFloor()) {
-			return;
+		
+		if(newFloor == elevator.getMaxFloor() && elevator.getMotorDirection().equals("UP")) {
+			return -1;
+		}
+		if(newFloor == 1 && elevator.getMotorDirection().equals("DOWN")) {
+			return -1;
 		}
 		if(elevator.getMotorDirection().equals(Motor.UP)) {
 			newFloor++;
@@ -99,6 +101,8 @@ public class MovingES implements ElevatorState {
 			newFloor--;
 		
 		elevator.setCurrentFloor(newFloor);
+		
+		return 1;
 		
 	}
 

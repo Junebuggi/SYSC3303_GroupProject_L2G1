@@ -11,7 +11,7 @@
  * @version 1.0
  */
 
-package ElevatorProject;
+package ElevatorProject.FloorSubsystem;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
@@ -20,9 +20,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import ElevatorProject.Network;
+
 public class FloorSubsystem extends Network implements Runnable {
 	// The input file that contains all the floor requests
-	private File inputFile = new File(System.getProperty("user.dir") + "/src/ElevatorProject/floorRequest.txt");
+	private File inputFile = new File(System.getProperty("user.dir") + "/src/ElevatorProject/FloorSubsystem/floorRequest.txt");
 	SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss.SSS");
 
 	private int schedulerPort;
@@ -169,7 +171,7 @@ public class FloorSubsystem extends Network implements Runnable {
 				try {
 					int now = getMilli(curRequest.split(" ")[0]);
 					int nextTime = getMilli(requests.get(0).split(" ")[0]);
-					Thread.sleep((int) ((nextTime - now)));
+					Thread.sleep((int) ((nextTime - now)*(0.01)));
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -188,7 +190,7 @@ public class FloorSubsystem extends Network implements Runnable {
 		int nFloors = 7;
 		int nShafts = 4;
 		int schedulerPort = 23;
-		int timeout = 500; // in milliseconds
+		int timeout = 2000; // in milliseconds
 
 		new Thread(new FloorSubsystem(nFloors, nShafts, schedulerPort, timeout), "FloorSubsystem").start();
 

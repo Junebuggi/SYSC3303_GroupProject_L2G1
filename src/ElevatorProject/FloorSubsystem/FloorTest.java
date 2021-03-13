@@ -9,7 +9,7 @@
  * @version 1.0
  */
 
-package ElevatorProject;
+package ElevatorProject.FloorSubsystem;
 
 public class FloorTest {
 

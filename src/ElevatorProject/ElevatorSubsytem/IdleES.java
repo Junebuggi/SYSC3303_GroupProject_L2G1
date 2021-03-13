@@ -1,4 +1,4 @@
-package ElevatorProject;
+package ElevatorProject.ElevatorSubsytem;
 
 /**
  * IdleES.java
@@ -31,17 +31,26 @@ public class IdleES implements ElevatorState{
 	@Override
 	public void Moving() {
 		System.out.println("\n" + "Elevator" + elevator.getElevatorNumber() + " STATE: IDLE");
+		//Entry action
 		elevator.setMotorState("IDLE");
 		elevator.setDoorState("OPEN");
 		
 		elevator.arrivalSensor(elevator.getCurrentFloor(), elevator.getElevatorNumber(), elevator.getMotorDirection().toString());
-
+		
+		//The elevator will wait until floorsToVisit is no longer empty
 		int nextFloor = elevator.getNextFloor();
 		
 		System.out.println("Elevator" + elevator.getElevatorNumber() + ": requested at floor : " + nextFloor);
-		elevator.CloseDoors();
+		
 		String motorDirection = elevator.getDirection(nextFloor);
+		
+		//Elevator is already at floor
+		if(motorDirection.equals("IDLE")) {
+			System.out.println("Elevator" + elevator.getElevatorNumber() + ": Switching to Arrived state\n");
+			elevator.setState(elevator.getArrivedState());
+		}
 		System.out.println("Elevator" + elevator.getElevatorNumber() + " Turning on the " + motorDirection + " direction lamp");
+		elevator.CloseDoors();
 		elevator.TurnOnDirectionLamp(motorDirection);
 		elevator.setMotorState(motorDirection);
 				

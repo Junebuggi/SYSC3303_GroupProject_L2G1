@@ -11,7 +11,7 @@
  * (Group 1 - SYSC 3303 L2)
  *
  */
-package ElevatorProject;
+package ElevatorProject.SchedulerSubsystem;
 
 import java.io.UnsupportedEncodingException;
 import java.net.DatagramSocket;
@@ -19,6 +19,8 @@ import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+
+import ElevatorProject.Network;
 
 public class Scheduler extends Network {
 
@@ -95,7 +97,7 @@ public class Scheduler extends Network {
 			return Network.createACK();
 	}
 	
-	private String checkIfRequestPendingAtFloor(int floor, String direction) {
+	private synchronized String checkIfRequestPendingAtFloor(int floor, String direction) {
 		
 		for(int i = 0; i < workRequests.size(); i++) {
 			System.out.println("Floor: " + floor + " Direction: " + direction);

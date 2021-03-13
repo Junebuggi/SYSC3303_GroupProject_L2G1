@@ -1,11 +1,15 @@
-package ElevatorProject;
+package ElevatorProject.ElevatorSubsytem;
 
 import java.io.UnsupportedEncodingException;
+import ElevatorProject.DirectionLamp;
+import ElevatorProject.Information;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+
+import ElevatorProject.Network;
 
 /**
  * Elevator.java
@@ -157,22 +161,6 @@ public class Elevator extends Network implements Runnable {
 	}
 
 	/**
-	 * Method to move the elevator.
-	 */
-	public void move(int floor) {
-		//this.stationary = false;
-		int numFloorsToTravel = Math.abs(currentFloor - floor);
-		System.out.println("Elevator is moving to floor " + floor);
-		try {
-			Thread.sleep(Information.TRAVEL_TIME_PER_FLOOR * numFloorsToTravel);
-		} catch (InterruptedException e) {
-			System.err.println(e);
-		}
-		currentFloor = floor;
-		//this.stationary = true;
-	}
-
-	/**
 	 * This method implements the arrival sensor. It will send the arrivalSensor to the scheduler using 
 	 * an RPC method. 
 	 * 
@@ -307,9 +295,11 @@ public class Elevator extends Network implements Runnable {
 
 			for (int i = 0; i < dest.size(); i++) {
 				floorsToVisit.add(dest.get(i));
+				this.ButtonPress(dest.get(i));
 				
 			}
 		}
+		floorDestinations.remove(floor);
 	}
 	
 	/**
@@ -325,10 +315,7 @@ public class Elevator extends Network implements Runnable {
 	 * @param floor The new floor of the elevator
 	 */
 	public void setCurrentFloor(int floor) {
-		System.out.println("Current Floor: " + currentFloor);
 		this.currentFloor = floor;
-		System.out.println("New Floor: " + currentFloor);
-		
 	}
 	
 	/**
@@ -361,13 +348,15 @@ public class Elevator extends Network implements Runnable {
 	 * @param floor The floor the elevator just arrived at.
 	 */
 	public void arrivingAtFloor(int floor) {
+		moveDestToFloorsToVisit(floor);
+		TurnOffButtonLamp(floor);
 		for (Iterator<Integer> i = floorsToVisit.iterator(); i.hasNext();) {
 			Integer number = i.next();
 			if (number == floor) {
 				i.remove();
 			}
 		}
-		moveDestToFloorsToVisit(floor);
+		
 	}
 	
 	/**
@@ -400,12 +389,12 @@ public class Elevator extends Network implements Runnable {
 	
 	public void TurnOnDirectionLamp(String direction) {
 		getDirectionLamp(direction).setLamp("ON");
-		System.out.println("Elevator" + getElevatorNumber() +  " " + direction + " button lamp on.");
+		System.out.println("Elevator" + getElevatorNumber() +  " " + direction + " direction lamp on.");
 	}
 	
 	public void TurnOffDirectionLamp(String direction) {
 		getDirectionLamp(direction).setLamp("OFF");
-		System.out.println("Elevator" + getElevatorNumber() +  " " + direction + " button lamp off.");
+		System.out.println("Elevator" + getElevatorNumber() +  " " + direction + " direction lamp off.");
 	}
 	
 	

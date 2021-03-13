@@ -14,6 +14,10 @@ package ElevatorProject;
 
 import java.util.Random;
 
+import ElevatorProject.ElevatorSubsytem.Elevator;
+import ElevatorProject.FloorSubsystem.Floor;
+import ElevatorProject.SchedulerSubsystem.Scheduler;
+
 public class ElevatorSystem {
 
 	private static Random rand = new Random();

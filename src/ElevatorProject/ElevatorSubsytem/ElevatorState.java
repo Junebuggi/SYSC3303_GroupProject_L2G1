@@ -1,4 +1,4 @@
-package ElevatorProject;
+package ElevatorProject.ElevatorSubsytem;
 
 /**
  * ElevatorState.java

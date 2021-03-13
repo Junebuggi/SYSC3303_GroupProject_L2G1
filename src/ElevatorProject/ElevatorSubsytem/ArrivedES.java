@@ -1,4 +1,4 @@
-package ElevatorProject;
+package ElevatorProject.ElevatorSubsytem;
 
 /**
  * ArrivedES.java
@@ -31,16 +31,13 @@ public class ArrivedES implements ElevatorState{
 	@Override
 	public void Moving() {
 		
-		elevator.arrivingAtFloor(elevator.getCurrentFloor());
 		System.out.println("\n" + "Elevator" + elevator.getElevatorNumber() + " STATE: ARRIVED");
-		
-		int floor = elevator.getCurrentFloor();
-		elevator.TurnOffButtonLamp(floor);
+		elevator.arrivingAtFloor(elevator.getCurrentFloor());
 		
 		elevator.setMotorState("IDLE");
+		elevator.arrivalSensor(elevator.getCurrentFloor(), elevator.getElevatorNumber(), elevator.getDirection(0));
 		
 		System.out.println("Elevator" + elevator.getElevatorNumber() + " Switching to IDLE state\n");
-		
 		elevator.setState(elevator.getIdleState());		
 	}
 

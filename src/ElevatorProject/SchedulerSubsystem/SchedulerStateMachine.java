@@ -10,11 +10,10 @@
  *
  */
 
-package ElevatorProject;
+package ElevatorProject.SchedulerSubsystem;
 
 import java.net.DatagramSocket;
 import java.net.SocketException;
-import java.util.Arrays;
 import ElevatorProject.Network.ReturnData;
 
 public class SchedulerStateMachine implements Runnable{
@@ -171,7 +170,7 @@ public class SchedulerStateMachine implements Runnable{
 	 */
 	public static void main(String[] args) {
 		
-		SchedulerStateMachine schedulerFSM = new SchedulerStateMachine("Scheduler", 23, 10000);
+		SchedulerStateMachine schedulerFSM = new SchedulerStateMachine("Scheduler", 23, 2000);
 		Thread schedulerElevatorThread = new Thread(schedulerFSM, "activeThread");
 		Thread schedulerFloorThread = new Thread(schedulerFSM, "listeningThread");
 		schedulerElevatorThread.start();
