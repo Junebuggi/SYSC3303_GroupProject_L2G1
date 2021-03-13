@@ -4,6 +4,7 @@ import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.util.Arrays;
 
+import ElevatorProject.Information;
 import ElevatorProject.Network;
 
 public class ElevatorSubsystem extends Network implements Runnable{
@@ -77,7 +78,11 @@ public class ElevatorSubsystem extends Network implements Runnable{
 	
 	public static void main(String[] args) {
 		
-		ElevatorSubsystem elevSys = new ElevatorSubsystem(4, 23, 7);
+		int nFloors = Information.NUM_FLOORS;
+		int nShafts = Information.NUM_FLOORS;
+		int schedulerPort = Information.SCHEDULER_PORT;
+		
+		ElevatorSubsystem elevSys = new ElevatorSubsystem(nShafts, schedulerPort, nFloors);
 		Thread elevSubThread = new Thread(elevSys, "Elevator Subsystem");
 		elevSubThread.start();
 	}

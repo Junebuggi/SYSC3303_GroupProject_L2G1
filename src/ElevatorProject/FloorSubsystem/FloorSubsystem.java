@@ -20,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import ElevatorProject.Information;
 import ElevatorProject.Network;
 
 public class FloorSubsystem extends Network implements Runnable {
@@ -171,7 +172,7 @@ public class FloorSubsystem extends Network implements Runnable {
 				try {
 					int now = getMilli(curRequest.split(" ")[0]);
 					int nextTime = getMilli(requests.get(0).split(" ")[0]);
-					Thread.sleep((int) ((nextTime - now)*(0.01)));
+					Thread.sleep((int) ((nextTime - now)*(Information.TIME_MULTIPLIER)));
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}
@@ -187,9 +188,9 @@ public class FloorSubsystem extends Network implements Runnable {
 	 */
 	public static void main(String[] args) {
 
-		int nFloors = 7;
-		int nShafts = 4;
-		int schedulerPort = 23;
+		int nFloors = Information.NUM_FLOORS;
+		int nShafts = Information.NUM_FLOORS;
+		int schedulerPort = Information.SCHEDULER_PORT;
 		int timeout = 2000; // in milliseconds
 
 		new Thread(new FloorSubsystem(nFloors, nShafts, schedulerPort, timeout), "FloorSubsystem").start();

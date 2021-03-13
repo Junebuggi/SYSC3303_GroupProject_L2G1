@@ -1,5 +1,6 @@
 package ElevatorProject.ElevatorSubsytem;
 
+import ElevatorProject.Information;
 import ElevatorProject.ElevatorSubsytem.Elevator.Motor;
 
 /**
@@ -49,7 +50,7 @@ public class MovingES implements ElevatorState {
 			};
 		// Takes 5 seconds (arbitrary) to arrive to floor
 			try {
-				Thread.sleep(50);
+				Thread.sleep(Information.TRAVEL_TIME_PER_FLOOR);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
