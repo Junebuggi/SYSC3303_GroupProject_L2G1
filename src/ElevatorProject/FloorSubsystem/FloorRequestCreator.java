@@ -65,9 +65,9 @@ public class FloorRequestCreator{
 	
 
 
-public static void main(String[] args) {
-	printFloorRequest(Information.NUM_FLOORS, Information.NUM_ELEVATOR, 100);
-}
+	public static void main(String[] args) {
+		printFloorRequest(Information.NUM_FLOORS, Information.NUM_ELEVATORS, 100);
+	}
 }
 
 

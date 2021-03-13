@@ -15,11 +15,11 @@ package ElevatorProject;
 public class Information {
 	
 	public static final Integer NUM_FLOORS = 35;
-	public static final Integer NUM_ELEVATOR = 10;
+	public static final Integer NUM_ELEVATORS = 10;
 	
 	public static final Integer SCHEDULER_PORT = 23;
 	
-	public static final double TIME_MULTIPLIER = 0.01;
+	public static final double TIME_MULTIPLIER = 0.1;
 	
 	//Time measured and averaged in Iteration 0 (unit: milliseconds)
 	public static final Integer TRAVEL_TIME_PER_FLOOR = (int) (9500 * TIME_MULTIPLIER);

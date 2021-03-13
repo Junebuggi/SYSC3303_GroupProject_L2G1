@@ -180,7 +180,6 @@ public class SchedulerStateMachine implements Runnable{
 		schedulerElevatorThread.start();
 		schedulerFloorThread.start();
 		
-
 	}
 
 }

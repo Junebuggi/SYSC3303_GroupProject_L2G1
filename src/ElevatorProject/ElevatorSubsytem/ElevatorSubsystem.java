@@ -7,17 +7,40 @@ import java.util.Arrays;
 import ElevatorProject.Information;
 import ElevatorProject.Network;
 
+/**
+ * This class controls the elevators in the system. It will receive requests
+ * from the scheduler at an initialized port and will pass the request on to
+ * the appropriate elevator.
+ * 
+ * @author Emma Boulay [Iteration 3]
+ *
+ */
 public class ElevatorSubsystem extends Network implements Runnable{
 	
 	private Elevator[] elevators;
 	private int schedulerPort;
 	
+	/**
+	 * The constructor method
+	 * 
+	 * @param nCars the number of elevators the system has
+	 * @param schedulerPort The port the scheduler is listening on
+	 * @param nFloors the number of floors the system has
+	 */
 	public ElevatorSubsystem(int nCars, int schedulerPort, int nFloors) {
 		this.schedulerPort = schedulerPort;
 		sockets = new DatagramSocket[1];
 		createCars(nCars, schedulerPort, nFloors);
 	}
 	
+	/**
+	 * This method constructs all the necessary elevators for the elevator subsystem
+	 * to control
+	 * 
+	 * @param nCars the number of elevators the system has
+	 * @param schedulerPort The port the scheduler is listening on
+	 * @param nFloors the number of floors the system has
+	 */
 	public void createCars(int nCars, int schedulerPort, int nFloors) {
 		elevators = new Elevator[nCars];
 		
@@ -27,8 +50,11 @@ public class ElevatorSubsystem extends Network implements Runnable{
 
 		}
 	}
-
 	
+	/**
+	 * This method will initialize the port the elevator subsystem is listening and 
+	 * communicate this to the scheduler.
+	 */
 	public void setUp() {
 		
 		try {
@@ -45,7 +71,11 @@ public class ElevatorSubsystem extends Network implements Runnable{
 		
 	}
 	
-	
+	/**
+	 * This is the run method for the elevator subsystem. It will first setup the subsystem
+	 * and wait to receive data from the scheduler. When it receives a floorRequest it will
+	 * add that request to an elevators queue.
+	 */
 	@Override
 	public void run() {
 		boolean running = true;
@@ -76,10 +106,14 @@ public class ElevatorSubsystem extends Network implements Runnable{
 		
 	}
 	
+	/**
+	 * This is the main method. It will create all the necessary threads and start them
+	 * @param args
+	 */
 	public static void main(String[] args) {
 		
 		int nFloors = Information.NUM_FLOORS;
-		int nShafts = Information.NUM_FLOORS;
+		int nShafts = Information.NUM_ELEVATORS;
 		int schedulerPort = Information.SCHEDULER_PORT;
 		
 		ElevatorSubsystem elevSys = new ElevatorSubsystem(nShafts, schedulerPort, nFloors);

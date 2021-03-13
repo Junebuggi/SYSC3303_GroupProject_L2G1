@@ -23,6 +23,14 @@ import java.util.Scanner;
 import ElevatorProject.Information;
 import ElevatorProject.Network;
 
+/**
+ * This is the Floor Subsystem class. This will create all the floors for the subystem to
+ * control and will read in all the floorRequests from a file and then send these requests
+ * to the scheduler with the appropriate delay between them.
+ * 
+ * @author Emma Boulay [Iteration 3]
+ *
+ */
 public class FloorSubsystem extends Network implements Runnable {
 	// The input file that contains all the floor requests
 	private File inputFile = new File(System.getProperty("user.dir") + "/src/ElevatorProject/FloorSubsystem/floorRequest.txt");
@@ -189,7 +197,7 @@ public class FloorSubsystem extends Network implements Runnable {
 	public static void main(String[] args) {
 
 		int nFloors = Information.NUM_FLOORS;
-		int nShafts = Information.NUM_FLOORS;
+		int nShafts = Information.NUM_ELEVATORS;
 		int schedulerPort = Information.SCHEDULER_PORT;
 		int timeout = 2000; // in milliseconds
 
