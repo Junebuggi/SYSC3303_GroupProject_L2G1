@@ -1,5 +1,7 @@
 package ElevatorProject.ElevatorSubsytem;
 
+import java.awt.Color;
+
 import ElevatorProject.Information;
 import ElevatorProject.ElevatorSubsytem.Elevator.Motor;
 
@@ -36,8 +38,11 @@ public class MovingES implements ElevatorState {
 	 */
 	@Override
 	public void Moving() {
-		System.out.println("ELEVATOR" + elevator.getElevatorNumber() + " STATE: MOVING");
-		System.out.println("Elevator" + elevator.getElevatorNumber() + " is moving.");
+		if(!elevator.printFlag)
+			elevator.transcript.setBackground( Color.decode("#e9d8f2")); //Light purple
+		
+		elevator.appendText("ELEVATOR" + elevator.getElevatorNumber() + " STATE: MOVING\n", elevator.printFlag);
+		elevator.appendText("Elevator" + elevator.getElevatorNumber() + " is moving\n", elevator.printFlag);
 
 		int nextFloor = elevator.getNextFloor();
 		elevator.setMotorState(elevator.getDirection(nextFloor));
@@ -59,9 +64,9 @@ public class MovingES implements ElevatorState {
 			}
 
 			// Approaching floor, arrival sensor is triggered and informing the scheduler
-			System.out.println(
-					"Elevator" + elevator.getElevatorNumber() + " approaching floor " + elevator.getCurrentFloor());
-			System.out.println("Elevator" + elevator.getElevatorNumber() + " arrival sensor is informing scheduler\n");
+			elevator.appendText(
+					"Elevator" + elevator.getElevatorNumber() + " approaching floor " + elevator.getCurrentFloor() + "\n", elevator.printFlag);
+			elevator.appendText("Elevator" + elevator.getElevatorNumber() + " arrival sensor is informing scheduler\n\n", elevator.printFlag);
 			// The scheduler will inform the elevator if it should stop at this floor
 			String[] returnMessage = elevator.arrivalSensor(elevator.getCurrentFloor(), elevator.getElevatorNumber(),
 					elevator.getMotorDirection().toString());
@@ -69,7 +74,7 @@ public class MovingES implements ElevatorState {
 			// If it should stop, it will stop, open doors and passengers will press their
 			// elevator buttons
 			if (!returnMessage[0].equals("ACK") && returnMessage.length == 5) {
-				System.out.println("Elevator" + elevator.getElevatorNumber() + ": request at this floor");
+				elevator.appendText("Elevator" + elevator.getElevatorNumber() + ": request at this floor\n", elevator.printFlag);
 				int floorButton = Integer.valueOf(returnMessage[4]);
 				elevator.ButtonPress(floorButton);
 				elevator.addFloorToVisit(floorButton);
@@ -78,7 +83,7 @@ public class MovingES implements ElevatorState {
 			}
 
 		}
-		System.out.println("Elevator" + elevator.getElevatorNumber() + " Switching to ARRIVED state\n");
+		elevator.appendText("Elevator" + elevator.getElevatorNumber() + " Switching to ARRIVED state\n\n", elevator.printFlag);
 		StopMoving();
 	}
 
@@ -87,11 +92,7 @@ public class MovingES implements ElevatorState {
 	 * and switch to the arrived state
 	 */
 	private void StopMoving() {
-		System.out.println("Elevator" + elevator.getElevatorNumber() + " has stopped, arriving at destination.");
-		elevator.TurnOffDirectionLamp(elevator.getMotorDirection().toString());
-		elevator.setMotorState("IDLE");
-		elevator.OpenDoors();
-
+		elevator.appendText("Elevator" + elevator.getElevatorNumber() + " has stopped, arriving at destination\n", elevator.printFlag);
 		// Change Elevator to ARRIVED state
 		elevator.setState(elevator.getArrivedState());
 	}

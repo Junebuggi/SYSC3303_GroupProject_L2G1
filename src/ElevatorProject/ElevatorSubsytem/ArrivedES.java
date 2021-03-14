@@ -1,5 +1,7 @@
 package ElevatorProject.ElevatorSubsytem;
 
+import java.awt.Color;
+
 /**
  * ArrivedES.java
  * 
@@ -28,14 +30,18 @@ public class ArrivedES implements ElevatorState {
 
 	@Override
 	public void Moving() {
+		if(!elevator.printFlag)
+			elevator.transcript.setBackground( Color.decode("#c3e4e8") );
 
-		System.out.println("\n" + "Elevator" + elevator.getElevatorNumber() + " STATE: ARRIVED");
-		elevator.arrivingAtFloor(elevator.getCurrentFloor());
-
+		elevator.appendText("\n" + "Elevator" + elevator.getElevatorNumber() + " STATE: ARRIVED\n", elevator.printFlag);
+		elevator.TurnOffDirectionLamp(elevator.getMotorDirection().toString());
 		elevator.setMotorState("IDLE");
+		elevator.OpenDoors();
+		
+		elevator.arrivingAtFloor(elevator.getCurrentFloor());
 		elevator.arrivalSensor(elevator.getCurrentFloor(), elevator.getElevatorNumber(), elevator.getDirection(0));
 
-		System.out.println("Elevator" + elevator.getElevatorNumber() + " Switching to IDLE state\n");
+		elevator.appendText("Elevator" + elevator.getElevatorNumber() + " Switching to IDLE state\n\n", elevator.printFlag);
 		elevator.setState(elevator.getIdleState());
 	}
 

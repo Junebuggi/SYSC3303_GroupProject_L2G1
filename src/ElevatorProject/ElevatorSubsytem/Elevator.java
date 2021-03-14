@@ -9,6 +9,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import javax.swing.JFrame;
+import javax.swing.JTextArea;
+
 import ElevatorProject.Network;
 
 /**
@@ -36,6 +39,8 @@ public class Elevator extends Network implements Runnable {
 
 	// Current Elevator State
 	private ElevatorState elevatorState;
+	
+	JTextArea transcript;
 
 	// All Concrete Elevator States
 	private ElevatorState idle;
@@ -48,7 +53,8 @@ public class Elevator extends Network implements Runnable {
 	private Motor motor = Motor.IDLE;
 	private Door door = Door.OPEN;
 	private SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss.SSS");
-
+	protected boolean printFlag;
+	
 	public enum Motor {
 		UP, DOWN, IDLE;
 	}
@@ -74,12 +80,12 @@ public class Elevator extends Network implements Runnable {
 	 * @param schedulerPort  The port of the scheduler's listening thread
 	 * @param nFloors        The number of floors the building has
 	 */
-	public Elevator(int elevatorNumber, int schedulerPort, int nFloors) {
+	public Elevator(int elevatorNumber, int schedulerPort, int nFloors, boolean printFlag) {
 
 		this.elevatorNumber = elevatorNumber;
 		this.schedulerPort = schedulerPort;
 		this.nFloors = nFloors;
-
+		this.printFlag = printFlag;
 		btns = createButtons();
 		dirLamps = new DirectionLamp[] { new DirectionLamp("UP"), new DirectionLamp("DOWN") };
 
@@ -91,6 +97,13 @@ public class Elevator extends Network implements Runnable {
 		// Default State to Idle
 		elevatorState = idle;
 
+	}
+	
+	public Elevator(int elevatorNumber, int schedulerPort, int nFloors, JTextArea transcript, boolean printFlag) {
+
+		this(elevatorNumber, schedulerPort, nFloors, printFlag);
+		this.transcript = transcript;
+	
 	}
 
 	/**
@@ -392,7 +405,7 @@ public class Elevator extends Network implements Runnable {
 	 */
 	public void TurnOffButtonLamp(int btnNumber) {
 		getElevatorButton(btnNumber).setLampState("OFF");
-		System.out.println("Elevator" + getElevatorNumber() + " button " + btnNumber + " lamp off.");
+		appendText("Elevator" + getElevatorNumber() + " button " + btnNumber + " lamp off.\n", printFlag);
 	}
 
 	/**
@@ -402,7 +415,7 @@ public class Elevator extends Network implements Runnable {
 	 * @param floorLevel The button to be turned off
 	 */
 	public void ButtonPress(int floorLevel) {
-		System.out.println("Elevator" + getElevatorNumber() + " Button: " + floorLevel + ", has been pressed");
+		appendText("Elevator" + getElevatorNumber() + " Button: " + floorLevel + ", has been pressed\n", printFlag);
 		TurnOnButtonLamp(floorLevel); // Illuminate the designated floor button
 	}
 
@@ -414,7 +427,7 @@ public class Elevator extends Network implements Runnable {
 	 */
 	public void TurnOnButtonLamp(int btnNumber) {
 		getElevatorButton(btnNumber).setLampState("ON");
-		System.out.println("Elevator" + getElevatorNumber() + " button " + btnNumber + " lamp on.");
+		appendText("Elevator" + getElevatorNumber() + " button " + btnNumber + " lamp on\n", printFlag);
 
 	}
 
@@ -425,7 +438,7 @@ public class Elevator extends Network implements Runnable {
 	 */
 	public void TurnOnDirectionLamp(String direction) {
 		getDirectionLamp(direction).setLamp("ON");
-		System.out.println("Elevator" + getElevatorNumber() + " " + direction + " direction lamp on.");
+		appendText("Elevator" + getElevatorNumber() + " " + direction + " direction lamp on\n", printFlag);
 	}
 
 	/**
@@ -435,35 +448,35 @@ public class Elevator extends Network implements Runnable {
 	 */
 	public void TurnOffDirectionLamp(String direction) {
 		getDirectionLamp(direction).setLamp("OFF");
-		System.out.println("Elevator" + getElevatorNumber() + " " + direction + " direction lamp off.");
+		appendText("Elevator" + getElevatorNumber() + " " + direction + " direction lamp off\n", printFlag);
 	}
 
 	/**
 	 * This method simulates closing the elevator doors
 	 */
 	public void CloseDoors() {
-		System.out.println("Elevator" + getElevatorNumber() + " door closing.");
+		appendText("Elevator" + getElevatorNumber() + " door closing\n", printFlag);
 		try {
 			Thread.sleep(Information.TIME_CLOSE_DOOR);
 		} catch (InterruptedException e) {
 			System.err.println(e);
 		}
 		setDoorState("CLOSE");
-		System.out.println("Elevator" + getElevatorNumber() + " door closed.");
+		appendText("Elevator" + getElevatorNumber() + " door closed\n", printFlag);
 	}
 
 	/**
 	 * This method simulates opening the elevator doors
 	 */
 	public void OpenDoors() {
-		System.out.println("Elevator" + getElevatorNumber() + " door opening.");
+		appendText("Elevator" + getElevatorNumber() + " door opening\n", printFlag);
 		try {
 			Thread.sleep(Information.TIME_OPEN_DOOR);
 		} catch (InterruptedException e) {
 			System.err.println(e);
 		}
 		setDoorState("OPEN");
-		System.out.println("Elevator" + getElevatorNumber() + " door opened.");
+		appendText("Elevator" + getElevatorNumber() + " door opened\n", printFlag);
 
 	}
 
@@ -475,6 +488,21 @@ public class Elevator extends Network implements Runnable {
 	public int getMaxFloor() {
 		return this.nFloors;
 	}
+	
+	public void appendText(String str, boolean printFlag){
+		if(printFlag) {
+			System.out.print(str);
+		}else {
+			transcript.append(str);
+		    scrollDown();
+		}
+	  
+	}
+
+	public void scrollDown(){
+	    transcript.setCaretPosition(transcript.getText().length());
+	}
+
 
 	/**
 	 * Overrides the run method of the Runnable interface. The floor requests from
@@ -484,7 +512,7 @@ public class Elevator extends Network implements Runnable {
 	 */
 	@Override
 	public void run() {
-		System.out.println("Elevator " + elevatorNumber + " is set up and ready to go");
+		appendText("Elevator " + elevatorNumber + " is set up and ready to go", printFlag);
 
 		while (true)
 			this.elevatorState.Moving();

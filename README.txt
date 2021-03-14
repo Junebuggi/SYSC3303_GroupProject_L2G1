@@ -107,7 +107,7 @@ Scheduler.java
 	-> The Scheduler is responsible for handling incoming requests from the floor Subsystem and passing 		  
 	   requests to the elevator subsystem. This is done with the implementation of a state machine. 
 SchedulerStateMachine.java
-	-> The scheduler statemachine implements runnable and is in charge of implementing the state machine for 	  
+	-> The scheduler state machine implements runnable and is in charge of implementing the state machine for 	  
 	   the scheduler
 SchedulerStateMachineTest.java
 	-> This test class tests the state transitions of the state machine with how it interprets test data.
@@ -124,9 +124,19 @@ SchedulerTest.java
 	3. Run SchedulerStateMachineTest.java JUnit file to run unit test
 	4. Run ElevatorTest.java JUnit file to run unit test
  
-- NOTE
-
+- NOTE1
 	To create randomized floorRequests data, the user can run "FloorRequestCreator.java" 
 	to have floorRequsts printed into the console, in a chronological order in accordance with time.
 	The console output can then be copy and pasted in the "floorRequest.txt" file. The NUM_ELEVATORS
 	and NUM_FLOORS variables in Information.java can be modified to simulated desired system.
+
+- NOTE2
+	In the Information.java class there is a variable TIME_MULTIPLIER. It is used to change the speed of
+	execution. It currently is 0.1 so the system will run at 10 times the speed.
+
+
+
+
+
+
+	

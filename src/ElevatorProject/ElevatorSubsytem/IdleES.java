@@ -1,5 +1,7 @@
 package ElevatorProject.ElevatorSubsytem;
 
+import java.awt.Color;
+
 /**
  * IdleES.java
  * 
@@ -30,7 +32,10 @@ public class IdleES implements ElevatorState {
 
 	@Override
 	public void Moving() {
-		System.out.println("\n" + "Elevator" + elevator.getElevatorNumber() + " STATE: IDLE");
+		if(!elevator.printFlag)
+			elevator.transcript.setBackground( Color.decode("#d2e9af") ); //Light green
+		
+		elevator.appendText("\n" + "Elevator" + elevator.getElevatorNumber() + " STATE: IDLE\n", elevator.printFlag);
 		// Entry action
 		elevator.setMotorState("IDLE");
 		elevator.setDoorState("OPEN");
@@ -41,23 +46,23 @@ public class IdleES implements ElevatorState {
 		// The elevator will wait until floorsToVisit is no longer empty
 		int nextFloor = elevator.getNextFloor();
 
-		System.out.println("Elevator" + elevator.getElevatorNumber() + ": requested at floor : " + nextFloor);
+		elevator.appendText("Elevator" + elevator.getElevatorNumber() + ": requested at floor : " + nextFloor + "\n", elevator.printFlag);
 
 		String motorDirection = elevator.getDirection(nextFloor);
 
 		// Elevator is already at floor
 		if (motorDirection.equals("IDLE")) {
-			System.out.println("Elevator" + elevator.getElevatorNumber() + ": Switching to Arrived state\n");
+			elevator.appendText("Elevator" + elevator.getElevatorNumber() + ": Switching to Arrived state\n\n", elevator.printFlag);
 			elevator.setState(elevator.getArrivedState());
 		}
 		// Turn on direction lamp
-		System.out.println(
-				"Elevator" + elevator.getElevatorNumber() + " Turning on the " + motorDirection + " direction lamp");
+		elevator.appendText(
+				"Elevator" + elevator.getElevatorNumber() + " Turning on the " + motorDirection + " direction lamp\n", elevator.printFlag);
 		elevator.CloseDoors();
 		elevator.TurnOnDirectionLamp(motorDirection);
 		elevator.setMotorState(motorDirection);
 
-		System.out.println("Elevator" + elevator.getElevatorNumber() + ": Switching to MOVING state\n");
+		elevator.appendText("Elevator" + elevator.getElevatorNumber() + ": Switching to MOVING state\n\n", elevator.printFlag);
 		elevator.setState(elevator.getMovingState());
 	}
 
