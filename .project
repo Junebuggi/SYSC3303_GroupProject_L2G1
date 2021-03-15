@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>SYSC3303_Group_Project</name>
+	<name>L1G1_milestone_1</name>
 	<comment></comment>
 	<projects>
 	</projects>
 	<buildSpec>
-<<<<<<< HEAD
 		<buildCommand>
 			<name>org.eclipse.jdt.core.javabuilder</name>
 			<arguments>
@@ -14,9 +13,5 @@
 	</buildSpec>
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
-=======
-	</buildSpec>
-	<natures>
->>>>>>> branch 'main' of https://github.com/Hasan-Baig/SYSC3303_Group_Project.git
 	</natures>
 </projectDescription>

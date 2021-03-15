@@ -17,16 +17,12 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Floor implements Runnable{
-<<<<<<< HEAD
-=======
-	
-	//private final Integer NUMBER_OF_FLOORS = 7;
->>>>>>> branch 'main' of https://github.com/Hasan-Baig/SYSC3303_Group_Project.git
+
 	private Scheduler scheduler;
 	private int floorLevel;
 	private int floorButton;
 	private Information.directionLamp dirLamp = Information.directionLamp.NOT_PRESSED;
-	private File inputFile = new File(System.getProperty("user.dir") + "/ElevatorProject/floorRequest.txt");
+	private File inputFile = new File(System.getProperty("user.dir") + "/src/ElevatorProject/floorRequest.txt");
 	private ArrayList<String> requestList;
 	
 	/**
@@ -50,10 +46,8 @@ public class Floor implements Runnable{
 		ArrayList<String> requestList = new ArrayList<String>();
 		try {
 			Scanner scanner = new Scanner(inputFile);
-<<<<<<< HEAD
-=======
+
 			// Scan each line from the txt file and store it to the requestList
->>>>>>> branch 'main' of https://github.com/Hasan-Baig/SYSC3303_Group_Project.git
 			while(scanner.hasNextLine()) {
 				requestList.add(scanner.nextLine());
 			}
