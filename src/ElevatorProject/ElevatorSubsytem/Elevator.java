@@ -30,11 +30,6 @@ import ElevatorProject.Network;
  *         SYSC 3303 L2 Group 1
  * @version 1.0
  */
-
-/**
- * @author emmaboulay
- *
- */
 public class Elevator extends Network implements Runnable {
 
 	// Current Elevator State

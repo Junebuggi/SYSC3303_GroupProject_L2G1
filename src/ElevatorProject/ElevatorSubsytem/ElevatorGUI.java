@@ -19,6 +19,7 @@ public class ElevatorGUI extends JFrame{
 			ta = new JTextArea[Information.NUM_ELEVATORS];
 		    
 		    Box box = Box.createVerticalBox();
+		    JScrollPane mainPain = new JScrollPane(box, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		    for(int i = 0; i < Information.NUM_ELEVATORS; i++) {
 		    	ta[i] = new JTextArea(5,40);
 			    ta[i].setEditable(false);
@@ -28,9 +29,10 @@ public class ElevatorGUI extends JFrame{
 			        new JScrollPane(ta[i], JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
 			                        JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 			    pane1.setBorder(BorderFactory.createTitledBorder("Elevator " + (i+1)));
-			    box.add(pane1);
+			    mainPain.add(pane1);
 			   
 		    }
+		    //box.add(mainPain);
 		    getContentPane().add(box);
 		    
 		}
