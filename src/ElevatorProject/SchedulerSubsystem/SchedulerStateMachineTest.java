@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.UnsupportedEncodingException;
 import java.util.Arrays;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ElevatorProject.Network;
 /**
@@ -62,6 +63,9 @@ class SchedulerStateMachineTest extends Network{
 			e.printStackTrace();
 		}
 		
+		assertEquals(underTest.getState().equals(SchedulerStateMachine.State.WAIT_FOR_REQUEST),true);
+		
+		
 	}
 	
 	/**
@@ -92,6 +96,7 @@ class SchedulerStateMachineTest extends Network{
 		//Once an ACK is received, assert that it is as expected
 		assertEquals(Arrays.equals(returnData, "ACK".getBytes(pac.getEncoding())), true);
 		
+		
 	}
 	
 	/**
@@ -102,7 +107,7 @@ class SchedulerStateMachineTest extends Network{
 	@Test
 	public void testStartUp() throws Throwable{
 		//Test that all threads startup as expected
-		int receiverPort = 24;
+		int receiverPort = 25;
 		setUpThreads(receiverPort);
 	}
 	

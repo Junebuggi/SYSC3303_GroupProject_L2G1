@@ -46,7 +46,7 @@ public class MovingES implements ElevatorState {
 
 		int nextFloor = elevator.getNextFloor();
 		elevator.setMotorState(elevator.getDirection(nextFloor));
-
+		elevator.appendText("Elevator" + elevator.getElevatorNumber() + " next floor is: " + nextFloor + "\n", elevator.printFlag);
 		while (nextFloor != elevator.getCurrentFloor()) {
 			// This will decrease or increase the current floor by 1 depending on motor
 			// direction.
@@ -106,12 +106,6 @@ public class MovingES implements ElevatorState {
 	private int moveFloor() {
 		int newFloor = elevator.getCurrentFloor();
 
-		if (newFloor == elevator.getMaxFloor() && elevator.getMotorDirection().equals("UP")) {
-			return -1;
-		}
-		if (newFloor == 1 && elevator.getMotorDirection().equals("DOWN")) {
-			return -1;
-		}
 		if (elevator.getMotorDirection().equals(Motor.UP)) {
 			newFloor++;
 		} else if (elevator.getMotorDirection().equals(Motor.DOWN))

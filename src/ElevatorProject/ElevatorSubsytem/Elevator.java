@@ -244,6 +244,8 @@ public class Elevator extends Network implements Runnable {
 		if (motor.equals(Motor.IDLE)) {
 			while (floorsToVisit.isEmpty()) {
 				try {
+					arrivalSensor(getCurrentFloor(), getElevatorNumber(),
+							getMotorDirection().toString());
 					wait();
 				} catch (InterruptedException e) {
 					e.printStackTrace();
@@ -485,12 +487,12 @@ public class Elevator extends Network implements Runnable {
 	}
 	
 	public void appendText(String str, boolean printFlag){
-		if(printFlag) {
-			System.out.print(str);
-		}else {
+		if(!printFlag) {
 			transcript.append(str);
 		    scrollDown();
 		}
+			
+		System.out.print(str);
 	  
 	}
 

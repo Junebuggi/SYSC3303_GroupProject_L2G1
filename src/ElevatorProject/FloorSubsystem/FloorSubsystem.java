@@ -90,7 +90,6 @@ public class FloorSubsystem extends Network implements Runnable {
 	 *             performed.
 	 * @return requestList the arraylist containing all the requests to be performed
 	 */
-	@SuppressWarnings({ "resource" })
 	public ArrayList<String> getRequestFromFile(File file) {
 		ArrayList<String> requestList = new ArrayList<String>();
 		try {
@@ -100,6 +99,8 @@ public class FloorSubsystem extends Network implements Runnable {
 			while (scanner.hasNextLine()) {
 				requestList.add(scanner.nextLine());
 			}
+			
+			scanner.close();
 
 		} catch (Exception ex) {
 			ex.printStackTrace();

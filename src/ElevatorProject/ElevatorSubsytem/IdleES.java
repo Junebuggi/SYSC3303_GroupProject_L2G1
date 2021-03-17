@@ -40,9 +40,6 @@ public class IdleES implements ElevatorState {
 		elevator.setMotorState("IDLE");
 		elevator.setDoorState("OPEN");
 
-		elevator.arrivalSensor(elevator.getCurrentFloor(), elevator.getElevatorNumber(),
-				elevator.getMotorDirection().toString());
-
 		// The elevator will wait until floorsToVisit is no longer empty
 		int nextFloor = elevator.getNextFloor();
 
