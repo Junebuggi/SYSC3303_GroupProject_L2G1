@@ -17,6 +17,7 @@ import java.net.SocketException;
 
 import ElevatorProject.Information;
 import ElevatorProject.Network.ReturnData;
+import ElevatorProject.SchedulerSubsystem.Scheduler.Elevator;
 
 public class SchedulerStateMachine implements Runnable {
 
@@ -155,6 +156,7 @@ public class SchedulerStateMachine implements Runnable {
 				if (returnData.getData() != null && returnData.getPort() != -1) {
 					// If acknowledgement received, remove the request and wait for next request
 					scheduler.removeRequest(0);
+					scheduler.elevators.put(elevator, scheduler.newElevator("Pending", -1));
 					
 					
 					scheduler.elevatorMonitors[elevator-1].startTimer();

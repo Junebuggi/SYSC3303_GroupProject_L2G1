@@ -104,14 +104,14 @@ public class Scheduler extends Network {
 			
 			//This is a elevator destination floor message
 			if(data[0].equals("arrivalSensor") && data.length == 5) {
-				elevatorMonitors[Integer.parseInt(data[3])-1].cancel();
+				//Arrival notification arrived, cancel fault timer
+				elevatorMonitors[Integer.parseInt(data[3])-1].cancelTimer();
+				//If the elevator's state is not IDLE, it's still moving, start fault timer
+				if(!data[4].equals("IDLE"))
+					elevatorMonitors[Integer.parseInt(data[3])-1].startTimer();			
 				
 				arrivalNotificationToFloor(data, Integer.valueOf(data[2]));
-				if(!data[4].equals("Idle")) {
-					
-					elevatorMonitors[Integer.parseInt(data[3])-1].startTimer();		
-					
-				}
+
 				elevators.put(Integer.parseInt(data[3]), new Elevator(data[4], Integer.parseInt(data[3])));
 				//Check if a passenger is waiting at this floor on this direction
 				String servicableRequest = checkIfRequestPendingAtFloor(Integer.valueOf(data[2]), data[4]);
@@ -121,6 +121,7 @@ public class Scheduler extends Network {
 					notifyAll();
 					return pac.toBytes(servicableRequest);
 				}
+
 			}
 			notifyAll();
 			return Network.createACK();
@@ -364,6 +365,10 @@ public class Scheduler extends Network {
 		}	
 		System.out.println("Message to floor: " + floor + " at port: " + floorPorts.get(floor) + "\nis: " + str);
 		rpc_send(floorPorts.get(floor), Network.pac.toBytes(str));
+	}
+	
+	public Elevator newElevator(String state, int floor) {
+		return new Elevator(state, floor);
 	}
 
 }
