@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import ElevatorProject.Information;
 import ElevatorProject.Network;
 
 public class Scheduler extends Network {
@@ -30,8 +31,9 @@ public class Scheduler extends Network {
 	//-1 if the elevatorPort hasn't been initialized yet
 	private int elevatorPort = -1;
 	//A mapping between all the elevators by number and their current state(floor and motor direction)
-	private HashMap<Integer, Elevator> elevators = new HashMap<Integer, Elevator>();
+	HashMap<Integer, Elevator> elevators = new HashMap<Integer, Elevator>();
 	private int timeout; //The timeout to be used when wait for an ACK
+	protected ElevatorFaultMonitor elevatorMonitors[];
 	
 	/**
 	 * A simple class that models an elevator's current floor and motor state
@@ -43,7 +45,7 @@ public class Scheduler extends Network {
 		private int floor;
 		/**
 		 * The constructor method
-		 * @param state //The motor state, "UP", "DOWN" or "IDLE"
+		 * @param state //The motor state, "UP", "DOWN", "IDLE" or "OUT_OF_ORDER"
 		 * @param floor the current floor of the elevator
 		 */
 		Elevator(String state, int floor){
@@ -64,6 +66,7 @@ public class Scheduler extends Network {
 		public String getState() {
 			return this.state;
 		}
+		
 	}
 	
 	/**
@@ -101,7 +104,14 @@ public class Scheduler extends Network {
 			
 			//This is a elevator destination floor message
 			if(data[0].equals("arrivalSensor") && data.length == 5) {
+				elevatorMonitors[Integer.parseInt(data[3])-1].cancel();
+				
 				arrivalNotificationToFloor(data, Integer.valueOf(data[2]));
+				if(!data[4].equals("Idle")) {
+					
+					elevatorMonitors[Integer.parseInt(data[3])-1].startTimer();		
+					
+				}
 				elevators.put(Integer.parseInt(data[3]), new Elevator(data[4], Integer.parseInt(data[3])));
 				//Check if a passenger is waiting at this floor on this direction
 				String servicableRequest = checkIfRequestPendingAtFloor(Integer.valueOf(data[2]), data[4]);
@@ -310,9 +320,18 @@ public class Scheduler extends Network {
 	 * @param nElevators The number number of elevators in the system
 	 */
 	public void createElevatorsReference(int nElevators) {
+		
+		elevatorMonitors = new ElevatorFaultMonitor[nElevators];
 		for(int i = 1; i <= nElevators; i++ ) {
 			elevators.put(i, new Elevator("IDLE", 1));
+			elevatorMonitors[i-1] = new ElevatorFaultMonitor(this, Information.TRAVEL_TIME_PER_FLOOR + 2*Information.TIME_CLOSE_DOOR + Information.TIME_OPEN_DOOR, i);
+
 		}
+	}
+	
+	public Elevator createNewElevatorReference(int elevator, String state) {
+		
+		return new Elevator(state, elevator);
 	}
 	
 	/**

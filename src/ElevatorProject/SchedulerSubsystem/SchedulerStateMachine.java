@@ -155,6 +155,11 @@ public class SchedulerStateMachine implements Runnable {
 				if (returnData.getData() != null && returnData.getPort() != -1) {
 					// If acknowledgement received, remove the request and wait for next request
 					scheduler.removeRequest(0);
+					
+					
+					scheduler.elevatorMonitors[elevator-1].startTimer();
+						
+					
 					current_state = State.WAIT_FOR_REQUEST;
 					System.out.println("Elevator " + elevator + " is available and on its way!");
 					break;

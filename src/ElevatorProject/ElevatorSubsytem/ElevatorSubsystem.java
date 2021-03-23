@@ -81,7 +81,7 @@ public class ElevatorSubsystem extends Network implements Runnable {
 			if(printFlag)
 				elevators[i] = new Elevator(i + 1, schedulerPort, nFloors, printFlag);
 			else
-				elevators[i] = new Elevator(i + 1, schedulerPort, nFloors, frame.getArea(i), printFlag);
+				elevators[i] = new Elevator(i + 1, schedulerPort, nFloors, frame.getArea(i+1), printFlag);
 			(new Thread(elevators[i], "Elevator " + (1 + i))).start();
 
 		}
