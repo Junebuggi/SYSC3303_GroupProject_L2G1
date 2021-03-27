@@ -14,9 +14,9 @@ import ElevatorProject.Network;
 /**
  * This is the JUnit test class for the SchedulerStateMachine class.
  * It exercises the setup process and how the scheduler handles receiving
- * arrivalSensor and floorRequest messages
+ * arrivalSensor and floorRequest messages, as well as fault timer triggers.
  * 
- * @author Emma Boulay [Iteration 3]
+ * @author Emma Boulay [Iteration 3], Abeer Rafiq
  *
  */
 class SchedulerStateMachineTest extends Network{
@@ -159,9 +159,11 @@ class SchedulerStateMachineTest extends Network{
 	}
 	
 	/**
-	 * This test is to show that the elevator's reference in the scheduler is
-	 * Out_of_Order if the elevator's arrival notification takes to long to
-	 * respond.
+	 * The scheduler sends a request to the elevator and if the scheduler doesn't 
+	 * receive a arrivalSensor message, then fault timer is supposed to be triggered. 
+	 * 
+	 * Therefore, this method tests that in this situation, the elevator reference 
+	 * in the scheduler should have a state change to Out_of_Order.
 	 * 
 	 * @throws Throwable
 	 */
@@ -171,16 +173,18 @@ class SchedulerStateMachineTest extends Network{
 		System.out.println("========================================");
 		System.out.println("\t\tTest 4 - Fault Timer Timeout Test");
 		System.out.println("========================================");
+		// Set up threads
 		int receiverPort = 50;
 		setUpThreads(receiverPort);
 		int elevatorPort = 888;//random
+		// Create a Mock elevator 
 		new Thread()
 		{
 		    public void run() {
 		        try {
 					DatagramSocket socket = new DatagramSocket(elevatorPort);
 					System.out.println("Mock elevator subystem listening on port: " + elevatorPort);
-					
+					//Elevator receives Scheduler Request at port 888 and sends ack
 					ReturnData data = receive(socket);
 					System.out.println("Sent from port " + data.getPort());
 					send(data.getPort(), createACK(), socket);
@@ -190,14 +194,14 @@ class SchedulerStateMachineTest extends Network{
 		        
 		    }
 		}.start();
-		
-		
 		//Send floorRequest to scheduler and wait for ACK
 		byte[] floorRequest = "floorRequest hh:mm:ss.mmm 5 UP 7".getBytes();
 		byte[] returnData = rpc_send(50, floorRequest, 100);
-		
+		// Sleep waitTime*2 to give some extra time before checking state
 		Thread.sleep((int) 2 * (Information.TIME_CLOSE_DOOR + Information.TIME_OPEN_DOOR + Information.TRAVEL_TIME_PER_FLOOR));
-		
+		// Ensure that the elevator reference in scheduler is now Out_of_Order state
+		// since the scheduler didn't receive a arrivalSensor message after sending a
+		// request to the elevator		
 		assertEquals(scheduler.elevators.get(1).getFloor() == -1, true);
 		assertEquals(scheduler.elevators.get(1).getState().equals("Out_of_Order"), true);
 		
