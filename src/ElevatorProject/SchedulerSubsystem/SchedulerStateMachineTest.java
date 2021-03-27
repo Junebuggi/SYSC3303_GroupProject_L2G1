@@ -157,6 +157,11 @@ class SchedulerStateMachineTest extends Network{
 		
 
 	}
+	
+	/**
+	 * 
+	 * @throws Throwable
+	 */
 	@Test
 	public void testFaultTimer() throws Throwable{
 		
