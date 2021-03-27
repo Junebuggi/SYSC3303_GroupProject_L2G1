@@ -159,6 +159,9 @@ class SchedulerStateMachineTest extends Network{
 	}
 	
 	/**
+	 * This test is to show that the elevator's reference in the scheduler is
+	 * Out_of_Order if the elevator's arrival notification takes to long to
+	 * respond.
 	 * 
 	 * @throws Throwable
 	 */
