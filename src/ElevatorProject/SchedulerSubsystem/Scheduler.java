@@ -94,7 +94,7 @@ public class Scheduler extends Network {
 			//This is an elevatorRequest message
 			String[] data = pac.parseData(request);
 			System.out.println("Request: " + Arrays.toString(data));
-			if(data[0].equals("floorRequest") && data.length == 5) {
+			if(data[0].equals("floorRequest") && (data.length == 5 || data.length == 6)) {
 				if(!arrayContainsRequest(data, workRequests)) {
 					this.workRequests.add(data);
 					System.out.println("Added to workRequests array");
