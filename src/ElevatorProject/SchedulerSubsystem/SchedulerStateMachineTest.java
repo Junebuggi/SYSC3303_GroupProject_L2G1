@@ -16,7 +16,7 @@ import ElevatorProject.Network;
  * It exercises the setup process and how the scheduler handles receiving
  * arrivalSensor and floorRequest messages, as well as fault timer triggers.
  * 
- * @author Emma Boulay [Iteration 3]
+ * @author Emma Boulay [Iteration 3], Abeer Rafiq
  *
  */
 class SchedulerStateMachineTest extends Network{
