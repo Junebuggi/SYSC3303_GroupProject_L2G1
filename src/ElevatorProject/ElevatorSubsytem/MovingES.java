@@ -86,6 +86,8 @@ public class MovingES implements ElevatorState {
 		elevator.appendText("Elevator" + elevator.getElevatorNumber() + " Switching to ARRIVED state\n\n", elevator.printFlag);
 		StopMoving();
 	}
+	
+	public void Error(boolean hard_error) {/*do nothing - doesn't use this method*/}
 
 	/**
 	 * This is a helper function. It is called when the elevator should stop moving

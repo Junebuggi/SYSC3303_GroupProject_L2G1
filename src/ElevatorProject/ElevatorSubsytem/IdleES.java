@@ -62,5 +62,7 @@ public class IdleES implements ElevatorState {
 		elevator.appendText("Elevator" + elevator.getElevatorNumber() + ": Switching to MOVING state\n\n", elevator.printFlag);
 		elevator.setState(elevator.getMovingState());
 	}
+	
+	public void Error(boolean hard_error) {/*do nothing - doesn't use this method*/}
 
 }

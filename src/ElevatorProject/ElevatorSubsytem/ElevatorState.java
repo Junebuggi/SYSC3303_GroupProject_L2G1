@@ -16,4 +16,5 @@ package ElevatorProject.ElevatorSubsytem;
 
 public interface ElevatorState {
 	public void Moving();
+	public void Error(boolean hard_error);
 }

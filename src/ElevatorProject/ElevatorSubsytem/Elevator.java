@@ -39,6 +39,7 @@ public class Elevator extends Network implements Runnable {
 	private ElevatorState idle;
 	private ElevatorState moving;
 	private ElevatorState arrived;
+	private ElevatorState error;
 
 	private int schedulerPort;
 	private int elevatorNumber;
@@ -80,12 +81,13 @@ public class Elevator extends Network implements Runnable {
 		this.nFloors = nFloors;
 		this.printFlag = printFlag;
 		btns = createButtons();
-		dirLamps = new DirectionLamp[] { new DirectionLamp("UP"), new DirectionLamp("DOWN") };
+		dirLamps = new DirectionLamp[] { new DirectionLamp("UP"), new DirectionLamp("DOWN"), new DirectionLamp("ERROR")};
 
 		// Creating all concrete state objects
 		this.idle = new IdleES(this);
 		this.moving = new MovingES(this);
 		this.arrived = new ArrivedES(this);
+		this.error = new ErrorES(this);
 
 		// Default State to Idle
 		elevatorState = idle;
@@ -154,6 +156,15 @@ public class Elevator extends Network implements Runnable {
 	public ElevatorState getArrivedState() {
 		return this.arrived;
 	}
+	
+	/**
+	 * Returns the Error state
+	 * 
+	 * @return Error state
+	 */
+	public ElevatorState getErrorState() {
+		return this.error;
+	}
 
 	/**
 	 * Method prints current elevator information.
@@ -200,15 +211,16 @@ public class Elevator extends Network implements Runnable {
 	 * This method returns the direction lamp of the elevator. Each elevator has a
 	 * pair of two direction lamps
 	 * 
-	 * @param direction "UP" or "DOWN"
-	 * @return If "UP", directionLamp at index 0, otherwise direction lamp at index
-	 *         1
+	 * @param direction "UP" or "DOWN" or "ERROR"
+	 * @return If "UP" set directionLamp at index 0, if "DOWN" set directionLamp at index 1, otherwise direction lamp at index 2
 	 */
 	public DirectionLamp getDirectionLamp(String direction) {
 		if (direction.equals("UP"))
 			return dirLamps[0];
-		else
+		else if (direction.equals("DOWN"))
 			return dirLamps[1];
+		else
+			return dirLamps[2];
 	}
 
 	/**
