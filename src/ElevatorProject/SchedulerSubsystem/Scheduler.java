@@ -325,7 +325,7 @@ public class Scheduler extends Network {
 		elevatorMonitors = new ElevatorFaultMonitor[nElevators];
 		for(int i = 1; i <= nElevators; i++ ) {
 			elevators.put(i, new Elevator("IDLE", 1));
-			elevatorMonitors[i-1] = new ElevatorFaultMonitor(this, Information.TRAVEL_TIME_PER_FLOOR + 2*Information.TIME_CLOSE_DOOR + Information.TIME_OPEN_DOOR, i);
+			elevatorMonitors[i-1] = new ElevatorFaultMonitor(this, Information.TRAVEL_TIME_PER_FLOOR + Information.TIME_CLOSE_DOOR + Information.TIME_OPEN_DOOR, i);
 
 		}
 	}

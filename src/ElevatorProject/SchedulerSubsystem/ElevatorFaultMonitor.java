@@ -49,15 +49,20 @@ public class ElevatorFaultMonitor {
 			public void run() {
 				
 					System.out.println("Arrival sensor timed out. Elevator " + elevator
-							+ " out of order.\n Maintenance has been notified and is on its way!");
+							+ " out of order.\nMaintenance has been notified and is on its way!");
 					int elevatorFloor = scheduler.elevators.get(elevator).getFloor();
+					//scheduler.elevators.remove(elevator);
 					scheduler.elevators.put(elevator, scheduler.createNewElevatorReference(elevatorFloor, "Out_of_Order"));
 					Toolkit.getDefaultToolkit().beep();
 					timer.cancel();
 			}
 		};
 
-		timer.schedule(task, (int) 1.25 * waitTime);
+		timer.schedule(task, (int) 1.15 * waitTime);
 	}
 
 }
+
+
+
+

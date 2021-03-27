@@ -43,7 +43,7 @@ public class SchedulerStateMachine implements Runnable {
 	 * The default constructor.
 	 */
 	public SchedulerStateMachine(String name, int listeningPort, int timeout) {
-		scheduler = new Scheduler(name, listeningPort, timeout);
+		
 
 		try {
 			sendReceiveSocket = new DatagramSocket();
@@ -51,6 +51,9 @@ public class SchedulerStateMachine implements Runnable {
 		} catch (SocketException e) {
 			e.printStackTrace();
 		}
+		
+		scheduler = new Scheduler(name, listeningPort, timeout);
+		
 	}
 
 	/**
@@ -58,6 +61,14 @@ public class SchedulerStateMachine implements Runnable {
 	 */
 	public SchedulerStateMachine(Scheduler scheduler) {
 		this.scheduler = scheduler;
+		
+		try {
+			sendReceiveSocket = new DatagramSocket();
+			sendReceiveSocket.setSoTimeout(500);
+			System.out.println("Active thread sends from: " + sendReceiveSocket.getLocalPort());
+		} catch (SocketException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/*
@@ -90,12 +101,17 @@ public class SchedulerStateMachine implements Runnable {
 		DatagramSocket socket = getSocket();
 		if (socket != null) {
 			scheduler.setUp(socket);
+			try {
+				socket.setSoTimeout(500);
+			} catch (SocketException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		while (Thread.currentThread().getName().equals("listeningThread") && listeningRunning) {
 			System.out.println(Thread.currentThread().getName());
 			ReturnData returnData = scheduler.receive(scheduler.getSocket(0));
-			if (returnData != null) {
+			if (returnData.getData() != null) {
 				byte[] returnMessage = scheduler.putRequest(returnData.getData());
 				scheduler.send(returnData.getPort(), returnMessage, scheduler.getSocket(0));
 			}
@@ -174,17 +190,16 @@ public class SchedulerStateMachine implements Runnable {
 			}
 			}
 		}
+		
+		System.out.println(Thread.currentThread().getName() + " is exiting");
 	}
 	
 	public void interrupt() {
-		if(Thread.currentThread().getName().equals("activeThread")) {
-			activeRunning = false;
-		}
-		
-		if(Thread.currentThread().getName().equals("listeningThread")) {
-			listeningRunning = false;
-		}
+		activeRunning = false;
+		listeningRunning = false;
 	}
+	
+	
 
 	/**
 	 * The main method of the SchedulerStateMachine
