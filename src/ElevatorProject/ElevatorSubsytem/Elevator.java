@@ -48,6 +48,8 @@ public class Elevator extends Network implements Runnable {
 	private Door door = Door.OPEN;
 	private SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss.SSS");
 	protected boolean printFlag;
+	private String errorMsg = null;
+	protected boolean running = true;
 	
 	public enum Motor {
 		UP, DOWN, IDLE;
@@ -81,7 +83,7 @@ public class Elevator extends Network implements Runnable {
 		this.nFloors = nFloors;
 		this.printFlag = printFlag;
 		btns = createButtons();
-		dirLamps = new DirectionLamp[] { new DirectionLamp("UP"), new DirectionLamp("DOWN"), new DirectionLamp("ERROR")};
+		dirLamps = new DirectionLamp[] { new DirectionLamp("UP"), new DirectionLamp("DOWN") };
 
 		// Creating all concrete state objects
 		this.idle = new IdleES(this);
@@ -138,6 +140,15 @@ public class Elevator extends Network implements Runnable {
 	public ElevatorState getIdleState() {
 		return this.idle;
 	}
+	
+	/**
+	 * Returns the Error state
+	 * 
+	 * @return Error state
+	 */
+	public ElevatorState getErrorState() {
+		return this.error;
+	}
 
 	/**
 	 * Returns the moving state
@@ -155,15 +166,6 @@ public class Elevator extends Network implements Runnable {
 	 */
 	public ElevatorState getArrivedState() {
 		return this.arrived;
-	}
-	
-	/**
-	 * Returns the Error state
-	 * 
-	 * @return Error state
-	 */
-	public ElevatorState getErrorState() {
-		return this.error;
 	}
 
 	/**
@@ -211,16 +213,15 @@ public class Elevator extends Network implements Runnable {
 	 * This method returns the direction lamp of the elevator. Each elevator has a
 	 * pair of two direction lamps
 	 * 
-	 * @param direction "UP" or "DOWN" or "ERROR"
-	 * @return If "UP" set directionLamp at index 0, if "DOWN" set directionLamp at index 1, otherwise direction lamp at index 2
+	 * @param direction "UP" or "DOWN"
+	 * @return If "UP", directionLamp at index 0, otherwise direction lamp at index
+	 *         1
 	 */
 	public DirectionLamp getDirectionLamp(String direction) {
 		if (direction.equals("UP"))
 			return dirLamps[0];
-		else if (direction.equals("DOWN"))
-			return dirLamps[1];
 		else
-			return dirLamps[2];
+			return dirLamps[1];
 	}
 
 	/**
@@ -509,7 +510,15 @@ public class Elevator extends Network implements Runnable {
 	public void scrollDown(){
 	    transcript.setCaretPosition(transcript.getText().length());
 	}
-
+	
+	public void addError(String error) {
+		this.errorMsg = error;
+	}
+	
+	public String getError() {
+		return this.errorMsg;
+	}
+	
 
 	/**
 	 * Overrides the run method of the Runnable interface. The floor requests from
@@ -521,7 +530,7 @@ public class Elevator extends Network implements Runnable {
 	public void run() {
 		appendText("Elevator " + elevatorNumber + " is set up and ready to go", printFlag);
 
-		while (true)
+		while (running)
 			this.elevatorState.Moving();
 	}
 }

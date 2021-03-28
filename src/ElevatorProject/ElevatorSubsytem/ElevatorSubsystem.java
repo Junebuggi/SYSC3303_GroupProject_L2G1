@@ -132,8 +132,15 @@ public class ElevatorSubsystem extends Network implements Runnable {
 				// Add request to floorsToVisit and connect the pickup floor with the
 				// destination floor
 				synchronized (elevators[elevatorNum]) {
+					if(data.length == 6) {
+						System.out.println("Added error!");
+						elevators[elevatorNum].addError(data[5]);
+					}
 					elevators[elevatorNum].addFloorToVisit(floor);
 					elevators[elevatorNum].addDestination(floor, floorButton);
+					if(data.length == 7) {
+						elevators[elevatorNum].addError(data[6]);
+					}
 					elevators[elevatorNum].notifyAll();
 				}
 

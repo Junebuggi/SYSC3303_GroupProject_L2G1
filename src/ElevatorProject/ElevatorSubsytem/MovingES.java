@@ -87,7 +87,6 @@ public class MovingES implements ElevatorState {
 		StopMoving();
 	}
 	
-	public void Error(boolean hard_error) {/*do nothing - doesn't use this method*/}
 
 	/**
 	 * This is a helper function. It is called when the elevator should stop moving

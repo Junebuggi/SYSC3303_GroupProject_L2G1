@@ -21,11 +21,15 @@ floor timer fault should be regarded as a hard fault and should shut down the co
 - BREAKDOWN OF RESPONSIBILITIES
 
      Emma + Abeer
-  -> Implementing elevator Fault Timer to ensure elevator goes out of order if no arrival is detected
-  -> SchedulerStateMachineTest.java (tests for elevatorFaultMonitor.java)
-  -> Hard Fault Timing Diagram
+	  -> Implementing elevator Fault Timer to ensure elevator goes out of order if no arrival is detected
+	  -> SchedulerStateMachineTest.java (tests for elevatorFaultMonitor.java)
+	  -> Hard Fault Timing Diagram
+	  
      Alden + Hasan + Rutvik
-
+	  -> Implementing functions in ElevatorSubsystem.java and Elevator.java for elevator errors 
+	  -> ErrorES.java (adding error state for Hard Fault error)
+	  -> Transient Fault Timing Diagram
+	  -> Sequence diagram
 
 - FILE NAMES
 
@@ -55,6 +59,8 @@ Elevator.java
  	   if it should stop. It also changes the states of the state machine.
 ElevatorButton.java
 	-> This class simulates a floor button inside an elevator
+ElevatorGUI.java
+	-> Creates a GUI that display the messages of each elevator thread in their respective states
 ElevatorState.java
 	-> This interface holds all the methods that the Elevator States use to implement the logic.
 ElevatorSubsystem.java
@@ -63,6 +69,9 @@ ElevatorSubsystem.java
  	   appropriate elevator.	   
 ElevatorTest.java
 	-> A jUNIT test class to test the methods of the Elevator class.
+ErrorES.java
+	-> This class implements the ElevatorState interface to set the State to Error and change characteristics 	   
+	   of the Elevator.	
 IdleES.java
 	-> This class implements the ElevatorState interface to set the State to Idle and change characteristics 	   
 	   of the Elevator.	
@@ -92,6 +101,11 @@ floorRequests.txt
           "TIME FLOOR FLOORBUTTON CARBUTTON"
 	  
 /***** SCHEDULER SUBSYSTEM *****/
+ElevatorFaultMonitor.java
+	->  This class is responsible for starting a timer each time a elevator services a request.
+		The timer will be triggered after a certain time since there was no arrival sensor
+		message received that would have cancelled the timer. The corresponding elevator 
+		will go out of service to ensure that the issue can be reviewed before operating again.
 Scheduler.java
 	-> The Scheduler is responsible for handling incoming requests from the floor Subsystem and passing 		  
 	   requests to the elevator subsystem. This is done with the implementation of a state machine. 
@@ -110,8 +124,8 @@ SchedulerTest.java
 
 	1. Unzip project folder and import into Eclipse
 	2. Run the following files (threads)
-		a. SchedulerStateMachineFloorSubsystem.java (scheduler system)
-		b. ElevatorSubsystem.java (elevator system)
+		a. SchedulerStateMachine.java (scheduler system)
+		b. ElevatorSubsystem.java (elevator system) - A GUI WILL POP UP SHOWING ELEVATOR STATE INFO
 		c. FloorSubsystem.java (floor system)
 	3. Run SchedulerStateMachineTest.java JUnit file to run unit test
 	4. Run ElevatorTest.java JUnit file to run unit test
