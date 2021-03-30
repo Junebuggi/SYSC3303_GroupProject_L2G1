@@ -45,6 +45,7 @@ public class MovingES implements ElevatorState {
 		elevator.appendText("Elevator" + elevator.getElevatorNumber() + " is moving\n", elevator.printFlag);
 
 		int nextFloor = elevator.getNextFloor();
+		
 		elevator.setMotorState(elevator.getDirection(nextFloor));
 		elevator.appendText("Elevator" + elevator.getElevatorNumber() + " next floor is: " + nextFloor + "\n", elevator.printFlag);
 		while (nextFloor != elevator.getCurrentFloor()) {

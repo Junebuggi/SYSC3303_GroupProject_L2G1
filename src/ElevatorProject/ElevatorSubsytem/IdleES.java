@@ -45,20 +45,8 @@ public class IdleES implements ElevatorState {
 		// The elevator will wait until floorsToVisit is no longer empty
 		int nextFloor = elevator.getNextFloor();
 		
-		if(elevator.getError() != null) {
-			if(elevator.getError().equals("doorStuck")) {
-				try {
-					Thread.sleep((int) (5000 * Information.TIME_MULTIPLIER));
-					elevator.addError(null);
-				} catch (InterruptedException e) {
-					e.printStackTrace();
-				}
-			}
-			else if(elevator.getError().equals("hardFault")) {
-				elevator.setState(elevator.getErrorState());
-				return;		
-			}
-		}
+		if(elevator.checkForError())
+			return;
 
 		elevator.appendText("Elevator" + elevator.getElevatorNumber() + ": requested at floor : " + nextFloor + "\n", elevator.printFlag);
 

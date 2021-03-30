@@ -137,7 +137,7 @@ public class Scheduler extends Network {
 		
 		for(int i = 0; i < workRequests.size(); i++) {
 			System.out.println("Floor: " + floor + " Direction: " + direction);
-			if(workRequests.get(i)[3].equals(direction) && Integer.valueOf(workRequests.get(i)[2]) == floor) {
+			if(workRequests.get(i)[3].equals(direction) && Integer.valueOf(workRequests.get(i)[2]) == floor && workRequests.get(i).length == 5) {
 				System.out.println("Pending request found");
 				return Network.pac.joinStringArray(workRequests.remove(i));
 

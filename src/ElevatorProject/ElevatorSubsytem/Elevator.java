@@ -519,6 +519,25 @@ public class Elevator extends Network implements Runnable {
 		return this.errorMsg;
 	}
 	
+	public boolean checkForError() {
+		if(getError() != null) {
+			if(getError().equals("doorStuck")) {
+				try {
+					Thread.sleep((int) (5000 * Information.TIME_MULTIPLIER));
+					addError(null);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+			}
+			else if(getError().equals("hardFault")) {
+				setState(getErrorState());
+				return true;		
+			}
+		}
+		
+		return false;
+	}
+	
 
 	/**
 	 * Overrides the run method of the Runnable interface. The floor requests from
