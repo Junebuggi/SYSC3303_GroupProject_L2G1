@@ -37,6 +37,9 @@ public class IdleES implements ElevatorState {
 		if(!elevator.printFlag)
 			elevator.transcript.setBackground( Color.decode("#d2e9af") ); //Light green
 		
+		if(Information.gui)
+			elevator.elevGUI.setColour("IDLE", elevator.getCurrentFloor());
+		
 		elevator.appendText("\n" + "Elevator" + elevator.getElevatorNumber() + " STATE: IDLE\n", elevator.printFlag);
 		// Entry action
 		elevator.setMotorState("IDLE");
@@ -67,7 +70,5 @@ public class IdleES implements ElevatorState {
 		elevator.appendText("Elevator" + elevator.getElevatorNumber() + ": Switching to MOVING state\n\n", elevator.printFlag);
 		elevator.setState(elevator.getMovingState());
 	}
-	
-	public void Error(boolean hard_error) {/*do nothing - doesn't use this method*/}
 
 }

@@ -41,6 +41,9 @@ public class MovingES implements ElevatorState {
 		if(!elevator.printFlag)
 			elevator.transcript.setBackground( Color.decode("#e9d8f2")); //Light purple
 		
+		if(Information.gui)
+			elevator.elevGUI.setColour("MOVING", elevator.getCurrentFloor());
+		
 		elevator.appendText("ELEVATOR" + elevator.getElevatorNumber() + " STATE: MOVING\n", elevator.printFlag);
 		elevator.appendText("Elevator" + elevator.getElevatorNumber() + " is moving\n", elevator.printFlag);
 
@@ -63,6 +66,9 @@ public class MovingES implements ElevatorState {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
+			
+			if(Information.gui)
+				elevator.elevGUI.setColour("MOVING", elevator.getCurrentFloor());
 
 			// Approaching floor, arrival sensor is triggered and informing the scheduler
 			elevator.appendText(

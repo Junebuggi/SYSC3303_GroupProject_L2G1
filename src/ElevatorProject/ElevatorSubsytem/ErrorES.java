@@ -2,6 +2,8 @@ package ElevatorProject.ElevatorSubsytem;
 
 import java.awt.Color;
 
+import ElevatorProject.Information;
+
 /**
  * ErrorES.java
  * 
@@ -33,9 +35,12 @@ public class ErrorES implements ElevatorState {
 	}
 
 	public void Error() {
-		System.out.println("Elevator made it!");
+		
 		if(!elevator.printFlag)
 			elevator.transcript.setBackground( Color.decode("#e9afaf") ); //Light red
+		
+		if(Information.gui)
+			elevator.elevGUI.setColour("ERROR", elevator.getCurrentFloor());
 		
 		elevator.appendText("\n" + "Elevator" + elevator.getElevatorNumber() + " STATE: ERROR\n", elevator.printFlag);
 

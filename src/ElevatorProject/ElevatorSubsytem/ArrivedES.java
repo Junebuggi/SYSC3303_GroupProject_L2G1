@@ -2,6 +2,8 @@ package ElevatorProject.ElevatorSubsytem;
 
 import java.awt.Color;
 
+import ElevatorProject.Information;
+
 /**
  * ArrivedES.java
  * 
@@ -32,9 +34,13 @@ public class ArrivedES implements ElevatorState {
 	public void Moving() {
 		if(!elevator.printFlag)
 			elevator.transcript.setBackground( Color.decode("#c3e4e8") );
+		
+		if(Information.gui)
+			elevator.elevGUI.setColour("ARRIVED", elevator.getCurrentFloor());
 
 		elevator.appendText("\n" + "Elevator" + elevator.getElevatorNumber() + " STATE: ARRIVED\n", elevator.printFlag);
 		elevator.TurnOffDirectionLamp(elevator.getMotorDirection().toString());
+		elevator.TurnOffButtonLamp(elevator.getCurrentFloor());
 		elevator.setMotorState("IDLE");
 		elevator.OpenDoors();
 		

@@ -22,6 +22,8 @@ import java.util.Scanner;
 
 import ElevatorProject.Information;
 import ElevatorProject.Network;
+import ElevatorProject.GUI.ElevatorGridGUI;
+import ElevatorProject.GUI.Components.FloorButtonsComponent;
 
 /**
  * This is the Floor Subsystem class. This will create all the floors for the
@@ -43,6 +45,7 @@ public class FloorSubsystem extends Network implements Runnable {
 	private int nFloors;
 	private int nShafts;
 	private Floor[] floors;
+	protected FloorButtonsComponent[] floorButtonsGUI;
 
 	/**
 	 * The constructor method creates a floor subsystem with nFloors and each floor
@@ -61,6 +64,9 @@ public class FloorSubsystem extends Network implements Runnable {
 		this.timeout = timeout;
 		this.nFloors = nFloors;
 		this.nShafts = nShafts;
+		
+		if(Information.gui)
+			floorButtonsGUI = ElevatorGridGUI.floorButtons;
 
 	}
 
@@ -121,6 +127,9 @@ public class FloorSubsystem extends Network implements Runnable {
 		String dir = reqArr[2];
 		System.out.println("Elevator Requested at floor " + floor + ", " + dir + " button pressed and is now on");
 		floors[floor - 1].turnOnOffLamp(dir, true);
+		
+		if(Information.gui)
+			floorButtonsGUI[floor - 1].pressButton(dir);
 	}
 
 	/**
@@ -183,7 +192,7 @@ public class FloorSubsystem extends Network implements Runnable {
 				try {
 					int now = getMilli(curRequest.split(" ")[0]);
 					int nextTime = getMilli(requests.get(0).split(" ")[0]);
-					Thread.sleep((int) ((nextTime - now) * (Information.TIME_MULTIPLIER)));
+					Thread.sleep(Math.abs((int) ((nextTime - now) * (Information.TIME_MULTIPLIER))));
 				} catch (InterruptedException e) {
 					e.printStackTrace();
 				}

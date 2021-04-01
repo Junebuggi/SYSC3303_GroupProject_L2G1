@@ -5,8 +5,11 @@ import java.net.DatagramSocket;
 import java.net.SocketException;
 
 import ElevatorProject.DirectionLamp;
+import ElevatorProject.Information;
 import ElevatorProject.Network;
 import ElevatorProject.FloorSubsystem.FloorButton.Direction;
+import ElevatorProject.GUI.ElevatorGridGUI;
+import ElevatorProject.GUI.Components.FloorButtonsComponent;
 
 /**
  * The floor class models a floor that has nShaft elevator shafts with an up or
@@ -27,6 +30,7 @@ public class Floor extends Network implements Runnable {
 	private DirectionLamp[][] dirLamps; // Each shaft has a direction lamp signaling the arrival of an elevator
 	private int schedulerPort;
 	private int maxFloor;
+	protected FloorButtonsComponent floorButtonsGUI;
 	/**
 	 * The constructor method creates a Floor at floorLevel that communicates with
 	 * the scheduler
@@ -41,6 +45,10 @@ public class Floor extends Network implements Runnable {
 		DirectionLamp[] dirLamp;
 		this.schedulerPort = schedulerPort;
 		this.maxFloor = maxFloor;
+		
+		if(Information.gui)
+			this.floorButtonsGUI = ElevatorGridGUI.floorButtons[floorLevel-1];
+		
 		// Create new socket to listen from scheduler. Don't worry about a port. It will
 		// let coordinate with scheduler in setUp()
 		try {
@@ -195,9 +203,12 @@ public class Floor extends Network implements Runnable {
 			// Turn off designated directionLamp
 			if (request[0].equals("floorArrival") && !request[4].equals("IDLE")) {
 				if(getFloorButton(getIndex(Integer.valueOf(request[2]), request[4])).isPressed()) {
-					System.out.println("Elevator " + request[3] + " arriving at floor " + request[2] + ", " + request[4] + " button lamp turning off");
-				}
-				turnOnOffLamp(request[4], false);
+					System.out.println("Floor " + floorLevel + ": Elevator " + request[3] + " arriving at floor " + request[2] + ", " + request[4] + " button lamp turning off");
+					if(Information.gui)
+						floorButtonsGUI.turnOffButton(request[4]);
+					turnOnOffLamp(request[4], false);
+				}	
+				
 				//setDirectionLamp(Integer.valueOf(request[3]), getIndex(Integer.valueOf(request[2]), request[4]), "OFF");
 			}
 		}

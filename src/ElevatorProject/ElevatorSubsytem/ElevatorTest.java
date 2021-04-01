@@ -100,6 +100,4 @@ public class ElevatorTest extends Network{
 
 		System.out.println("All elevator are in IDLE state.");
 	}
-	
-
 }
