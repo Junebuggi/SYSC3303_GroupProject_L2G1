@@ -83,9 +83,14 @@ public class MovingES implements ElevatorState {
 			// elevator buttons
 			if (!returnMessage[0].equals("ACK") && returnMessage.length == 5) {
 				elevator.appendText("[" + Time.getCurrentTime() + "], ELEVATOR" + elevator.getElevatorNumber() + ": request at this floor\n", elevator.printFlag);
-				int floorButton = Integer.valueOf(returnMessage[4]);
-				elevator.ButtonPress(floorButton);
-				elevator.addFloorToVisit(floorButton);
+				
+				String[] destinations = returnMessage[4].split(",");
+				
+				for(int i = 0; i < destinations.length; i++) {
+					int floorButton = Integer.valueOf(destinations[i]);
+					elevator.ButtonPress(floorButton);
+					elevator.addFloorToVisit(floorButton);
+				}
 				StopMoving();
 				return;
 			}

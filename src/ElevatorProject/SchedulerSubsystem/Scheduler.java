@@ -138,19 +138,35 @@ public class Scheduler extends Network {
 	}
 	
 	/**
-	 * This method will check if there is a pending request at the floor with the given direction
+	 * This method will check if there is a pending request at the floor with the given direction, if there
+	 * are multiple matching pending requests, it will append the passenger's destination.
 	 * @param floor the floor the passenger is waiting at
 	 * @param direction the direction the passenger wants to go
 	 * @return the request if found, null if none found
 	 */
 	private synchronized String checkIfRequestPendingAtFloor(int floor, String direction) {
 		
+		//If there is other outstanding requests at the floor, the passengers destination will be tacked on at the end
+		boolean foundOne = false;
+		String pendingRequest = null;
 		for(int i = 0; i < workRequests.size(); i++) {
 			if(workRequests.get(i)[3].equals(direction) && Integer.valueOf(workRequests.get(i)[2]) == floor && workRequests.get(i).length == 5) {
-				return Network.pac.joinStringArray(workRequests.remove(i));
+				System.out.println("Made it in first if");
+				//If this is the first request, add the whole request to the string to be returned
+				if(!foundOne) {
+					pendingRequest = pac.joinStringArray(workRequests.remove(i));
+					foundOne = true;
+					i--; //Decrement position to reflect request removed
+					System.out.println("Made it in second if");
+				} 
+				//If there are additional matching requests, add the passengers destination
+				else {
+					String destination = workRequests.remove(i)[4];
+					pendingRequest = pendingRequest + "," + destination;
+				}
 			}
 		}	
-		return null;	
+		return pendingRequest;	
 	}
 	
 	/**

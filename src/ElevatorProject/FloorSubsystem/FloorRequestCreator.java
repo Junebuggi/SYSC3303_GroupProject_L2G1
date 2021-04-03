@@ -35,7 +35,7 @@ public class FloorRequestCreator {
 		Date now = new Date();
 		for (int i = 0; i < nRequest; i++) {
 			String strDate = sdf.format(now);
-			int offset = rand.nextInt(5000) + 10000;
+			int offset = rand.nextInt(1000) + 4000;
 			now = new Date(now.getTime() + offset);
 			int flr = rand.nextInt(nFloor + 1 - 1) + 1;
 			String floor = "" + flr;
@@ -62,6 +62,6 @@ public class FloorRequestCreator {
 	}
 
 	public static void main(String[] args) {
-		printFloorRequest(Information.NUM_FLOORS, Information.NUM_ELEVATORS, 100);
+		printFloorRequest(Information.NUM_FLOORS, Information.NUM_ELEVATORS, 1000);
 	}
 }
