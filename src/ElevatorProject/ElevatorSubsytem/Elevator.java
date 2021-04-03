@@ -15,6 +15,7 @@ import ElevatorProject.GUI.Components.ElevatorComponent;
 import ElevatorProject.GUI.ElevatorGridGUI;
 
 import ElevatorProject.Network;
+import ElevatorProject.Time;
 
 /**
  * Elevator.java
@@ -426,7 +427,7 @@ public class Elevator extends Network implements Runnable {
 		if(Information.gui)
 			elevButtonGUI.turnOffButton(btnNumber);
 		getElevatorButton(btnNumber).setLampState("OFF");
-		appendText("Elevator" + getElevatorNumber() + " button " + btnNumber + " lamp off.\n", printFlag);
+		appendText("[" + Time.getCurrentTime() + "], ELEVATOR" + getElevatorNumber() + ": Button " + btnNumber + " lamp off.\n", printFlag);
 	}
 
 	/**
@@ -436,7 +437,7 @@ public class Elevator extends Network implements Runnable {
 	 * @param floorLevel The button to be turned off
 	 */
 	public void ButtonPress(int floorLevel) {
-		appendText("Elevator" + getElevatorNumber() + " Button: " + floorLevel + ", has been pressed\n", printFlag);
+		appendText("[" + Time.getCurrentTime() + "], ELEVATOR" + getElevatorNumber() + ": Button " + floorLevel + ", has been pressed\n", printFlag);
 		TurnOnButtonLamp(floorLevel); // Illuminate the designated floor button
 		
 		if(Information.gui)
@@ -451,7 +452,7 @@ public class Elevator extends Network implements Runnable {
 	 */
 	public void TurnOnButtonLamp(int btnNumber) {
 		getElevatorButton(btnNumber).setLampState("ON");
-		appendText("Elevator" + getElevatorNumber() + " button " + btnNumber + " lamp on\n", printFlag);
+		appendText("[" + Time.getCurrentTime() + "], ELEVATOR" + getElevatorNumber() + ": Button " + btnNumber + " lamp on\n", printFlag);
 
 	}
 
@@ -462,7 +463,7 @@ public class Elevator extends Network implements Runnable {
 	 */
 	public void TurnOnDirectionLamp(String direction) {
 		getDirectionLamp(direction).setLamp("ON");
-		appendText("Elevator" + getElevatorNumber() + " " + direction + " direction lamp on\n", printFlag);
+		appendText("[" + Time.getCurrentTime() + "], ELEVATOR" + getElevatorNumber() + ": " + direction + " direction lamp on\n", printFlag);
 	}
 
 	/**
@@ -472,35 +473,35 @@ public class Elevator extends Network implements Runnable {
 	 */
 	public void TurnOffDirectionLamp(String direction) {
 		getDirectionLamp(direction).setLamp("OFF");
-		appendText("Elevator" + getElevatorNumber() + " " + direction + " direction lamp off\n", printFlag);
+		appendText("[" + Time.getCurrentTime() + "], ELEVATOR" + getElevatorNumber() + ": " + direction + " direction lamp off\n", printFlag);
 	}
 
 	/**
 	 * This method simulates closing the elevator doors
 	 */
 	public void CloseDoors() {
-		appendText("Elevator" + getElevatorNumber() + " door closing\n", printFlag);
+		appendText("[" + Time.getCurrentTime() + "], ELEVATOR" + getElevatorNumber() + ": door closing\n", printFlag);
 		try {
 			Thread.sleep(Information.TIME_CLOSE_DOOR);
 		} catch (InterruptedException e) {
 			System.err.println(e);
 		}
 		setDoorState("CLOSE");
-		appendText("Elevator" + getElevatorNumber() + " door closed\n", printFlag);
+		appendText("[" + Time.getCurrentTime() + "], ELEVATOR" + getElevatorNumber() + ": door closed\n", printFlag);
 	}
 
 	/**
 	 * This method simulates opening the elevator doors
 	 */
 	public void OpenDoors() {
-		appendText("Elevator" + getElevatorNumber() + " door opening\n", printFlag);
+		appendText("[" + Time.getCurrentTime() + "], ELEVATOR" + getElevatorNumber() + ": door opening\n", printFlag);
 		try {
 			Thread.sleep(Information.TIME_OPEN_DOOR);
 		} catch (InterruptedException e) {
 			System.err.println(e);
 		}
 		setDoorState("OPEN");
-		appendText("Elevator" + getElevatorNumber() + " door opened\n", printFlag);
+		appendText("[" + Time.getCurrentTime() + "], ELEVATOR" + getElevatorNumber() + ": door opened\n", printFlag);
 
 	}
 
@@ -539,9 +540,9 @@ public class Elevator extends Network implements Runnable {
 		if(getError() != null) {
 			if(getError().equals("doorStuck")) {
 				try {
-					System.out.println("Elevator " + elevatorNumber + ": door is stuck!");
+					System.out.println("[" + Time.getCurrentTime() + "], ELEVATOR" + elevatorNumber + ": door is stuck!");
 					Thread.sleep((int) (5000 * Information.TIME_MULTIPLIER));
-					System.out.println("Elevator " + elevatorNumber + ": door is unstuck! Phew!");
+					System.out.println("[" + Time.getCurrentTime() + "], ELEVATOR" + elevatorNumber + ": door is unstuck! Phew!");
 					addError(null);
 				} catch (InterruptedException e) {
 					e.printStackTrace();
@@ -565,7 +566,7 @@ public class Elevator extends Network implements Runnable {
 	 */
 	@Override
 	public void run() {
-		appendText("Elevator " + elevatorNumber + " is set up and ready to go\n", printFlag);
+		appendText("[" + Time.getCurrentTime() + "], ELEVATOR" + elevatorNumber + " is set up and ready to go\n", printFlag);
 
 		while (running)
 			this.elevatorState.Moving();

@@ -3,6 +3,7 @@ package ElevatorProject.ElevatorSubsytem;
 import java.awt.Color;
 
 import ElevatorProject.Information;
+import ElevatorProject.Time;
 
 /**
  * IdleES.java
@@ -40,7 +41,7 @@ public class IdleES implements ElevatorState {
 		if(Information.gui)
 			elevator.elevGUI.setColour("IDLE", elevator.getCurrentFloor());
 		
-		elevator.appendText("\n" + "Elevator" + elevator.getElevatorNumber() + " STATE: IDLE\n", elevator.printFlag);
+		elevator.appendText("\n" + "[" + Time.getCurrentTime() + "], ELEVATOR" + elevator.getElevatorNumber() + " STATE: IDLE\n", elevator.printFlag);
 		// Entry action
 		elevator.setMotorState("IDLE");
 		elevator.setDoorState("OPEN");
@@ -51,23 +52,23 @@ public class IdleES implements ElevatorState {
 		if(elevator.checkForError())
 			return;
 
-		elevator.appendText("Elevator" + elevator.getElevatorNumber() + ": requested at floor : " + nextFloor + "\n", elevator.printFlag);
+		elevator.appendText("[" + Time.getCurrentTime() + "], ELEVATOR" + elevator.getElevatorNumber() + ": requested at floor " + nextFloor + "\n", elevator.printFlag);
 
 		String motorDirection = elevator.getDirection(nextFloor);
 
 		// Elevator is already at floor
 		if (motorDirection.equals("IDLE")) {
-			elevator.appendText("Elevator" + elevator.getElevatorNumber() + ": Switching to Arrived state\n\n", elevator.printFlag);
+			elevator.appendText("[" + Time.getCurrentTime() + "], ELEVATOR" + elevator.getElevatorNumber() + ": Switching to Arrived state\n\n", elevator.printFlag);
 			elevator.setState(elevator.getArrivedState());
 		}
 		// Turn on direction lamp
 		elevator.appendText(
-				"Elevator" + elevator.getElevatorNumber() + " Turning on the " + motorDirection + " direction lamp\n", elevator.printFlag);
+				"[" + Time.getCurrentTime() + "], ELEVATOR" + elevator.getElevatorNumber() + ": Turning on the " + motorDirection + " direction lamp\n", elevator.printFlag);
 		elevator.CloseDoors();
 		elevator.TurnOnDirectionLamp(motorDirection);
 		elevator.setMotorState(motorDirection);
 
-		elevator.appendText("Elevator" + elevator.getElevatorNumber() + ": Switching to MOVING state\n\n", elevator.printFlag);
+		elevator.appendText("[" + Time.getCurrentTime() + "], ELEVATOR" + elevator.getElevatorNumber() + ": Switching to MOVING state\n\n", elevator.printFlag);
 		elevator.setState(elevator.getMovingState());
 	}
 

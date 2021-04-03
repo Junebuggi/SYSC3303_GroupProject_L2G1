@@ -3,6 +3,7 @@ package ElevatorProject.ElevatorSubsytem;
 import java.awt.Color;
 
 import ElevatorProject.Information;
+import ElevatorProject.Time;
 
 /**
  * ArrivedES.java
@@ -38,7 +39,7 @@ public class ArrivedES implements ElevatorState {
 		if(Information.gui)
 			elevator.elevGUI.setColour("ARRIVED", elevator.getCurrentFloor());
 
-		elevator.appendText("\n" + "Elevator" + elevator.getElevatorNumber() + " STATE: ARRIVED\n", elevator.printFlag);
+		elevator.appendText("\n" + "[" + Time.getCurrentTime() + "], ELEVATOR" + elevator.getElevatorNumber() + " STATE: ARRIVED\n", elevator.printFlag);
 		elevator.TurnOffDirectionLamp(elevator.getMotorDirection().toString());
 		elevator.TurnOffButtonLamp(elevator.getCurrentFloor());
 		elevator.setMotorState("IDLE");
@@ -47,7 +48,7 @@ public class ArrivedES implements ElevatorState {
 		elevator.arrivingAtFloor(elevator.getCurrentFloor());
 		elevator.arrivalSensor(elevator.getCurrentFloor(), elevator.getElevatorNumber(), elevator.getDirection(0));
 
-		elevator.appendText("Elevator" + elevator.getElevatorNumber() + " Switching to IDLE state\n\n", elevator.printFlag);
+		elevator.appendText("[" + Time.getCurrentTime() + "], ELEVATOR" + elevator.getElevatorNumber() + " Switching to IDLE state\n\n", elevator.printFlag);
 		elevator.setState(elevator.getIdleState());
 	}
 

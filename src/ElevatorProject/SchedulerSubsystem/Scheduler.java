@@ -13,15 +13,15 @@
  */
 package ElevatorProject.SchedulerSubsystem;
 
-import java.io.UnsupportedEncodingException;
 import java.net.DatagramSocket;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-
 import ElevatorProject.Information;
 import ElevatorProject.Network;
+import ElevatorProject.Time;
+import ElevatorProject.GUI.ElevatorGridGUI;
 
 public class Scheduler extends Network {
 	//An array list of all the floor requests that are waiting to be serviced
@@ -91,15 +91,14 @@ public class Scheduler extends Network {
 	 */
 	public synchronized byte[] putRequest(byte[] request) {
 			//Add the work requests passed in and notify all
-			//This is an elevatorRequest message
 			String[] data = pac.parseData(request);
-			System.out.println("Request: " + Arrays.toString(data));
+			
+			//This is an elevatorRequest message
 			if(data[0].equals("floorRequest") && (data.length == 5 || data.length == 6)) {
 				if(!arrayContainsRequest(data, workRequests)) {
 					this.workRequests.add(data);
-					System.out.println("Added to workRequests array");
-				}
-					
+					print("[" + Time.getCurrentTime() + "], SCHEDULER: Received elevator request from Floor " + data[2]);
+				}	
 			}
 			
 			//This is a elevator destination floor message
@@ -107,8 +106,19 @@ public class Scheduler extends Network {
 				//Arrival notification arrived, cancel fault timer
 				elevatorMonitors[Integer.parseInt(data[3])-1].cancelTimer();
 				//If the elevator's state is not IDLE, it's still moving, start fault timer
-				if(!data[4].equals("IDLE"))
-					elevatorMonitors[Integer.parseInt(data[3])-1].startTimer();			
+				print("[" + Time.getCurrentTime() + "], SCHEDULER: Arrival Notification received from Elevator " + data[3] + ", canceling timer.");
+				
+				if(elevators.get(Integer.parseInt(data[3])).getState().equals("Out_of_Order")) {
+					printError("[" + Time.getCurrentTime() + "], SCHEDULER: Elevator Timer previously timed out but Arrival Notification received with delay. Elevator " + data[3] + " is schedulable again.");
+
+				}
+				
+				
+				if(!data[4].equals("IDLE")) {
+					print("[" + Time.getCurrentTime() + "], SCHEDULER: Elevator " + data[3] + " moving, starting timer.");
+					elevatorMonitors[Integer.parseInt(data[3])-1].startTimer();	
+				}
+							
 				
 				arrivalNotificationToFloor(data, Integer.valueOf(data[2]));
 
@@ -117,7 +127,7 @@ public class Scheduler extends Network {
 				String servicableRequest = checkIfRequestPendingAtFloor(Integer.valueOf(data[2]), data[4]);
 				if(servicableRequest != null) {		
 					//Passenger is waiting!
-					System.out.println("Servicable Request: " + servicableRequest);
+					print("[" + Time.getCurrentTime() + "], SCHEDULER: Instructing Elevator " + servicableRequest.split(" ")[1] + " to service request a Floor " + servicableRequest.split(" ")[3]);
 					notifyAll();
 					return pac.toBytes(servicableRequest);
 				}
@@ -136,11 +146,8 @@ public class Scheduler extends Network {
 	private synchronized String checkIfRequestPendingAtFloor(int floor, String direction) {
 		
 		for(int i = 0; i < workRequests.size(); i++) {
-			System.out.println("Floor: " + floor + " Direction: " + direction);
 			if(workRequests.get(i)[3].equals(direction) && Integer.valueOf(workRequests.get(i)[2]) == floor && workRequests.get(i).length == 5) {
-				System.out.println("Pending request found");
 				return Network.pac.joinStringArray(workRequests.remove(i));
-
 			}
 		}	
 		return null;	
@@ -235,12 +242,6 @@ public class Scheduler extends Network {
 			while(floor || elevatorPort == -1) {
 				System.out.println("Listening on port: " + socket.getLocalPort());
 				ReturnData portData = receive(socket);
-				//Print message received as a string
-				try {
-					System.out.println(new String(portData.getData(), pac.getEncoding()));
-				} catch (UnsupportedEncodingException e) {
-					e.printStackTrace();
-				}
 				//Send an ACK after message received
 				send(portData.getPort(), createACK(), socket);
 
@@ -259,9 +260,7 @@ public class Scheduler extends Network {
 				else if (fromSystem[0].equals("floorInitEnd")) {
 					System.out.println("Received floorInitEnd message");
 					floor = false;
-				}
-
-			
+				}	
 			}
 		}
 	
@@ -337,7 +336,7 @@ public class Scheduler extends Network {
 	
 	/**
 	 * This method creates the request to be sent to the elevator subsystem. It inserts the elevator
-	 * number into the original work request so the elevator subystem can determine which elevator to
+	 * number into the original work request so the elevator subsystem can determine which elevator to
 	 * pass it along to
 	 * 
 	 * @param request The request to be modified
@@ -349,7 +348,7 @@ public class Scheduler extends Network {
 		req += (" " + elevator);
 		for(int i = 2; i < request.length; i++)
 			req += (" " + request[i]);
-		System.out.println("Request to elevator " + elevator + ": " + req.toString());
+		print("[" + Time.getCurrentTime() + "], SCHEDULER: Routing Elevator " + elevator + " to floor " + request[2]);
 		return pac.toBytes(req);
 	}
 	
@@ -363,14 +362,39 @@ public class Scheduler extends Network {
 		for(int i = 1; i < request.length; i++) {
 			str += " " + request[i];
 		}	
-		System.out.println("Message to floor: " + floor + " at port: " + floorPorts.get(floor) + "\nis: " + str);
+		print("[" + Time.getCurrentTime() + "], SCHEDULER: Notifying Floor " + floor + " at port: " + floorPorts.get(floor) + " that Elevator " + request[3] + " arrived." );
 		rpc_send(floorPorts.get(floor), Network.pac.toBytes(str));
 	}
 	
+	/**
+	 * 
+	 * 
+	 * @param state The state of the Elevator "IDLE", "DOWN" "UP" "OUT_OF_ORDER"
+	 * @param floor the floor number the elevator is on
+	 * @return
+	 */
 	public Elevator newElevator(String state, int floor) {
 		return new Elevator(state, floor);
 	}
-
+	
+	/**
+	 * This is the print method, that if the gui variable in the Information class is
+	 * TRUE will also print to the "Scheduler Notification" text area.
+	 * 
+	 * @param str String to print
+	 */
+	public void print(String str) {
+		if(Information.gui) {
+			ElevatorGridGUI.schedulerNotificationsTA.append(str + "\n");
+		}
+		System.out.println(str);
+	}
+	
+	public void printError(String str) {
+		if(Information.gui) {
+			ElevatorGridGUI.errorNotificationsTA.append(str + "\n");
+		}
+		System.out.println(str);
+	}
+	
 }
-
-

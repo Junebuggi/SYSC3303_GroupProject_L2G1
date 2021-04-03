@@ -18,10 +18,12 @@ import java.io.UnsupportedEncodingException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Scanner;
 
 import ElevatorProject.Information;
 import ElevatorProject.Network;
+import ElevatorProject.Time;
 import ElevatorProject.GUI.ElevatorGridGUI;
 import ElevatorProject.GUI.Components.FloorButtonsComponent;
 
@@ -36,7 +38,7 @@ import ElevatorProject.GUI.Components.FloorButtonsComponent;
  */
 public class FloorSubsystem extends Network implements Runnable {
 	// The input file that contains all the floor requests
-	private File inputFile = new File(
+	private static File inputFile = new File(
 			System.getProperty("user.dir") + "/src/ElevatorProject/FloorSubsystem/floorRequest.txt");
 	SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss.SSS");
 
@@ -133,23 +135,6 @@ public class FloorSubsystem extends Network implements Runnable {
 	}
 
 	/**
-	 * This method converts the given time in the format "HH:mm:ss.SSS" to
-	 * milliseconds. It is used to determine the time required to wait between
-	 * requests sent to scheduler.
-	 * 
-	 * @param time A string representation of time in the format "HH:mm:ss.SSS"
-	 * @return milliseconds The given time in milliseconds
-	 */
-	public int getMilli(String time) {
-		try {
-			return (int) sdf.parse(time).getTime();
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
-		return -1; // Error
-	}
-
-	/**
 	 * The run method for the floorSubsystem. It will read in the input file and
 	 * send them to the scheduler. After sending a request it will turn on the
 	 * designate floor direction lamp
@@ -173,6 +158,8 @@ public class FloorSubsystem extends Network implements Runnable {
 
 		// Send the next request in the array
 		int i = 1;
+		
+		Time.startTimeReference = sdf.format(new Date());
 		while (!requests.isEmpty()) {
 			String curRequest = requests.remove(0);
 			turnOnLamp(curRequest); // Button has been pressed, turn on lamp
@@ -190,8 +177,8 @@ public class FloorSubsystem extends Network implements Runnable {
 			// read to be sent
 			if (requests.size() > 0) {
 				try {
-					int now = getMilli(curRequest.split(" ")[0]);
-					int nextTime = getMilli(requests.get(0).split(" ")[0]);
+					long now = Time.getMilli(curRequest.split(" ")[0]);
+					long nextTime = Time.getMilli(requests.get(0).split(" ")[0]);
 					Thread.sleep(Math.abs((int) ((nextTime - now) * (Information.TIME_MULTIPLIER))));
 				} catch (InterruptedException e) {
 					e.printStackTrace();

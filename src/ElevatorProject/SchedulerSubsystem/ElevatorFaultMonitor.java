@@ -2,6 +2,8 @@ package ElevatorProject.SchedulerSubsystem;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import ElevatorProject.Time;
+
 import java.awt.Toolkit;
 /**
  * This class is responsible for starting a timer each time a elevator services a request.
@@ -61,14 +63,15 @@ public class ElevatorFaultMonitor {
 			@Override
 			public void run() {
 					// If timer triggered, make elevator reference in scheduler Out_of_Order
-					System.out.println("Arrival sensor timed out. Elevator " + elevator
-							+ " out of order.\nMaintenance has been notified and is on its way!");
 					int elevatorFloor = scheduler.elevators.get(elevator).getFloor();
 					//scheduler.elevators.remove(elevator);
 					scheduler.elevators.put(elevator, scheduler.createNewElevatorReference(elevatorFloor, "Out_of_Order"));
 					Toolkit.getDefaultToolkit().beep();
 					// End timer
 					timer.cancel();
+					
+					scheduler.printError("[" + Time.getCurrentTime() + "], SCHEDULER: Arrival Sensor Timed out. Elevator " + elevator + " out of order. Maintenance has been notified!");
+						
 			}
 		};
 		// Schedule Timer to wait waitTime before being triggered

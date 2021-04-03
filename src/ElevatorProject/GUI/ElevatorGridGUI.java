@@ -1,48 +1,49 @@
 package ElevatorProject.GUI;
 import java.awt.BorderLayout;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.EventQueue;
-import java.awt.FlowLayout;
 import java.awt.GridLayout;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 
 import ElevatorProject.Information;
 import ElevatorProject.GUI.Components.ElevatorButtonComponent;
 import ElevatorProject.GUI.Components.ElevatorComponent;
 import ElevatorProject.GUI.Components.FloorButtonsComponent;
+import ElevatorProject.GUI.Components.SmartScroller;
 import ElevatorProject.GUI.Components.StartButton;
 
+@SuppressWarnings("serial")
 public class ElevatorGridGUI extends JFrame{
 	
 	public static ElevatorComponent[] elevatorShaft;
 	public static ElevatorButtonComponent[] elevatorButtons;
 	public static FloorButtonsComponent[] floorButtons;
+	public static JTextArea schedulerNotificationsTA;
+	public static JTextArea errorNotificationsTA;
+	public static JScrollPane schedulerNotificationPane;
 	
 	public ElevatorGridGUI() {
 		super("Scheduler GUI");
 		this.setLayout(new BorderLayout());
-		this.setSize(550, 650);
+		this.setSize(900, 700);
 		this.setVisible(true);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setResizable(true);
-		Box box = Box.createVerticalBox();
+		
+		Box vbox = Box.createVerticalBox();
 		
 		JPanel elevatorMainPanel = new JPanel();
 		elevatorMainPanel.setLayout(new BoxLayout(elevatorMainPanel, BoxLayout.Y_AXIS));
-		elevatorMainPanel.setPreferredSize(new Dimension(275, 500));
-		
-		
-		
+		elevatorMainPanel.setPreferredSize(new Dimension(250, 500));
 		
 		JPanel elevatorsPanel = new JPanel();
 		elevatorsPanel.setLayout(new GridLayout(1, Information.NUM_ELEVATORS+2, 0, 0));
@@ -85,7 +86,7 @@ public class ElevatorGridGUI extends JFrame{
 		elevatorsPanel.add(floorButtonsPanel);
 		elevatorMainPanel.add(elevatorsPanel);
 		
-		box.add(elevatorMainPanel);
+		vbox.add(elevatorMainPanel);
 		
 		
 		JPanel elevatoButtonMainPanel = new JPanel();
@@ -101,13 +102,28 @@ public class ElevatorGridGUI extends JFrame{
 		}
 		
 		
-		box.add(elevatoButtonMainPanel);
+		vbox.add(elevatoButtonMainPanel);;
 		
-		getContentPane().add(box);
+		schedulerNotificationsTA = new JTextArea();
+		schedulerNotificationsTA.setEditable(false);
 		
-		
-		
-		
+		errorNotificationsTA = new JTextArea();
+		errorNotificationsTA.setEditable(false);
+    	
+	    schedulerNotificationPane = new JScrollPane(schedulerNotificationsTA, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+	    
+	    schedulerNotificationPane.setBorder(BorderFactory.createTitledBorder("Scheduler Notifications"));
+	    
+	    new SmartScroller(schedulerNotificationPane, SmartScroller.VERTICAL, SmartScroller.END);
+	    
+	    JScrollPane errorNotificationPane = new JScrollPane(errorNotificationsTA, JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+	    errorNotificationPane.setBorder(BorderFactory.createTitledBorder("Error Notifications"));
+	    new SmartScroller(errorNotificationPane, SmartScroller.VERTICAL, SmartScroller.END);
+		JSplitPane notifcationsRightSide = new JSplitPane(JSplitPane.VERTICAL_SPLIT, schedulerNotificationPane, errorNotificationPane);
+		notifcationsRightSide.setVisible(true);	    
+		JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, vbox, notifcationsRightSide);
+	    
+		getContentPane().add(splitPane);
 		
 		
 		

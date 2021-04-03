@@ -20,8 +20,5 @@ public class Project {
 			ElevatorSubsystem.main(null);
 			FloorSubsystem.main(null);
 		}
-		
-		
 	}
-
 }

@@ -65,7 +65,6 @@ public class SchedulerStateMachine implements Runnable {
 		try {
 			sendReceiveSocket = new DatagramSocket();
 			sendReceiveSocket.setSoTimeout(500);
-			System.out.println("Active thread sends from: " + sendReceiveSocket.getLocalPort());
 		} catch (SocketException e) {
 			e.printStackTrace();
 		}
@@ -92,7 +91,6 @@ public class SchedulerStateMachine implements Runnable {
 	 */
 	@Override
 	public void run() {
-		System.out.println(Thread.currentThread().getName());
 
 		int elevator = 0;
 		// Wait to receive port initialization messages from the floor and elevator
@@ -108,8 +106,9 @@ public class SchedulerStateMachine implements Runnable {
 			}
 		}
 		
+		// If this is the listening thread then wait to receive and place messages into
+		// appropriate list
 		while (Thread.currentThread().getName().equals("listeningThread") && listeningRunning) {
-			System.out.println(Thread.currentThread().getName());
 			ReturnData returnData = scheduler.receive(scheduler.getSocket(0));
 			if (returnData.getData() != null) {
 				byte[] returnMessage = scheduler.putRequest(returnData.getData());
@@ -118,10 +117,6 @@ public class SchedulerStateMachine implements Runnable {
 		}
 
 		while (Thread.currentThread().getName().equals("activeThread") && activeRunning) {
-			// If this is the listening thread then wait to receive and place messages into
-			// appropriate list
-
-
 			switch (current_state) {
 			case WAIT_FOR_REQUEST: {
 
@@ -153,7 +148,7 @@ public class SchedulerStateMachine implements Runnable {
 					current_state = State.WAIT_FOR_REQUEST;
 					break;
 				}
-				System.out.println("Sending message to elevator");
+
 				byte[] msg = scheduler.createElevatorRequest(request, elevator);
 				scheduler.send(scheduler.getElevatorPort(), msg, sendReceiveSocket);
 
@@ -179,13 +174,12 @@ public class SchedulerStateMachine implements Runnable {
 						
 					
 					current_state = State.WAIT_FOR_REQUEST;
-					System.out.println("Elevator " + elevator + " is available and on its way!");
 					break;
 				}
 
 				// Change state of elevator to send elevator to floor (if timeout occurs)
 				current_state = State.SEND_ELEVATOR_TO_FLOOR;
-				System.out.println("Elevator not found");
+
 				break;
 			}
 			}

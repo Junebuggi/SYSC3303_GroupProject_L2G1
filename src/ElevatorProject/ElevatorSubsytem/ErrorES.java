@@ -3,6 +3,7 @@ package ElevatorProject.ElevatorSubsytem;
 import java.awt.Color;
 
 import ElevatorProject.Information;
+import ElevatorProject.Time;
 
 /**
  * ErrorES.java
@@ -42,12 +43,12 @@ public class ErrorES implements ElevatorState {
 		if(Information.gui)
 			elevator.elevGUI.setColour("ERROR", elevator.getCurrentFloor());
 		
-		elevator.appendText("\n" + "Elevator" + elevator.getElevatorNumber() + " STATE: ERROR\n", elevator.printFlag);
+		elevator.appendText("\n" + "[" + Time.getCurrentTime() + "], ELEVATOR" + elevator.getElevatorNumber() + " STATE: ERROR\n", elevator.printFlag);
 
 		elevator.setMotorState("IDLE");
 
-		elevator.appendText("Elevator" + elevator.getElevatorNumber() + " is stuck between floor: " + elevator.getCurrentFloor() + " and floor: " + elevator.getNextFloor() + "\n", elevator.printFlag);
-		elevator.appendText("Elevator" + elevator.getElevatorNumber() + " will stay in the ERROR state as it is shut down.\n", elevator.printFlag);
+		elevator.appendText("[" + Time.getCurrentTime() + "], ELEVATOR" + elevator.getElevatorNumber() + ": is stuck between floor " + elevator.getCurrentFloor() + " and floor " + elevator.getNextFloor() + "\n", elevator.printFlag);
+		elevator.appendText("[" + Time.getCurrentTime() + "], ELEVATOR" + elevator.getElevatorNumber() + " will stay in the ERROR state as it is shut down.\n", elevator.printFlag);
 		
 		elevator.running = false;	
 	}
