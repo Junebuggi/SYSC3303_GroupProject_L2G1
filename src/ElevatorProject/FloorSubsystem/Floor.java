@@ -196,6 +196,7 @@ public class Floor extends Network implements Runnable {
 		while (running) {
 			// Wait to receive instructions from the scheduler (no timeout)
 			ReturnData returnData = receive(getSocket(0));
+			
 			// Send an ACK back once received
 			send(returnData.getPort(), createACK(), getSocket(0));
 

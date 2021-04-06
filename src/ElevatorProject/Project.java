@@ -13,9 +13,12 @@ public class Project {
 	 * @param args
 	 */
 	public static void main(String[] args) {
+		//If the static gui variable is true, launch the GUI
 		if(Information.gui) {
 			ElevatorGridGUI.main(null);
-		} else {
+		} 
+		//Launch the three subsystems without the GUI
+		else {
 			SchedulerStateMachine.main(null);
 			ElevatorSubsystem.main(null);
 			FloorSubsystem.main(null);

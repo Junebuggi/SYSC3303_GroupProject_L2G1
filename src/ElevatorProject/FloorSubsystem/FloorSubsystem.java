@@ -158,8 +158,7 @@ public class FloorSubsystem extends Network implements Runnable {
 
 		// Send the next request in the array
 		int i = 1;
-		
-		Time.startTimeReference = sdf.format(new Date());
+				
 		while (!requests.isEmpty()) {
 			String curRequest = requests.remove(0);
 			turnOnLamp(curRequest); // Button has been pressed, turn on lamp

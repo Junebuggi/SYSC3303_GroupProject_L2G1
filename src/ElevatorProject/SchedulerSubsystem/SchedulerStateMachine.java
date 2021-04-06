@@ -30,6 +30,7 @@ public class SchedulerStateMachine implements Runnable {
 	private DatagramSocket sendReceiveSocket;
 	private boolean activeRunning = true;
 	private boolean listeningRunning = true;
+	private long startTime;
 
 	/**
 	 * These are the states that the scheduler will go through.
@@ -151,6 +152,7 @@ public class SchedulerStateMachine implements Runnable {
 
 				byte[] msg = scheduler.createElevatorRequest(request, elevator);
 				scheduler.send(scheduler.getElevatorPort(), msg, sendReceiveSocket);
+				
 
 				//
 
@@ -159,7 +161,7 @@ public class SchedulerStateMachine implements Runnable {
 				break;
 			}
 			case WAIT_FOR_ELEVATOR: {
-				System.out.println("Waiting for Elevator");
+				//System.out.println("Waiting for Elevator");
 
 				// A timeout is set in case elevator does not respond
 				ReturnData returnData = scheduler.receive(sendReceiveSocket);

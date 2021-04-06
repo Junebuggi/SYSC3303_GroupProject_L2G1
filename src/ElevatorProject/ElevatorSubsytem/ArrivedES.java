@@ -33,19 +33,25 @@ public class ArrivedES implements ElevatorState {
 
 	@Override
 	public void Moving() {
+		//This will change the Elevator's GUI text area to blue
 		if(!elevator.printFlag)
 			elevator.transcript.setBackground( Color.decode("#c3e4e8") );
 		
+		//If running the Project GUI, change the elevator shaft's position and colour
 		if(Information.gui)
 			elevator.elevGUI.setColour("ARRIVED", elevator.getCurrentFloor());
 
 		elevator.appendText("\n" + "[" + Time.getCurrentTime() + "], ELEVATOR" + elevator.getElevatorNumber() + " STATE: ARRIVED\n", elevator.printFlag);
+		
+		//Turn off Direction Lamp, button lamp, stop motors and open the doors.
 		elevator.TurnOffDirectionLamp(elevator.getMotorDirection().toString());
 		elevator.TurnOffButtonLamp(elevator.getCurrentFloor());
 		elevator.setMotorState("IDLE");
 		elevator.OpenDoors();
 		
+		//Remove this floor from floorsToVisit and add the passengers destinations to floorsToVisit
 		elevator.arrivingAtFloor(elevator.getCurrentFloor());
+		//Inform the scheduler that the elevator has arrived
 		elevator.arrivalSensor(elevator.getCurrentFloor(), elevator.getElevatorNumber(), elevator.getDirection(0));
 
 		elevator.appendText("[" + Time.getCurrentTime() + "], ELEVATOR" + elevator.getElevatorNumber() + " Switching to IDLE state\n\n", elevator.printFlag);

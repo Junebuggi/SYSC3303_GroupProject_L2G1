@@ -96,6 +96,7 @@ public class Scheduler extends Network {
 			//This is an elevatorRequest message
 			if(data[0].equals("floorRequest") && (data.length == 5 || data.length == 6)) {
 				if(!arrayContainsRequest(data, workRequests)) {
+					
 					this.workRequests.add(data);
 					print("[" + Time.getCurrentTime() + "], SCHEDULER: Received elevator request from Floor " + data[2]);
 				}	
@@ -103,6 +104,7 @@ public class Scheduler extends Network {
 			
 			//This is a elevator destination floor message
 			if(data[0].equals("arrivalSensor") && data.length == 5) {
+				
 				//Arrival notification arrived, cancel fault timer
 				elevatorMonitors[Integer.parseInt(data[3])-1].cancelTimer();
 				//If the elevator's state is not IDLE, it's still moving, start fault timer
@@ -127,7 +129,7 @@ public class Scheduler extends Network {
 				String servicableRequest = checkIfRequestPendingAtFloor(Integer.valueOf(data[2]), data[4]);
 				if(servicableRequest != null) {		
 					//Passenger is waiting!
-					print("[" + Time.getCurrentTime() + "], SCHEDULER: Instructing Elevator " + servicableRequest.split(" ")[1] + " to service request a Floor " + servicableRequest.split(" ")[3]);
+					print("[" + Time.getCurrentTime() + "], SCHEDULER: Instructing Elevator " + data[3] + " to service request at Floor " + data[2]);
 					notifyAll();
 					return pac.toBytes(servicableRequest);
 				}
@@ -149,21 +151,22 @@ public class Scheduler extends Network {
 		//If there is other outstanding requests at the floor, the passengers destination will be tacked on at the end
 		boolean foundOne = false;
 		String pendingRequest = null;
-		for(int i = 0; i < workRequests.size(); i++) {
+		int nPassenger = 0;
+		for(int i = 0; i < workRequests.size() && nPassenger < 3; i++) {
 			if(workRequests.get(i)[3].equals(direction) && Integer.valueOf(workRequests.get(i)[2]) == floor && workRequests.get(i).length == 5) {
-				System.out.println("Made it in first if");
 				//If this is the first request, add the whole request to the string to be returned
 				if(!foundOne) {
 					pendingRequest = pac.joinStringArray(workRequests.remove(i));
 					foundOne = true;
-					i--; //Decrement position to reflect request removed
-					System.out.println("Made it in second if");
 				} 
 				//If there are additional matching requests, add the passengers destination
 				else {
 					String destination = workRequests.remove(i)[4];
 					pendingRequest = pendingRequest + "," + destination;
+
 				}
+				i--; //Decrement position to reflect request removed
+				nPassenger++;
 			}
 		}	
 		return pendingRequest;	

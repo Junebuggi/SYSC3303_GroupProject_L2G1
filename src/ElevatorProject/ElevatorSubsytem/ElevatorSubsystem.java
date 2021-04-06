@@ -160,7 +160,7 @@ public class ElevatorSubsystem extends Network implements Runnable {
 		int nFloors = Information.NUM_FLOORS;
 		int nShafts = Information.NUM_ELEVATORS;
 		int schedulerPort = Information.SCHEDULER_PORT;
-		boolean printFlag = false;
+		boolean printFlag = true;
 		ElevatorSubsystem elevSys = new ElevatorSubsystem(nShafts, schedulerPort, nFloors, printFlag);
 		Thread elevSubThread = new Thread(elevSys, "Elevator Subsystem");
 		elevSubThread.start();

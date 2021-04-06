@@ -296,6 +296,7 @@ public class Elevator extends Network implements Runnable {
 	 */
 	public void setMotorState(String motorState) {
 		this.motor = Motor.valueOf(motorState);
+		ElevatorGridGUI.dirLamp[this.elevatorNumber-1].setDirection(motorState);
 	}
 
 	/**
@@ -514,6 +515,13 @@ public class Elevator extends Network implements Runnable {
 		return this.nFloors;
 	}
 	
+	/**
+	 * This method will print to the console, and if the GUI is open will also print to the 
+	 * text area
+	 * 
+	 * @param str The string to be printed
+	 * @param printFlag, true if printing to Elevator GUI as well
+	 */
 	public void appendText(String str, boolean printFlag){
 		if(!printFlag) {
 			transcript.append(str);
@@ -524,20 +532,41 @@ public class Elevator extends Network implements Runnable {
 	  
 	}
 
-	public void scrollDown(){
+	/**
+	 * This method will scroll to the bottom, it is called after something is printed
+	 * to the text area.
+	 */
+	private void scrollDown(){
 	    transcript.setCaretPosition(transcript.getText().length());
 	}
 	
+	/**
+	 * This method will add an error to the elevator
+	 * 
+	 * @param error, "doorStuck" or "hardFault", null if no error
+	 */
 	public void addError(String error) {
 		this.errorMsg = error;
 	}
 	
+	/**
+	 * This method will return the error stored in the elevator
+	 * 
+	 * @return null if no error, "doorStuck" or "hardFault" otherwise
+	 */
 	public String getError() {
 		return this.errorMsg;
 	}
 	
+	/**
+	 * This method will check if the elevator has an error and will simulate the appropriate
+	 * error protocol
+	 * 
+	 * @return true, if this is a "hardFault"
+	 */
 	public boolean checkForError() {
 		if(getError() != null) {
+			//This is a transient fault, the door will be stuck for 5 seconds, and then go back to working
 			if(getError().equals("doorStuck")) {
 				try {
 					System.out.println("[" + Time.getCurrentTime() + "], ELEVATOR" + elevatorNumber + ": door is stuck!");
@@ -548,6 +577,7 @@ public class Elevator extends Network implements Runnable {
 					e.printStackTrace();
 				}
 			}
+			//This is a hard fault, this elevator will shutdown.
 			else if(getError().equals("hardFault")) {
 				setState(getErrorState());
 				return true;		

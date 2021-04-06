@@ -44,7 +44,7 @@ public class ElevatorFaultMonitor {
 	 * It means the elevator has operated properly.
 	 */
 	public void cancelTimer() {
-		System.out.println("Arrival notification received. Stoping fault timer for elevator " + elevator);
+		//System.out.println("Arrival notification received. Stoping fault timer for elevator " + elevator);
 		timer.cancel();
 	}
 	
@@ -58,7 +58,7 @@ public class ElevatorFaultMonitor {
 		// Instantiate a Timer
 		timer = new Timer();
 		// Assign Timer Task
-		System.out.println("Starting fault timer for elevator " + elevator);
+		//System.out.println("Starting fault timer for elevator " + elevator);
 		TimerTask task = new TimerTask() {
 			@Override
 			public void run() {
@@ -75,7 +75,7 @@ public class ElevatorFaultMonitor {
 			}
 		};
 		// Schedule Timer to wait waitTime before being triggered
-		timer.schedule(task, (int) 1.15 * waitTime);
+		timer.schedule(task, (int) 500 + waitTime);
 	}
 
 }
