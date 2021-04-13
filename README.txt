@@ -7,29 +7,18 @@ Group 1 Members
   - Hasan Baig
   - Rutvik Shah
 
-Project Iteration 4 - Adding Error Detection and Correction
-
-- PURPOSE
-
-The purpose of this iteration was to modify our code to detect and handle faults. We have added timing events so 
-that if the timer goes off (either, the elevator is stuck between floors, or the arrival sensor at a 
-floor has failed), then the system assumes that this is a fault. Similarly, the system  should detect 
-whether a door opens or not, or is stuck open. A door which has not closed should be regarded as a 
-transient fault, so the system should be able to handle this situation gracefully. However, the 
-floor timer fault should be regarded as a hard fault and should shut down the corresponding elevator.
+Project Iteration 5 - GUI and Measurements
 
 - BREAKDOWN OF RESPONSIBILITIES
 
-     Emma + Abeer
-	  -> Implementing elevator Fault Timer to ensure elevator goes out of order if no arrival is detected
-	  -> SchedulerStateMachineTest.java (tests for elevatorFaultMonitor.java)
-	  -> Hard Fault Timing Diagram
+     Abeer
+      -> Gathered measurements for Scheduler performance and calculated statistics
+     Emma
+	  -> Created layout for the GUI and implemented it using Java Swing
+	  -> Gathered measurements for Scheduler performance and calculated statistics
 	  
      Alden + Hasan + Rutvik
-	  -> Implementing functions in ElevatorSubsystem.java and Elevator.java for elevator errors 
-	  -> ErrorES.java (adding error state for Hard Fault error)
-	  -> Transient Fault Timing Diagram
-	  -> Sequence diagram
+	 
 
 - FILE NAMES
 
