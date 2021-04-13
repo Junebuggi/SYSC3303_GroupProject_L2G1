@@ -29,8 +29,8 @@ public class Information {
 
 	// Time measured and averaged in Iteration 0 (unit: milliseconds)
 	public static final Integer TRAVEL_TIME_PER_FLOOR = (int) (9500 * TIME_MULTIPLIER);
-	public static final Integer TIME_OPEN_DOOR = (int) (4600 * TIME_MULTIPLIER);
-	public static final Integer TIME_CLOSE_DOOR = (int) (4600 * TIME_MULTIPLIER);
+	public static final Integer TIME_OPEN_DOOR = (int) (4500 * TIME_MULTIPLIER);
+	public static final Integer TIME_CLOSE_DOOR = (int) (4500 * TIME_MULTIPLIER);
 	
 	public static boolean gui = false;
 

@@ -19,6 +19,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Scanner;
 
 import ElevatorProject.Information;
@@ -158,7 +159,7 @@ public class FloorSubsystem extends Network implements Runnable {
 
 		// Send the next request in the array
 		int i = 1;
-				
+		
 		while (!requests.isEmpty()) {
 			String curRequest = requests.remove(0);
 			turnOnLamp(curRequest); // Button has been pressed, turn on lamp

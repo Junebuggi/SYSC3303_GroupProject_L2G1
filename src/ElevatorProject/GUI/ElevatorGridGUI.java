@@ -1,5 +1,6 @@
 package ElevatorProject.GUI;
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.GridLayout;
@@ -13,6 +14,10 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultHighlighter;
+import javax.swing.text.Highlighter;
+import javax.swing.text.Highlighter.HighlightPainter;
 
 import ElevatorProject.Information;
 import ElevatorProject.GUI.Components.DirectionLampComponent;
@@ -60,10 +65,10 @@ public class ElevatorGridGUI extends JFrame{
 	public static FloorButtonsComponent[] floorButtons;
 	public static JTextArea schedulerNotificationsTA;
 	public static JTextArea errorNotificationsTA;
-	public static DirectionLampComponent[] dirLamp;
+	public static DirectionLampComponent[] dirLamp = new DirectionLampComponent[Information.NUM_ELEVATORS];
 
 	public ElevatorGridGUI() {
-		super("Scheduler GUI");
+		super("L2G1 - Elevator Scheduling System");
 		this.setLayout(new BorderLayout());
 		this.setSize(1100, 700);
 		this.setVisible(true);
@@ -75,7 +80,7 @@ public class ElevatorGridGUI extends JFrame{
 		JPanel elevatorMainPanel = new JPanel();
 		elevatorMainPanel.setLayout(new BoxLayout(elevatorMainPanel, BoxLayout.Y_AXIS));
 		vbox.setPreferredSize(new Dimension(1100, 800));
-		dirLamp = new DirectionLampComponent[Information.NUM_ELEVATORS];
+
 		for(int i = 0; i < Information.NUM_ELEVATORS; i++) {
 			dirLamp[i] = new DirectionLampComponent();
 		}
@@ -92,6 +97,10 @@ public class ElevatorGridGUI extends JFrame{
 
 	}
 	
+	/**
+	 * This method will create the GUI portion of the elevator panel
+	 * @param elevatorMainPanel
+	 */
 	public void createElevatorPanel(JPanel elevatorMainPanel) {
 		JPanel elevatorsPanel = new JPanel();
 		elevatorsPanel.setLayout(new GridLayout(1, Information.NUM_ELEVATORS+2, 0, 0));
@@ -106,6 +115,10 @@ public class ElevatorGridGUI extends JFrame{
 		elevatorMainPanel.add(elevatorsPanel);	
 	}
 	
+	/**
+	 * This method will create the GUI portion of the Floor labels
+	 * @param elevatorsPanel
+	 */
 	public void createFloorLabels(JPanel elevatorsPanel) {
 		
 		JPanel floorLabelsPanel = new JPanel();
@@ -122,7 +135,10 @@ public class ElevatorGridGUI extends JFrame{
 		elevatorsPanel.add(floorLabelsPanel);
 	}
 	
-	
+	/**
+	 * This method will create the GUI portion of the elevator shaft component
+	 * @param elevatorsPanel
+	 */
 	public void createElevatorComponent(JPanel elevatorsPanel) {
 		for(int i = 0; i < Information.NUM_ELEVATORS; i++) {
 			JPanel elevatorPanel = new JPanel();
@@ -132,6 +148,10 @@ public class ElevatorGridGUI extends JFrame{
 		}
 	}
 	
+	/**
+	 * This method will create the GUI portion of the floor buttons
+	 * @param elevatorsPanel
+	 */
 	public void createFloorButtons(JPanel elevatorsPanel) {
 		JPanel floorButtonsPanel = new JPanel();
 		floorButtonsPanel.setLayout(new GridLayout(Information.NUM_FLOORS+2, 1, 0, 0));
@@ -153,6 +173,10 @@ public class ElevatorGridGUI extends JFrame{
 		elevatorsPanel.add(floorButtonsPanel);
 	}
 	
+	/**
+	 * This method will create the GUI portion of the elevator button main panel
+	 * @param vbox
+	 */
 	public void createElevatorButtonMainPanel(Box vbox) {
 		JPanel elevatoButtonMainPanel = new JPanel();
 		elevatoButtonMainPanel.setLayout(new GridLayout(1, Information.NUM_ELEVATORS+1, 0, 0));
@@ -170,13 +194,39 @@ public class ElevatorGridGUI extends JFrame{
 		vbox.add(elevatoButtonMainPanel);
 	}
 	
+	/**
+	 * This method will create the GUI portion of the right-hand side 
+	 * notification text area
+	 * @return
+	 */
 	public JSplitPane createNotificationArea() {
 		schedulerNotificationsTA = new JTextArea();
 		schedulerNotificationsTA.setEditable(false);
 		JTextArea legend = new JTextArea();
 		legend.append("IDLE: Green\nMOVING: Purple\nARRIVED: Blue\nERROR: Red");
+		
+		//Highlight each line with the appropriate colour
+		HighlightPainter idlePainter = 
+	             new DefaultHighlighter.DefaultHighlightPainter(Color.decode("#d2e9af"));
+		HighlightPainter movingPainter = 
+	             new DefaultHighlighter.DefaultHighlightPainter(Color.decode("#e9d8f2"));
+		HighlightPainter arrivedPainter = 
+	             new DefaultHighlighter.DefaultHighlightPainter(Color.decode("#c3e4e8"));
+		HighlightPainter errorPainter = 
+	             new DefaultHighlighter.DefaultHighlightPainter(Color.decode("#e9afaf"));
+		
+		Highlighter highlighter = legend.getHighlighter();
 		legend.setEditable(false);
 		legend.setBorder(BorderFactory.createTitledBorder("Legend"));
+		
+		try {
+			highlighter.addHighlight(0, 11, idlePainter);
+			highlighter.addHighlight(12, 26, movingPainter);
+			highlighter.addHighlight(27, 40, arrivedPainter);
+			highlighter.addHighlight(41, 52, errorPainter);
+		} catch (BadLocationException e) {
+			e.printStackTrace();
+		}
 		errorNotificationsTA = new JTextArea();
 		errorNotificationsTA.setEditable(false);
 

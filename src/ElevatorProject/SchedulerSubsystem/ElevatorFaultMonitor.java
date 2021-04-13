@@ -75,7 +75,7 @@ public class ElevatorFaultMonitor {
 			}
 		};
 		// Schedule Timer to wait waitTime before being triggered
-		timer.schedule(task, (int) 500 + waitTime);
+		timer.schedule(task, (int) 1.15 * waitTime);
 	}
 
 }

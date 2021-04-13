@@ -22,7 +22,7 @@ public class StartButton extends JButton {
 		super("Start!");
 
 		// When the button is clicked, it will begin simulation and
-		// become inactive (can't try to run already running simulation)a
+		// become inactive (can't try to run already running simulation)
 		super.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -35,5 +35,4 @@ public class StartButton extends JButton {
 			}
 		});
 	}
-
 }

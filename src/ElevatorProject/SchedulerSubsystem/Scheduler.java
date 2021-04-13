@@ -406,14 +406,14 @@ public class Scheduler extends Network {
 		if(Information.gui) {
 			ElevatorGridGUI.schedulerNotificationsTA.append(str + "\n");
 		}
-		System.out.println(str);
+		//System.out.println(str);
 	}
 	
 	public void printError(String str) {
 		if(Information.gui) {
 			ElevatorGridGUI.errorNotificationsTA.append(str + "\n");
 		}
-		System.out.println(str);
+		//System.out.println(str);
 	}
 	
 }

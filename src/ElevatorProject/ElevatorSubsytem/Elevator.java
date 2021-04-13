@@ -296,7 +296,8 @@ public class Elevator extends Network implements Runnable {
 	 */
 	public void setMotorState(String motorState) {
 		this.motor = Motor.valueOf(motorState);
-		ElevatorGridGUI.dirLamp[this.elevatorNumber-1].setDirection(motorState);
+		if(Information.gui)
+			ElevatorGridGUI.dirLamp[this.elevatorNumber-1].setDirection(motorState);
 	}
 
 	/**

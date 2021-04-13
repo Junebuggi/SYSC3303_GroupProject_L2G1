@@ -17,6 +17,7 @@ import java.net.SocketException;
 
 import ElevatorProject.Information;
 import ElevatorProject.Network.ReturnData;
+import ElevatorProject.GUI.ElevatorGridGUI;
 import ElevatorProject.SchedulerSubsystem.Scheduler.Elevator;
 
 public class SchedulerStateMachine implements Runnable {
@@ -130,6 +131,7 @@ public class SchedulerStateMachine implements Runnable {
 
 			}
 			case SEND_ELEVATOR_TO_FLOOR: {
+				startTime = System.nanoTime();
 
 				// If there are still no requests, change state to waiting for a request and
 				// exit case statement
@@ -161,20 +163,18 @@ public class SchedulerStateMachine implements Runnable {
 				break;
 			}
 			case WAIT_FOR_ELEVATOR: {
-				//System.out.println("Waiting for Elevator");
 
 				// A timeout is set in case elevator does not respond
 				ReturnData returnData = scheduler.receive(sendReceiveSocket);
 
 				if (returnData.getData() != null && returnData.getPort() != -1) {
+					System.out.println(System.nanoTime() - startTime);
 					// If acknowledgement received, remove the request and wait for next request
 					scheduler.removeRequest(0);
 					scheduler.elevators.put(elevator, scheduler.newElevator("Pending", -1));
-					
-					
+					//Elevator is on its way! Start its fault timer
 					scheduler.elevatorMonitors[elevator-1].startTimer();
 						
-					
 					current_state = State.WAIT_FOR_REQUEST;
 					break;
 				}
