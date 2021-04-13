@@ -111,13 +111,15 @@ SchedulerTest.java
 
 - SET-UP INSTRUCTIONS
 
-	1. Unzip project folder and import into Eclipse
-	2. Run the following files (threads)
-		a. SchedulerStateMachine.java (scheduler system)
-		b. ElevatorSubsystem.java (elevator system) - A GUI WILL POP UP SHOWING ELEVATOR STATE INFO
-		c. FloorSubsystem.java (floor system)
-	3. Run SchedulerStateMachineTest.java JUnit file to run unit test
-	4. Run ElevatorTest.java JUnit file to run unit test
+	1.	Unzip project folder and import into Eclipse
+	2.	Run the file: ElevatorGridGUI.java
+	3.	Press the "Start" button to begin processing the input requests
+	4.	Run SchedulerStateMachineTest.java JUnit file to run unit test
+	5.	Run ElevatorTest.java JUnit file to run unit test
+
+NOTE: 	Once the “Start” button is clicked the entire input file will be run to completion. 
+	To run the system again, close GUI, make any changes to the input file: “floorRequests.txt” and then repeat steps 2 & 3.
+
  
 - NOTE1
 	To create randomized floorRequests data, the user can run "FloorRequestCreator.java" 
